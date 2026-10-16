@@ -1,9 +1,9 @@
 # 本阶段实施计划
 
-当前阶段：**Phase 2 — 分块原子事实提取**
+当前阶段：**Phase 3 — 实体消歧与角色档案**
 状态：已实施，待验收
 更新日期：2026-10-16
-上游依据：`docs/IMPLEMENTATION_PLAN.md` Phase 2
+上游依据：`docs/IMPLEMENTATION_PLAN.md` Phase 3
 
 > 每个阶段完成后更新本文；已完成的阶段摘要见 §7 历史。
 
@@ -48,6 +48,41 @@
 ### 依赖
 
 无新增。HTTP 走标准库 `urllib`，不引入 requests/httpx。
+
+---
+
+## Phase 3 — 实体消歧与角色档案
+
+### 目标
+
+把跨章节的实体提及聚成 canonical 实体，并汇总每个实体的档案。
+
+### 自动合并只允许两种情况
+
+1. **规范化后字面完全相同**（NFKC + 去标点 + casefold）；
+2. **抽取结果里显式标注为彼此的别名**（原文有"又名/化名/称号"依据）。
+
+其余——字面包含、编辑距离为 1——**一律进复核队列**，`decision="needs_review"`，
+绝不自动合并。这是 AGENTS「绝不可仅因为名字相似就自动合并」的落点。
+
+### 不丢实体
+
+- 所有实体都会得到档案，**不按体量排序裁剪**。
+- 只有泛称（少年/士兵/众人…）被排除——它们是角色名词而非专有实体，
+  被排除的名单完整列在报告里，不是静默丢弃。
+- 每个合并判定都记录 `candidate_names` / `match_signals` / `confidence` /
+  `evidence_refs`，可追溯可回滚。
+
+### 档案字段
+
+`first_appearance_chapter`、`appearance_chapters`、`aliases`、`facts`、
+`events`、`relations`、`evidence_count`、`importance`（按证据量归一化）。
+
+### 测试
+
+同名聚类、泛称排除、字面包含只提候选不合并、别名合并有记录、
+档案聚合正确、importance 归一化、**每个非泛称名字都出现在某个实体里**、
+产物文件齐全、抽取目录缺失/为空/无提及/JSON 非法时明确报错。
 
 ---
 
