@@ -80,47 +80,67 @@ def _cmd_config_check(args: argparse.Namespace, log) -> int:
     return 0
 
 
-def _cmd_doctor(args: argparse.Namespace, log) -> int:
-    checks: list[tuple[str, bool, str]] = []
+#: doctor 的检查级别。FAIL 影响退出码；WARN 只提示。
+FAIL = "FAIL"
+WARN = "WARN"
+OK = "OK"
 
-    checks.append(("Python 版本", sys.version_info >= (3, 10), platform.python_version()))
+_MARKS = {OK: "OK", WARN: "--", FAIL: "!!"}
+
+
+def _cmd_doctor(args: argparse.Namespace, log) -> int:
+    checks: list[tuple[str, str, str]] = []
+
+    checks.append(
+        ("Python 版本", OK if sys.version_info >= (3, 10) else FAIL, platform.python_version())
+    )
 
     config_path = Path(args.config) if args.config else None
     try:
         config = config_module.load_config(config_path)
-        checks.append(("配置文件", True, str(config_path or "自动发现")))
+        checks.append(("配置文件", OK, str(config_path or "自动发现")))
     except config_module.ConfigError as exc:
         config = None
-        checks.append(("配置文件", False, str(exc).splitlines()[0]))
+        checks.append(("配置文件", FAIL, str(exc).splitlines()[0]))
 
     dotenv = Path(env_module.DEFAULT_DOTENV)
-    checks.append((".env 文件", True, "存在" if dotenv.is_file() else "不存在（当前用不到）"))
+    checks.append((".env 文件", OK, "存在" if dotenv.is_file() else "不存在（当前用不到）"))
 
     gitignore = Path(".gitignore")
     ignored = False
     if gitignore.is_file():
         lines = {line.strip() for line in gitignore.read_text(encoding="utf-8").splitlines()}
         ignored = ".env" in lines
-    checks.append((".env 已被 .gitignore 排除", ignored, str(gitignore)))
+    checks.append((".env 已被 .gitignore 排除", OK if ignored else FAIL, str(gitignore)))
 
     if config is not None:
-        status = config_module.env_status(config)
-        for name, present in status.items():
-            checks.append((f"环境变量 {name}", present, "已配置" if present else "未配置（Phase 2 前需配置）"))
+        # Phase 0 不需要凭据，所以缺凭据只是提示，不当失败 —— 否则 doctor 永远非零退出。
+        for name, present in config_module.env_status(config).items():
+            checks.append(
+                (
+                    f"环境变量 {name}",
+                    OK if present else WARN,
+                    "已配置" if present else "未配置（进入 Phase 2 前需要）",
+                )
+            )
 
     print(f"{PROG} {__version__} 环境检查")
     print(f"目标客户端格式：{TARGET_CLIENT}")
     print()
-    for label, ok, detail in checks:
-        print(f"  [{'OK' if ok else '!!'}] {label}: {detail}")
+    for label, level, detail in checks:
+        print(f"  [{_MARKS[level]:>2}] {label}: {detail}")
 
-    failed = [label for label, ok, _ in checks if not ok]
+    failed = [label for label, level, _ in checks if level == FAIL]
+    warned = [label for label, level, _ in checks if level == WARN]
+    if warned:
+        print()
+        print(f"提示：{', '.join(warned)}")
     if failed:
         print()
         print(f"未通过：{', '.join(failed)}")
         log.warning("doctor 未通过项：%s", ", ".join(failed))
         return 1
-    log.info("doctor 全部通过")
+    log.info("doctor 通过（%d 项提示）", len(warned))
     return 0
 
 
