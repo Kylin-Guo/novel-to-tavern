@@ -82,12 +82,10 @@ scenario = 世界：测试书。
 客户端常驻使用，所以这是实打实的剧透面。现有测试 `test_strict_greetings_offer_only_one_start`
 只断言章节摘要标记 `_marker(later)` 不出现，**没有断言未来人物名不出现**，因此漏掉了这条。
 
-修法（两处，都不大）：
-
-1. `_character_roster` / `_places` 增加 `start_chapter` 形参，按
-   `first_appearance_chapter <= start_chapter` 过滤；
-2. `_export_strict` 把过滤后的 entities 传给 `build_greetings`，并把测试从
-   「章节摘要标记」升级为「未来实体名 + 未来事件标记」。
+**实际修法**：`_character_roster` / `_places` 合并为一个 `_visible_by()`，
+按 `first_appearance_chapter <= start_chapter` 过滤，出场章节未知的一律不列；
+过滤发生在 builder 内部（而不是让调用方先筛一遍 entities），
+这样两个调用点不会有一处忘记筛。测试从「章节摘要标记」升级为「未来实体名不得出现」。
 
 ### P1-03 缺字段静默变成正史 —— `confirmed`
 
@@ -155,9 +153,13 @@ src/novel_to_tavern/extract/evidence.py       （无引文长度下限，只有 
 `unique_match` / `ambiguous`。所以 RUN_REPORT 里的「100% 定位」在字面意义上是对的，
 但它统计的是「至少能找到一处」，报告说的「不能解释为唯一且准确的定位」成立。
 
-修法：`locate_quote` 改为返回**全部**命中位置；命中多于一处时标记 `ambiguous` 并降级为
-`needs_review`；给 `quote` 加最小长度（例如 ≥ 4 个非空白字符）；`matched_text` 拆成
-`quote_exact`（模型原引文）与 `context_excerpt`（限长）。
+**实际修法**：`locate_quote` 统计**全部**命中，`QuoteCheck` 增加 `ambiguous` /
+`match_count`；多处命中时仍定位但降级 `needs_review` 并写明命中了几次；
+新增 `MIN_QUOTE_CHARS = 4`（按非空白字符计）。
+关于引文与上下文的拆分，实际采取的方案是：`SourceRef.quote` **保持**为命中处的
+原文片段（它保证「逐字可查」），另加 `quote_exact` 存模型的原话 ——
+而不是把 `quote` 换成模型原话。上下文长度本来就受 `MAX_QUOTE_SPAN_LINES = 8` 约束
+（实测最长 624 字符），所以没有再加一层字符上限。
 
 ### P1-06 主线条目触发词 —— `confirmed`（在真实产物上复现）
 
@@ -244,8 +246,10 @@ payload = {model, provider, prompt_template_sha256, schema_version, chunk_sha256
 
 `provider.name` 对 OpenAI 兼容引擎是常量 `"openai_compatible"`，**不含 base_url**。
 换一家兼容服务但模型名相同时，会命中上一家的缓存，且命中是静默的。
-修法：把规范化 base_url 的 sha256 前缀并入键（绝不放 API key）；顺带把
-`max_output_tokens`、top_p 等影响输出的参数一并纳入（当前它们甚至没被消费，见 P2-05）。
+**实际修法**：新增 `llm.provider.normalize_endpoint()` —— 小写 scheme/host、去尾斜杠、
+**丢弃 query 与 fragment**（有些服务把 key 写在查询串里，而缓存文件名会被列目录看到）。
+归一串直接并入键的载荷（最终整体再 sha256），另把 `max_output_tokens` 一并纳入。
+`FileProvider` 的「endpoint」取预生成响应目录的绝对路径。
 
 ### P2-05 配置项未消费 —— `confirmed`（本次复核中问题面最大的一条）
 
