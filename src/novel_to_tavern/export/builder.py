@@ -172,8 +172,17 @@ def build_greetings(
     opening_event = timeline[0] if timeline else None
     ending_events = [e for e in timeline if e.chapter_index == last.chapter_index][-2:]
 
+    def join_scenes(parts: list[str]) -> str:
+        """拼接片段时先去掉片段末尾已有的句读，避免出现「。；」这种重复标点。"""
+        cleaned = [p.strip().rstrip("。；;，, ") for p in parts if p and p.strip()]
+        return "；".join(cleaned)
+
     begin_scene = first.summary.strip() or first.title or "故事的开端"
-    end_scene = "；".join(e.summary for e in ending_events) or last.summary.strip() or "故事的终章"
+    end_scene = (
+        join_scenes([e.summary for e in ending_events])
+        or last.summary.strip()
+        or "故事的终章"
+    )
 
     description = (
         f"《{book_title}》世界模拟器。{CORE_RULES}\n"
@@ -204,7 +213,7 @@ def build_greetings(
     greeting_beginning = (
         f"【起点：故事开头 · {chapter_label(first.chapter_index, first.title)} 之前】\n\n"
         f"{begin_scene}\n\n"
-        f"此刻，{roster.split('、')[0] if roster else '故事里的人们'} 还不知道后面会发生什么。"
+        f"此刻，{roster.split('、')[0] if roster else '故事里的人们'}还不知道后面会发生什么。"
         f"你也不必照着原著走。\n\n"
         f"先说两件事：\n"
         f"1. 你扮演谁？（可以说一个原著人物，也可以是你自己带来的角色）\n"
