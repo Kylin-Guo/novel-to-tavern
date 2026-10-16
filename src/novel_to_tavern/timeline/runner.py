@@ -20,9 +20,11 @@ from .build import (
     relation_timeline,
 )
 from .worldbible import (
+    MIN_ENTITY_CHAPTERS,
+    MIN_ENTITY_FACTS,
     PlannedEntry,
     filter_for_start_chapter,
-    entities_without_facts,
+    entities_skipped_from_worldbook,
     plan_character_index,
     plan_entity_entries,
     plan_world_overview,
@@ -90,7 +92,7 @@ def build(run_dir: str | Path, *, start_chapter: int | None = None) -> dict:
     if index_entry:
         entries.append(index_entry)
     entries.extend(plan_entity_entries(entities, facts))
-    skipped_entities = entities_without_facts(entities, facts)
+    skipped_entities = entities_skipped_from_worldbook(entities, facts)
     # 章节事件条目已移除：它们与「剧情主线」内容重复，且触发词取的是该章在场人物，
     # 主要人物出场上百章 → 一句话会同时命中上百条（实测 117 条 ≈ 6 万 token）。
 
@@ -150,7 +152,7 @@ def _render_report(
     leakage_reports: dict[str, list[LeakageFinding]],
     entries: list[PlannedEntry],
     blocked: list[PlannedEntry],
-    skipped_entities: list[CanonicalEntity],
+    skipped_entities: list[tuple[CanonicalEntity, str]],
     plan_stats: dict,
     start_chapter: int | None,
     total_chapters: int,
@@ -234,20 +236,21 @@ def _render_report(
             "",
             "## 未生成世界书条目的实体",
             "",
-            f"共 {len(skipped_entities)} 个实体**一条已校验的 canon 事实都没有**，"
-            "只能写出「item：玩具熊」这种零信息空壳，因此不生成条目。",
+            f"共 {len(skipped_entities)} 个实体未生成条目。门槛是「已校验 canon 事实 ≥ "
+            f"{MIN_ENTITY_FACTS} 条**或**至少出现在 {MIN_ENTITY_CHAPTERS} 个章节里」，"
+            "两者都不满足的只会写出「item：玩具熊」这种零信息空壳。",
             "",
             "> 它们仍保留在 `canonical/entities.json` 里（来源可追溯），"
             "只是不进世界书 —— 不是静默丢弃。",
             "",
         ]
-        by_kind: dict[str, list[str]] = {}
-        for entity in skipped_entities:
-            by_kind.setdefault(entity.kind, []).append(entity.canonical_name)
-        for kind in sorted(by_kind, key=lambda k: -len(by_kind[k])):
-            names = by_kind[kind]
+        by_reason: dict[str, list[str]] = {}
+        for entity, reason in skipped_entities:
+            by_reason.setdefault(reason, []).append(entity.canonical_name)
+        for reason in sorted(by_reason, key=lambda k: -len(by_reason[k])):
+            names = by_reason[reason]
             preview = "、".join(names[:30]) + ("…" if len(names) > 30 else "")
-            lines.append(f"- **{kind}**（{len(names)}）：{preview}")
+            lines.append(f"- **{len(names)} 个**（{reason}）：{preview}")
 
     flagged = [e for e in entries if e.quality_flags]
     if flagged:

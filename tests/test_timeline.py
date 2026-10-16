@@ -21,7 +21,8 @@ from novel_to_tavern.timeline import (
     build_timeline,
     check_leakage,
     clip_at_sentence,
-    entities_without_facts,
+    entities_skipped_from_worldbook,
+    entry_qualification,
     estimate_tokens,
     extract_relative_time,
     filter_for_start_chapter,
@@ -192,24 +193,69 @@ def test_non_canon_facts_do_not_raise_contradictions():
 
 
 def test_entities_without_facts_get_no_entry():
-    """一条 canon 事实都没有的实体只能写出「item：玩具熊」这种空壳，不该进世界书。"""
+    """一条 canon 事实都没有、又只露一次面的实体不该进世界书。"""
     entities = [_entity("ent_0001", "玩具熊", kind="item")]
     entries = plan_entity_entries(entities, [])
     assert entries == []
 
 
-def test_entities_without_facts_are_reported_not_silently_dropped():
+def test_entities_skipped_are_reported_not_silently_dropped():
     entities = [_entity("ent_0001", "玩具熊", kind="item"), _entity("ent_0002", "西泽尔")]
-    facts = [_fact("f1", "西泽尔", "identity", "红龙骑士团团长")]
-    skipped = entities_without_facts(entities, facts)
-    assert [e.canonical_name for e in skipped] == ["玩具熊"]
+    facts = [
+        _fact("f1", "西泽尔", "identity", "红龙骑士团团长"),
+        _fact("f2", "西泽尔", "goal", "夺回王座"),
+    ]
+    skipped = entities_skipped_from_worldbook(entities, facts)
+    assert [e.canonical_name for e, _ in skipped] == ["玩具熊"]
+    assert "没有任何已校验" in skipped[0][1]
 
 
-def test_every_entity_with_facts_gets_an_entry():
-    entities = [_entity(f"ent_{i:04d}", f"角色{i}") for i in range(30)]
-    facts = [_fact(f"f{i}", f"角色{i}", "identity", f"第{i}号人物") for i in range(30)]
+def test_two_facts_are_enough_for_an_entry():
+    entities = [_entity("ent_0001", "甲", chapters=(0,))]
+    facts = [_fact("f1", "甲", "identity", "某人"), _fact("f2", "甲", "goal", "复仇")]
+    assert entry_qualification(entities[0], facts)[0] is True
+    assert plan_entity_entries(entities, facts)
+
+
+def test_one_fact_is_not_enough_for_a_one_chapter_entity():
+    """只出场一章、只有一条事实 —— 像顺带一提，不值得单开条目。"""
+    entities = [_entity("ent_0001", "军徽", kind="item", chapters=(0,))]
+    facts = [_fact("f1", "军徽", "appearance", "银色的中校军徽")]
+    ok, reason = entry_qualification(entities[0], facts)
+    assert ok is False
+    assert "顺带一提" in reason
+
+
+def test_presence_rescues_an_entity_with_few_facts():
+    """出场 3 章以上就算抽取没抽够，也该保留 —— 说明故事反复回到它。"""
+    entities = [_entity("ent_0001", "教皇国", kind="faction", chapters=(0, 3, 7, 12))]
+    facts = [_fact("f1", "教皇国", "background", "西方各国的领袖")]
+    ok, reason = entry_qualification(entities[0], facts)
+    assert ok is True
     entries = plan_entity_entries(entities, facts)
-    assert len(entries) == 30
+    assert len(entries) == 1
+    assert any("补抽" in f for f in entries[0].quality_flags)
+
+
+def test_zero_facts_never_gets_an_entry_even_with_many_appearances():
+    """出场再多，一条事实都没有就写不出内容 —— 保留只会多出一个空条目。"""
+    entities = [_entity("ent_0001", "亚琛", kind="place", chapters=(0, 2, 5, 9, 12))]
+    ok, reason = entry_qualification(entities[0], [])
+    assert ok is False
+    assert "写不出内容" in reason
+    assert plan_entity_entries(entities, []) == []
+
+
+def test_no_entry_is_ever_rendered_empty():
+    """兜底断言：任何生成的条目都必须有非空正文。"""
+    entities = [_entity("ent_0001", "甲"), _entity("ent_0002", "乙", chapters=(0, 3, 6))]
+    facts = [
+        _fact("f1", "甲", "identity", "某人"),
+        _fact("f2", "甲", "goal", "复仇"),
+        _fact("f3", "乙", "identity", "另一人"),
+    ]
+    for entry in plan_entity_entries(entities, facts):
+        assert entry.content_runtime.strip(), entry.title
 
 
 def test_needs_review_facts_do_not_qualify_an_entity():
@@ -248,7 +294,10 @@ def test_headline_prefers_background_over_action():
 def test_entity_entry_keys_include_name_and_aliases():
     """别名/称号必须能单独触发条目，否则只用称号提到角色时会漏。"""
     entity = _entity("ent_0001", "西泽尔", aliases=["红龙", "殿下"])
-    facts = [_fact("f1", "西泽尔", "identity", "红龙骑士团团长")]
+    facts = [
+        _fact("f1", "西泽尔", "identity", "红龙骑士团团长"),
+        _fact("f2", "西泽尔", "goal", "夺回王座"),
+    ]
     entry = plan_entity_entries([entity], facts)[0]
     assert entry.keys == ["西泽尔", "红龙", "殿下"]
     assert entry.secondary_keys == []
@@ -260,6 +309,7 @@ def test_entity_entry_content_uses_only_accepted_canon_facts():
         _fact("f1", "甲", "identity", "骑士"),
         _fact("f2", "甲", "identity", "王子", fact_type="rumor"),
         _fact("f3", "甲", "goal", "复仇", review_status="needs_review"),
+        _fact("f4", "甲", "state", "在边境驻守"),
     ]
     entry = plan_entity_entries([entity], facts)[0]
     assert "骑士" in entry.content_runtime
@@ -379,7 +429,9 @@ def _prepare_run(tmp_path: Path) -> Path:
         _fact("f1", "西泽尔", "identity", "红龙骑士团团长", chapter=0),
         _fact("f2", "西泽尔", "goal", "夺回王座", chapter=9),
         _fact("f3", "帕西", "identity", "西泽尔的随从", chapter=0),
-        _fact("f4", "迟到的角色", "identity", "第 9 章才登场的人", chapter=9),
+        _fact("f4", "帕西", "goal", "跟随西泽尔", chapter=0),
+        _fact("f5", "迟到的角色", "identity", "第 9 章才登场的人", chapter=9),
+        _fact("f6", "迟到的角色", "goal", "有他自己的目的", chapter=9),
     ]
     events = [_event("e1", 0, participants=["西泽尔", "帕西"]), _event("e2", 9, participants=["西泽尔"])]
     relations = [

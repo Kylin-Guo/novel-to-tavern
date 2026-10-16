@@ -44,7 +44,7 @@ run_id：`20261016T043701Z_aead30`
 | **Phase 2 原子事实提取** | 156 块全部完成，0 失败；实体提及 2,419、原子事实 1,806、事件 839、关系 682 |
 | **Phase 3 实体归一** | 504 个实体（其中人物 153）；自动合并 49 对；复核队列 188 条 |
 | **Phase 4 时间线与知识边界** | 839 个事件入时间线；冲突报告 260 条；世界书规划 662 条 |
-| **Phase 5 导出** | 主卡 266 条目（常驻 3）；结构校验 / 独立世界书校验 / 内嵌一致性 / 密钥扫描全通过 |
+| **Phase 5 导出** | 主卡 180 条目（常驻 3）；结构校验 / 独立世界书校验 / 内嵌一致性 / 密钥扫描全通过 |
 
 ### 来源覆盖率：100.00%
 
@@ -65,9 +65,9 @@ run_id：`20261016T043701Z_aead30`
 
 | 文件 | 大小 | 说明 |
 |---|---|---|
-| `world_simulator_v2.json` | 336 KB | **主角色卡**（chara_card_v2 / 2.0，内嵌 character_book，266 条目） |
+| `world_simulator_v2.json` | 336 KB | **主角色卡**（chara_card_v2 / 2.0，内嵌 character_book，180 条目） |
 | `worldbook_standalone.json` | 1,032 KB | 独立世界书（全部条目） |
-| `worldbook_start_beginning.json` | 94 KB | 独立世界书，**已屏蔽全书剧情记录**（265 条目） |
+| `worldbook_start_beginning.json` | 94 KB | 独立世界书，**已屏蔽全书剧情记录**（179 条目） |
 | `worldbook_start_after_ending.json` | 1,032 KB | 独立世界书，从结局之后开始（全部条目） |
 | `timeline.json` | 934 KB | 839 个事件的时间线 |
 | `export_manifest.json` | 26 KB | 导出清单（输入 hash、prompt 版本、校验结果） |
@@ -177,5 +177,5 @@ run_id：`20261016T043701Z_aead30`
 .venv/bin/n2t extract --run-id <run_id>         # Phase 2：156 块
 .venv/bin/n2t resolve --run-id <run_id>         # Phase 3：504 实体
 .venv/bin/n2t timeline --run-id <run_id>        # Phase 4：839 事件
-.venv/bin/n2t export  --run-id <run_id>         # Phase 5：266 条目
+.venv/bin/n2t export  --run-id <run_id>         # Phase 5：180 条目
 ```

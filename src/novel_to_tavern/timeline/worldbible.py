@@ -43,9 +43,16 @@ _KIND_TO_CATEGORY: dict[str, EntryCategory] = {
 #: 每个谓词最多渲染多少条取值，避免单个角色条目膨胀。
 MAX_VALUES_PER_PREDICATE = 4
 
-#: 一个实体至少要有这么多条已校验的 canon 事实，才值得单开一个世界书条目。
-#: 否则只能渲染成「item：玩具熊」这种零信息的空壳 —— 占预算、无帮助。
-MIN_ENTITY_FACTS = 1
+#: 生成世界书条目的门槛。满足**其一**即可：
+#:   ① 至少有 MIN_ENTITY_FACTS 条已校验的 canon 事实；
+#:   ② 至少有 1 条事实，且至少在 MIN_ENTITY_CHAPTERS 个章节里出现过。
+#:
+#: 为什么不能只看事实条数：实测「教皇国」出场 17 章却只抽到 1 条事实、
+#: 「赫克托耳家长」出场 10 章只有 1 条 —— 那是抽取漏了，不是它们不重要。
+#: 为什么第二条还要求「至少有 1 条事实」：一条事实都没有就**写不出任何内容**，
+#: 保留了也只是一个空条目，比「item：玩具熊」那种空壳更糟。
+MIN_ENTITY_FACTS = 2
+MIN_ENTITY_CHAPTERS = 3
 
 #: 世界概况里各分类最多列多少个「带一句说明」的实体。
 OVERVIEW_TOP_PER_KIND = {"faction": 6, "place": 8, "concept": 5, "ability": 4, "item": 4}
@@ -117,16 +124,36 @@ def _facts_by_entity(
     return result
 
 
-def entities_without_facts(
+def entry_qualification(entity: CanonicalEntity, own_facts: list[FactRecord]) -> tuple[bool, str]:
+    """该实体是否值得单开一个世界书条目，以及不符合时的原因。"""
+    if len(own_facts) >= MIN_ENTITY_FACTS:
+        return True, ""
+    if not own_facts:
+        return False, "没有任何已校验的 canon 事实 —— 写不出内容"
+    if len(entity.appearance_chapters) >= MIN_ENTITY_CHAPTERS:
+        # 反复出现说明故事确实在用它，只是抽取没抽够 —— 保留，内容偏薄由报告提示
+        return True, ""
+    return False, (
+        f"只有 {len(own_facts)} 条事实，且只在 {len(entity.appearance_chapters)} 个章节里出现过"
+        "（像顺带一提）"
+    )
+
+
+def entities_skipped_from_worldbook(
     entities: list[CanonicalEntity], facts: list[FactRecord]
-) -> list[CanonicalEntity]:
-    """没有一条已校验事实的实体 —— 它们不该单开世界书条目。
+) -> list[tuple[CanonicalEntity, str]]:
+    """不该单开世界书条目的实体及原因。
 
     这些实体仍保留在 canonical 数据里（来源可追溯），只是不进世界书。
-    被跳过的名单会写进报告，不是静默丢弃。
+    名单会写进报告，不是静默丢弃。
     """
     by_entity = _facts_by_entity(entities, facts)
-    return [e for e in entities if len(by_entity.get(e.id, [])) < MIN_ENTITY_FACTS]
+    result: list[tuple[CanonicalEntity, str]] = []
+    for entity in entities:
+        ok, reason = entry_qualification(entity, by_entity.get(entity.id, []))
+        if not ok:
+            result.append((entity, reason))
+    return result
 
 
 #: 概括一个实体时优先用哪些谓词 —— 越靠前越像「它是什么」，越靠后越像「它做了什么」。
@@ -244,15 +271,23 @@ def plan_entity_entries(
     entries: list[PlannedEntry] = []
     for entity in sorted(entities, key=lambda e: (-e.evidence_count, e.canonical_name)):
         own_facts = by_entity.get(entity.id, [])
-        if len(own_facts) < MIN_ENTITY_FACTS:
-            # 写不出任何有来源的内容 → 不生成条目
+        qualifies, _reason = entry_qualification(entity, own_facts)
+        if not qualifies:
             continue
 
         runtime = _render_facts(own_facts, with_sources=False)
+        if not runtime.strip():
+            # 事实值全为空串之类的边界情况 —— 宁可不出条目，也不产出空条目
+            continue
         canonical = _render_facts(own_facts, with_sources=True)
         primary, secondary = _entity_keys(entity)
 
         flags: list[str] = []
+        if len(own_facts) < MIN_ENTITY_FACTS:
+            flags.append(
+                f"内容偏薄：只在 {len(entity.appearance_chapters)} 个章节出现但仅 {len(own_facts)} 条事实，"
+                "疑似抽取遗漏，建议补抽"
+            )
         if len(runtime) > 1200:
             flags.append(f"内容偏长（{len(runtime)} 字），建议人工精简")
 

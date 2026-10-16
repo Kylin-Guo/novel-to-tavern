@@ -99,7 +99,7 @@
             "佛朗哥教授",
             "枢机卿"
           ],
-          "content": "ability：能一眼辨认出欧米茄是好东西，但搞不清其金属材质，缺失部件靠想象补上；只看一次演习就抓住了普罗米修斯的一个弱点\nappearance：远比西泽尔想的年轻，三十多岁，一头天生的凌乱灰白色头发，套着满是油污的白袍\nbackground：身份保密，因此要佩戴纯银面具；依据旧罗马帝国传下来的法典，亲属能以自己的付出为犯人赎罪；没有孩子，自称问题出在与他相好的女人身上；前任总长临终力荐，大人物们随即把总长之位连带着枢机卿席位交给当时二十四岁的他\ngoal：在西斯廷教堂后的小型经堂召开审判会决定对西泽尔的处置；要求把西泽尔交给密涅瓦机关由他的团队照顾；主张像战时把武器发给死刑犯那样给西泽尔一个机会；安排李锡尼监视西泽尔，必要时可自行处决他；一边遴选合适的新教皇，一边继续观察隆·博尔吉亚\nidentity：密涅瓦机关总长，同时是枢机卿；自称这间机构的负责人，让西泽尔以后把这里当家；密涅瓦机关历任总长之一，国家的首席科学家；枢机会的一员，也是西泽尔父亲的政治盟友，国家首屈一指的技术权威；密涅瓦机关的总长，同时是枢机卿\nspeech_style：一身流氓气，喜欢斗嘴，自称只是路过此地的天才机械师\nstate：一边观察西泽尔一边喝酒，酒气醺人欲醉；用扁酒壶随身带酒；承认所谓会中断实验、把人救出来是骗西泽尔的，实际没有任何备份方案和救援计划；拒绝终止实验，认为终止就意味着永远失去资格、对父亲成为没用的人；对训练进度仍摇头，认为只是在追赶黑龙的步伐；被学生夺权后仅保留总长头衔，做做机械设计混日子",
+          "content": "ability：能一眼辨认出欧米茄是好东西，但搞不清其金属材质，缺失部件靠想象补上；只看一次演习就抓住了普罗米修斯的一个弱点\nappearance：远比西泽尔想的年轻，三十多岁，一头天生的凌乱灰白色头发，套着满是油污的白袍\nbackground：身份保密，因此要佩戴纯银面具；依据旧罗马帝国传下来的法典，亲属能以自己的付出为犯人赎罪；没有孩子，自称问题出在与他相好的女人身上；前任总长临终力荐，大人物们随即把总长之位连带着枢机卿席位交给当时二十四岁的他\ngoal：在西斯廷教堂后的小型经堂召开审判会决定对西泽尔的处置；主张像战时把武器发给死刑犯那样给西泽尔一个机会；要求把西泽尔交给密涅瓦机关由他的团队照顾；安排李锡尼监视西泽尔，必要时可自行处决他；一边遴选合适的新教皇，一边继续观察隆·博尔吉亚\nidentity：密涅瓦机关总长，同时是枢机卿；自称这间机构的负责人，让西泽尔以后把这里当家；密涅瓦机关历任总长之一，国家的首席科学家；枢机会的一员，也是西泽尔父亲的政治盟友，国家首屈一指的技术权威；密涅瓦机关的总长，同时是枢机卿\nspeech_style：一身流氓气，喜欢斗嘴，自称只是路过此地的天才机械师\nstate：一边观察西泽尔一边喝酒，酒气醺人欲醉；用扁酒壶随身带酒；承认所谓会中断实验、把人救出来是骗西泽尔的，实际没有任何备份方案和救援计划；拒绝终止实验，认为终止就意味着永远失去资格、对父亲成为没用的人；对训练进度仍摇头，认为只是在追赶黑龙的步伐；被学生夺权后仅保留总长头衔，做做机械设计混日子",
           "enabled": true,
           "insertion_order": 60,
           "position": "after_char",
@@ -267,7 +267,7 @@
             "机动甲胄",
             "炽天使甲胄"
           ],
-          "content": "ability：敏捷得如同金属制造的生命体，腾空翻转仍保持极佳平衡，双腕能弹出锋利直刃；所能荷载的能量有限，只有五分钟的极限活动时间；由机械驱动，重量可达数百公斤，身高可以是常人的几倍；是有灵魂的机械，挑选骑士而非被骑士控制；平均每十万人里可能只有一人能驾驭；被排斥的骑士会死在甲胄里面\nappearance：只有两米出头，造型修长，细节中透着古奥狰狞，某些部件看起来像骨骼\nbackground：世界各国机动甲胄都以它为原型，但所剩不多，制造技术已失传、不可复制；各国机动甲胄先用红水银浸泡过的“硬金”制造甲胄骨骼，再附加可拆卸部件；被甲胄变成活死人者称“木偶骑士”，教廷仍把他们塞进甲胄当工具使用；采用古式神经回路，会对骑士产生严重精神冲击，只有万分之一的人能忍受；最先组建机甲骑士部队的是教皇国，之后各国仿造或改进并建立机甲骑士团\ngoal：被派来监视龙德施泰特\nidentity：最初的机动甲胄，一百年前一战摧毁了旧罗马帝国号称“世界最强”的黑骑士团；代号炽天使，正式名称是初代超机动战术甲胄，百年前被制造出来；东方人称机动甲胄为“铁傀儡”，认为那是某种邪恶的机器\nstate：蒸汽储备只够用五分钟，五分钟一过便成废铁；沉睡冰下时体温很低、呼吸微弱靠鼻管；醒来后几分钟内即恢复正常体温，机能基本不受低温影响；胸、腹、胯部可卸下，躯干“脊椎”部分无法拆卸；原计划不唤醒，睡在低温冰块中而非冰水混合液体里，至死未醒；脱卸过程极其痛苦，像把骑士放在地狱中煎熬，金色针状电极从后背拔出流血",
+          "content": "ability：敏捷得如同金属制造的生命体，腾空翻转仍保持极佳平衡，双腕能弹出锋利直刃；所能荷载的能量有限，只有五分钟的极限活动时间；是有灵魂的机械，挑选骑士而非被骑士控制；平均每十万人里可能只有一人能驾驭；被排斥的骑士会死在甲胄里面；由机械驱动，重量可达数百公斤，身高可以是常人的几倍\nappearance：只有两米出头，造型修长，细节中透着古奥狰狞，某些部件看起来像骨骼\nbackground：世界各国机动甲胄都以它为原型，但所剩不多，制造技术已失传、不可复制；各国机动甲胄先用红水银浸泡过的“硬金”制造甲胄骨骼，再附加可拆卸部件；被甲胄变成活死人者称“木偶骑士”，教廷仍把他们塞进甲胄当工具使用；采用古式神经回路，会对骑士产生严重精神冲击，只有万分之一的人能忍受；最先组建机甲骑士部队的是教皇国，之后各国仿造或改进并建立机甲骑士团\ngoal：被派来监视龙德施泰特\nidentity：最初的机动甲胄，一百年前一战摧毁了旧罗马帝国号称“世界最强”的黑骑士团；代号炽天使，正式名称是初代超机动战术甲胄，百年前被制造出来；东方人称机动甲胄为“铁傀儡”，认为那是某种邪恶的机器\nstate：蒸汽储备只够用五分钟，五分钟一过便成废铁；沉睡冰下时体温很低、呼吸微弱靠鼻管；醒来后几分钟内即恢复正常体温，机能基本不受低温影响；原计划不唤醒，睡在低温冰块中而非冰水混合液体里，至死未醒；胸、腹、胯部可卸下，躯干“脊椎”部分无法拆卸；脱卸过程极其痛苦，像把骑士放在地狱中煎熬，金色针状电极从后背拔出流血",
           "enabled": true,
           "insertion_order": 190,
           "position": "after_char",
@@ -1108,187 +1108,175 @@
         {
           "id": 86,
           "keys": [
-            "太监首领"
-          ],
-          "content": "goal：把楚舜华嫡系军官调离帝都腾出位置，让送了巨额贿赂的自己人升职",
-          "enabled": true,
-          "insertion_order": 870,
-          "position": "after_char",
-          "comment": "太监首领",
-          "extensions": {}
-        },
-        {
-          "id": 87,
-          "keys": [
             "斯泰因重机"
           ],
           "content": "ability：装备四冲程“疯马”引擎，庞加莱与贝隆凭它跃上疾驰的火车车顶\nbackground：出现才十几年就已取代大部分战马的两轮机车，不会疲倦、只消耗红水银",
           "enabled": true,
-          "insertion_order": 880,
+          "insertion_order": 870,
           "position": "after_char",
           "comment": "斯泰因重机",
           "extensions": {}
         },
         {
-          "id": 88,
+          "id": 87,
           "keys": [
             "克莱德曼",
             "查理曼王子"
           ],
           "content": "possession：拥有一件用最优质秘银打造的专属甲胄“霜之拂晓”",
           "enabled": true,
-          "insertion_order": 890,
+          "insertion_order": 880,
           "position": "after_char",
           "comment": "克莱德曼",
           "extensions": {}
         },
         {
-          "id": 89,
+          "id": 88,
           "keys": [
             "博尔吉亚家族"
           ],
           "content": "background：以出疯子成名的家族；城中约有三万五千人姓博尔吉亚，足以组成一支军队；内部分主干与分支，主干者称“纯正的博尔吉亚”；孩子们的自我介绍惯例是报出名字、母亲的姓氏爵位和自己最得意的事；被称为疯子的家族，靠优胜劣汰优化血统；国家里有三万五千个姓博尔吉亚的人，重要的只有家族",
           "enabled": true,
-          "insertion_order": 900,
+          "insertion_order": 890,
           "position": "after_char",
           "comment": "博尔吉亚家族",
           "extensions": {}
         },
         {
-          "id": 90,
+          "id": 89,
           "keys": [
             "鬼武者"
           ],
           "content": "appearance：身高接近三米，腰间的弧形长刃就有两米长，脸戴银色鬼面、全身黑色金属甲胄\nbackground：楚舜华刚刚公布的夏国第一代机动甲胄\nidentity：机动甲胄“鬼武者”初型，夏国的第一批甲胄骑士\nstate：楚舜华带进通天宫的鬼武者有一百具之多，已具备初步战斗力",
           "enabled": true,
-          "insertion_order": 910,
+          "insertion_order": 900,
           "position": "after_char",
           "comment": "鬼武者",
           "extensions": {}
         },
         {
-          "id": 91,
+          "id": 90,
           "keys": [
             "格拉古大主教",
             "格拉古"
           ],
           "content": "state：质问枢机卿们为何要像迎接贵客一样迎回被判异端的西泽尔",
           "enabled": true,
-          "insertion_order": 920,
+          "insertion_order": 910,
           "position": "after_char",
           "comment": "格拉古大主教",
           "extensions": {}
         },
         {
-          "id": 92,
+          "id": 91,
           "keys": [
             "破喉咙安迪斯"
           ],
           "content": "goal：想从角落里找出衣衫单薄的女孩取乐，并拿住西泽尔的把柄让他更听话\nstate：烟鬼兼酒鬼，嗓子坏了，每晚喝得醉醺醺，还跟下城区的妓女来往；身高接近两米，揣着带刺的铁拳套",
           "enabled": true,
-          "insertion_order": 930,
+          "insertion_order": 920,
           "position": "after_char",
           "comment": "破喉咙安迪斯",
           "extensions": {}
         },
         {
-          "id": 93,
+          "id": 92,
           "keys": [
             "纯公主"
           ],
           "content": "background：原诚之女，生母早已过世，无姐妹只有哥哥\nidentity：中山国君原诚之女，十八岁，东方的美人\nstate：压根不信教",
           "enabled": true,
-          "insertion_order": 940,
+          "insertion_order": 930,
           "position": "after_char",
           "comment": "纯公主",
           "extensions": {}
         },
         {
-          "id": 94,
+          "id": 93,
           "keys": [
             "裘卡"
           ],
           "content": "identity：真名为裘卡，裘卡杜是锡兰男孩的名字；下城区的锡兰女孩，看西泽尔的眼神很崇拜\npossession：腰间的黑色刀子是死去哥哥的佩刀\nstate：暴露女孩身份后在坏小子圈里混不下去",
           "enabled": true,
-          "insertion_order": 950,
+          "insertion_order": 940,
           "position": "after_char",
           "comment": "裘卡",
           "extensions": {}
         },
         {
-          "id": 95,
+          "id": 94,
           "keys": [
             "都灵圣教院"
           ],
           "content": "background：分初等院、高等院和号称“象牙塔之峰”的恒动天学宫；由弥赛亚圣教设立，历史只有一百年左右，却是世界学府的巅峰，教皇国半数高官出自此校",
           "enabled": true,
-          "insertion_order": 960,
+          "insertion_order": 950,
           "position": "after_char",
           "comment": "都灵圣教院",
           "extensions": {}
         },
         {
-          "id": 96,
+          "id": 95,
           "keys": [
             "铁男爵"
           ],
           "content": "goal：为拿到上校发放给坚持到终场不倒下者的奖金而参赛\nidentity：来自下城区的瘦小男孩，营养不良而带剽悍之气",
           "enabled": true,
-          "insertion_order": 970,
+          "insertion_order": 960,
           "position": "after_char",
           "comment": "铁男爵",
           "extensions": {}
         },
         {
-          "id": 97,
+          "id": 96,
           "keys": [
             "海菲兹中校"
           ],
           "content": "background：在马斯顿伪装成下城区屠宰场的杀猪好手，赴任前练习了两个月杀猪\nidentity：在学院里以校警队长的身份活动",
           "enabled": true,
-          "insertion_order": 980,
+          "insertion_order": 970,
           "position": "after_char",
           "comment": "海菲兹中校",
           "extensions": {}
         },
         {
-          "id": 98,
+          "id": 97,
           "keys": [
             "男人（西泽尔的父亲）"
           ],
           "content": "appearance：面孔消瘦，戴染色眼镜，一头略显凌乱的灰发，身材精悍\nbackground：此行是为防止政敌利用母子三人扳倒自己\ngoal：给西泽尔一个选择：迁往新岛屿，或随他回翡冷翠接受训练以掌握权力",
           "enabled": true,
-          "insertion_order": 990,
+          "insertion_order": 980,
           "position": "after_char",
           "comment": "男人（西泽尔的父亲）",
           "extensions": {}
         },
         {
-          "id": 99,
+          "id": 98,
           "keys": [
             "贝隆少校"
           ],
           "content": "ability：特长是易容伪装，可扮作贵族、仆役、苦力、律师乃至老妇人\nappearance：很年轻英俊，留着淡淡的络腮胡子，嘴角总带着玩世不恭的笑容\nidentity：十字禁卫军军部特务科科长，代号“无脸人”，前任炽天骑士",
           "enabled": true,
-          "insertion_order": 1000,
+          "insertion_order": 990,
           "position": "after_char",
           "comment": "贝隆少校",
           "extensions": {}
         },
         {
-          "id": 100,
+          "id": 99,
           "keys": [
             "入侵者"
           ],
           "content": "ability：使用末端带三叉铁钩的金属弹簧银鞭，能借钩弹射杀敌\ngoal：寻找导师所说被炽热之光包围、不可直视的东西\nstate：赤手空拳入侵密涅瓦机关",
           "enabled": true,
-          "insertion_order": 1010,
+          "insertion_order": 1000,
           "position": "after_char",
           "comment": "入侵者",
           "extensions": {}
         },
         {
-          "id": 101,
+          "id": 100,
           "keys": [
             "叶尼塞王国",
             "叶尼塞",
@@ -1296,1981 +1284,961 @@
           ],
           "content": "ability：神怒骑士甲胄以暴力著称，力量格外优胜\nbackground：占据北方浩瀚冰原的超级大国，国土大部分属东方，首都却在西方\nmilitary：王牌部队神怒骑士团是西方最顶尖的骑士团之一",
           "enabled": true,
-          "insertion_order": 1020,
+          "insertion_order": 1010,
           "position": "after_char",
           "comment": "叶尼塞王国",
           "extensions": {}
         },
         {
-          "id": 102,
+          "id": 101,
           "keys": [
             "教廷"
           ],
           "content": "background：百年来派密使在世界各地筛选有潜力的孩子带回翡冷翠反复试验；为保住马斯顿那个秘密下令圣堂装甲师杀掉所有目击者，只有西泽尔与阿黛尔因是教皇儿女而生还\ngoal：必须在东方接触史前遗迹之前征服东方\nstate：不承认史前文明，一再封锁阿瓦隆的秘密，以维护弥赛亚圣教存在的根基",
           "enabled": true,
-          "insertion_order": 1030,
+          "insertion_order": 1020,
           "position": "after_char",
           "comment": "教廷",
           "extensions": {}
         },
         {
-          "id": 103,
+          "id": 102,
           "keys": [
             "新罗马帝国"
           ],
           "content": "ability：狮心系列甲胄很精确，擅长操纵巨型的枪械\nbackground：由一半宣布效忠教皇的罗马帝国土地成立，定都君士坦丁堡\nidentity：教皇国最忠诚的盟友，国力强盛、技术先进",
           "enabled": true,
-          "insertion_order": 1040,
+          "insertion_order": 1030,
           "position": "after_char",
           "comment": "新罗马帝国",
           "extensions": {}
         },
         {
-          "id": 104,
+          "id": 103,
           "keys": [
             "穆法兰"
           ],
           "content": "appearance：个头不高但身材凹凸有致，清秀可人，校服裙下是一双红色的系带高跟鞋，鞋带上有金色铃铛\nidentity：都灵圣教院的寒门学生，由校务处派出领新生参观校园",
           "enabled": true,
-          "insertion_order": 1050,
+          "insertion_order": 1040,
           "position": "after_char",
           "comment": "穆法兰",
           "extensions": {}
         },
         {
-          "id": 105,
+          "id": 104,
           "keys": [
             "红水银"
           ],
           "content": "ability：极易燃烧并爆发高热，能与各种金属结合改变其属性\nbackground：教士们在被冰雪覆盖的荒岛上发现，是如鲜血般流淌在冰层深处的液体；燃烧起来热量极大的红色液体，是弥赛亚圣教在冰海小岛上找到的神秘物质，浓缩蒸汽为骑士提供动力\nstate：军用甲胄使用的更高级别能源，属于绝对的军用品，黑市上买不到",
           "enabled": true,
-          "insertion_order": 1060,
+          "insertion_order": 1050,
           "position": "after_char",
           "comment": "红水银",
           "extensions": {}
         },
         {
-          "id": 106,
+          "id": 105,
           "keys": [
             "骑士之骨"
           ],
           "content": "ability：电极插入骑士脊椎读取神经信号再传给甲胄，使甲胄变成身体的一部分；没有安装装甲板和武器，但单凭力量就能撕裂钢铁\nidentity：炽天使的核心部分，即炽天使的骨骼，用金属打造，硬金电极沿脊椎排列，比人类骨骼大出一号\nstate：还没有安装装甲板和其他附件，但基础系统完整，是一件危险的暴力机器，接触失控者只有死路一条；拆除外接系统后西泽尔根本没法控制机动甲胄，其价值仅限于帮降低神经接驳系统的反噬",
           "enabled": true,
-          "insertion_order": 1070,
+          "insertion_order": 1060,
           "position": "after_char",
           "comment": "骑士之骨",
           "extensions": {}
         },
         {
-          "id": 107,
+          "id": 106,
           "keys": [
             "Excalibur",
             "圣剑装具·Excalibur"
           ],
           "content": "identity：炽天铁骑用来一剑砍开普罗米修斯胸口的圣剑装具；炽天骑士团团长专属武器，与圣枪装具·Longinus同源\nstate：历代骑士中能握住它的不超过二十个，对绝大多数人无用",
           "enabled": true,
-          "insertion_order": 1080,
+          "insertion_order": 1070,
           "position": "after_char",
           "comment": "Excalibur",
           "extensions": {}
         },
         {
-          "id": 108,
+          "id": 107,
           "keys": [
             "中山国"
           ],
           "content": "background：位于东西方交界处，奉夏国为宗主国，是大夏联邦成员国之一，几百年前因山中发现金矿、移民会聚而形成国家；距离洛阳约2000公里，文化上跟夏国一脉相承，有“小夏国”的称号；东方国家，是夏国的属国，被视为教皇国的半个敌人",
           "enabled": true,
-          "insertion_order": 1090,
+          "insertion_order": 1080,
           "position": "after_char",
           "comment": "中山国",
           "extensions": {}
         },
         {
-          "id": 109,
+          "id": 108,
           "keys": [
             "塔拉夏"
           ],
           "content": "identity：薇若兰的副手，狡黠的年轻工程师，演习中驾驶拼装的二代普罗米修斯",
           "enabled": true,
-          "insertion_order": 1100,
+          "insertion_order": 1090,
           "position": "after_char",
           "comment": "塔拉夏",
           "extensions": {}
         },
         {
-          "id": 110,
+          "id": 109,
           "keys": [
             "彼得罗夫",
             "秘银之鬼"
           ],
           "content": "background：设计普罗米修斯与神怒Ⅱ型，反覆研究密涅瓦机关的作品并自称洞察机械核心规则\nstate：普罗米修斯被击毁后用短铳打碎自己的头颅自杀；认为自己的发明在炽天铁骑面前不堪一击，开枪自杀",
           "enabled": true,
-          "insertion_order": 1110,
+          "insertion_order": 1100,
           "position": "after_char",
           "comment": "彼得罗夫",
           "extensions": {}
         },
         {
-          "id": 111,
+          "id": 110,
           "keys": [
             "教皇隆·博尔吉亚"
           ],
           "content": "goal：等西泽尔凭自己的力量杀到他面前要求加冕，否则就放弃他\nstate：患重病，剧烈咳嗽并咳出猩红色的血，需服一枚绿色的药片",
           "enabled": true,
-          "insertion_order": 1120,
+          "insertion_order": 1110,
           "position": "after_char",
           "comment": "教皇隆·博尔吉亚",
           "extensions": {}
         },
         {
-          "id": 112,
+          "id": 111,
           "keys": [
             "军部"
           ],
           "content": "identity：其中大多数是不喜欢西泽尔父亲的人，即圣座的政治对手\nstate：以军部名义入驻中央圣所监督实验进度，强行提速，想尽快把选拔的孩子送进骑士舱测试",
           "enabled": true,
-          "insertion_order": 1130,
+          "insertion_order": 1120,
           "position": "after_char",
           "comment": "军部",
           "extensions": {}
         },
         {
-          "id": 113,
+          "id": 112,
           "keys": [
             "斯梅尔少校"
           ],
           "content": "identity：异端审判局驻马斯顿的潜伏军官，率炽天铁骑前来夺车",
           "enabled": true,
-          "insertion_order": 1140,
+          "insertion_order": 1130,
           "position": "after_char",
           "comment": "斯梅尔少校",
           "extensions": {}
         },
         {
-          "id": 114,
+          "id": 113,
           "keys": [
             "贝拉蒙老爷"
           ],
           "content": "identity：贝拉蒙少爷的父亲，克里特的行政次长，中年丧偶\nstate：断绝与各路情人的来往，一心锻炼身体要再度当新郎；不敢对琳琅夫人有非分之想，只求与儿子安静过完此生",
           "enabled": true,
-          "insertion_order": 1150,
+          "insertion_order": 1140,
           "position": "after_char",
           "comment": "贝拉蒙老爷",
           "extensions": {}
         },
         {
-          "id": 115,
+          "id": 114,
           "keys": [
             "转轮王"
           ],
           "content": "ability：因腿部延长，奔跑极速高于金刚猛士；与金刚猛士一样不怕进水，优质铜合金在红水银中浸泡后同样不锈\nappearance：胸部刻着东方文字，并蚀刻着巨大的星轮图案\nstate：背包里灌注的是黑市上买不到的红水银蒸汽",
           "enabled": true,
-          "insertion_order": 1160,
+          "insertion_order": 1150,
           "position": "after_char",
           "comment": "转轮王",
           "extensions": {}
         },
         {
-          "id": 116,
-          "keys": [
-            "原罪机关总长"
-          ],
-          "content": "appearance：戴白银面具，面具镂空雕花，只露出一双湛蓝色像大海的眼睛；声音非常年轻",
-          "enabled": true,
-          "insertion_order": 1170,
-          "position": "after_char",
-          "comment": "原罪机关总长",
-          "extensions": {}
-        },
-        {
-          "id": 117,
+          "id": 115,
           "keys": [
             "台伯河"
           ],
           "content": "background：河上常有顺流而下的浮尸，是处理仇人的好地方",
           "enabled": true,
-          "insertion_order": 1180,
+          "insertion_order": 1160,
           "position": "after_char",
           "comment": "台伯河",
           "extensions": {}
         },
         {
-          "id": 118,
-          "keys": [
-            "教官"
-          ],
-          "content": "identity：唐璜等人当年的教官，仍留在炽天骑士团的前任炽天使骑士",
-          "enabled": true,
-          "insertion_order": 1190,
-          "position": "after_char",
-          "comment": "教官",
-          "extensions": {}
-        },
-        {
-          "id": 119,
+          "id": 116,
           "keys": [
             "昆提良的父亲"
           ],
           "content": "identity：退役的炽天使骑士，为教皇国征战、军功升至上尉\npossession：半截暗金色的炽天骑士团制式断剑和一枚勋章",
           "enabled": true,
-          "insertion_order": 1200,
+          "insertion_order": 1170,
           "position": "after_char",
           "comment": "昆提良的父亲",
           "extensions": {}
         },
         {
-          "id": 120,
+          "id": 117,
           "keys": [
             "查理曼王国"
           ],
           "content": "ability：烙印骑士甲胄以高速著称，最适合的武器是锋利的骑士剑\nstate：与教皇国联姻后两国关系更亲近，债务问题可迎刃而解",
           "enabled": true,
-          "insertion_order": 1210,
+          "insertion_order": 1180,
           "position": "after_char",
           "comment": "查理曼王国",
           "extensions": {}
         },
         {
-          "id": 121,
-          "keys": [
-            "海菲兹"
-          ],
-          "content": "identity：校警队长，真实身份是教皇国的潜伏军官",
-          "enabled": true,
-          "insertion_order": 1220,
-          "position": "after_char",
-          "comment": "海菲兹",
-          "extensions": {}
-        },
-        {
-          "id": 122,
-          "keys": [
-            "骑警长官"
-          ],
-          "content": "identity：艾雷斯男爵的哥哥，清楚西泽尔等人的身份，不怕他们的军人身份",
-          "enabled": true,
-          "insertion_order": 1230,
-          "position": "after_char",
-          "comment": "骑警长官",
-          "extensions": {}
-        },
-        {
-          "id": 123,
+          "id": 118,
           "keys": [
             "万国盛典"
           ],
           "content": "background：不超过三个月后在翡冷翠举行，各国使团将以拜见教皇的名义到来，届时举行普罗米修斯与炽天使的对抗战，胜者成为最终定型的未来武装；三个月后由教皇国举办，西方各国派使团前往翡冷翠，盛典期间教皇国会展示最新的机动武器；机械艺术和外交的盛会，通常每隔十年在翡冷翠举办一次",
           "enabled": true,
-          "insertion_order": 1240,
+          "insertion_order": 1190,
           "position": "after_char",
           "comment": "万国盛典",
           "extensions": {}
         },
         {
-          "id": 124,
+          "id": 119,
           "keys": [
             "维苏威火山"
           ],
           "content": "background：日夜不息地喷吐火焰，开闸时流出各种颜色的钢水；没人知道谁建设了它，也没人能复制它\nidentity：世界上最大的熔炉，用于熔炼级别最高的武器级合金，百年来只熄火过三次",
           "enabled": true,
-          "insertion_order": 1250,
+          "insertion_order": 1200,
           "position": "after_char",
           "comment": "维苏威火山",
           "extensions": {}
         },
         {
-          "id": 125,
+          "id": 120,
           "keys": [
             "闪虎"
           ],
           "content": "appearance：神怒骑士团的标准格斗短剑，厚度是普通短剑的三倍，长度是普通剑的一倍半，刃口带粗大锯齿\nidentity：一对带锯齿的短刀，最基本的机甲武器，类似步兵的防身小刀",
           "enabled": true,
-          "insertion_order": 1260,
+          "insertion_order": 1210,
           "position": "after_char",
           "comment": "闪虎",
           "extensions": {}
         },
         {
-          "id": 126,
+          "id": 121,
           "keys": [
             "佩德罗·博尔吉亚",
             "佩德罗"
           ],
           "content": "identity：十七岁，母亲是朱丽叶·格里高利，教皇国首屈一指的数学家，考入恒动天学宫，任财政总长的首席秘书",
           "enabled": true,
-          "insertion_order": 1270,
+          "insertion_order": 1220,
           "position": "after_char",
           "comment": "佩德罗·博尔吉亚",
           "extensions": {}
         },
         {
-          "id": 127,
-          "keys": [
-            "太监"
-          ],
-          "content": "background：也许贪污受贿，但绝不希望皇权旁落，只能靠皇帝往上爬",
-          "enabled": true,
-          "insertion_order": 1280,
-          "position": "after_char",
-          "comment": "太监",
-          "extensions": {}
-        },
-        {
-          "id": 128,
+          "id": 122,
           "keys": [
             "校长奖学金"
           ],
           "content": "background：每年只发放给一名毕业生，学费全免并发放丰厚生活费，象征校长的隆重推荐；候选者共有五人，最后看核心科目机械学成绩，最高者胜出；此项奖励根本就是罗曼校长为拜伦少爷设置的",
           "enabled": true,
-          "insertion_order": 1290,
+          "insertion_order": 1230,
           "position": "after_char",
           "comment": "校长奖学金",
           "extensions": {}
         },
         {
-          "id": 129,
+          "id": 123,
           "keys": [
             "泰伦特"
           ],
           "content": "appearance：只是个十三四岁的男孩\nstate：扑向西泽尔时手中只攥着一块石头",
           "enabled": true,
-          "insertion_order": 1300,
+          "insertion_order": 1240,
           "position": "after_char",
           "comment": "泰伦特",
           "extensions": {}
         },
         {
-          "id": 130,
+          "id": 124,
           "keys": [
             "蒸汽里的男孩"
           ],
           "content": "ability：懂锡兰文字，能通过指尖发黄判断裘卡杜接触过吗啡粗制品\nidentity：排在第七个上场的挑战者",
           "enabled": true,
-          "insertion_order": 1310,
+          "insertion_order": 1250,
           "position": "after_char",
           "comment": "蒸汽里的男孩",
           "extensions": {}
         },
         {
-          "id": 131,
+          "id": 125,
           "keys": [
             "试制机零号"
           ],
           "content": "ability：仅用一只左手就摁停了全速突击的古洛诺斯，并拧下其头颅",
           "enabled": true,
-          "insertion_order": 1320,
+          "insertion_order": 1260,
           "position": "after_char",
           "comment": "试制机零号",
           "extensions": {}
         },
         {
-          "id": 132,
+          "id": 126,
           "keys": [
             "连射铳"
           ],
           "content": "appearance：长度超过两米，重量达50公斤，唯有庞加莱这种精英骑士才能执掌\nbackground：高台上装有四柄，带着长长的弹链\nidentity：炽天使的专用武器之一",
           "enabled": true,
-          "insertion_order": 1330,
+          "insertion_order": 1270,
           "position": "after_char",
           "comment": "连射铳",
           "extensions": {}
         },
         {
-          "id": 133,
+          "id": 127,
           "keys": [
             "阿瓦隆"
           ],
           "content": "background：位于北方冰海尽头的神秘岛屿，圣典记载了它的大约位置；人们从冰下挖出神创时代遗失的技术，今天的各式机械与翡冷翠城都源于那种神秘技术；教徒在阿瓦隆找到的不是神迹，而是另一个文明的遗迹，一个失落的史前文明\nstate：自教士离开后再也没有被找到，好像沉入了大海",
           "enabled": true,
-          "insertion_order": 1340,
+          "insertion_order": 1280,
           "position": "after_char",
           "comment": "阿瓦隆",
           "extensions": {}
         },
         {
-          "id": 134,
+          "id": 128,
           "keys": [
             "一字曰心冲锋队"
           ],
           "content": "background：来自夏国属国中山国，因凶猛异常而被教皇国关注；把脸涂成死人颜色、戴白色头带，表示已把自己看作死人",
           "enabled": true,
-          "insertion_order": 1350,
+          "insertion_order": 1290,
           "position": "after_char",
           "comment": "一字曰心冲锋队",
           "extensions": {}
         },
         {
-          "id": 135,
+          "id": 129,
           "keys": [
             "博尔吉亚家"
           ],
           "content": "goal：期待未来的骑士王出在博尔吉亚家，不在乎是普罗米修斯还是炽天使获胜\nidentity：以荆棘玫瑰为家徽，出了现任教皇",
           "enabled": true,
-          "insertion_order": 1360,
+          "insertion_order": 1300,
           "position": "after_char",
           "comment": "博尔吉亚家",
           "extensions": {}
         },
         {
-          "id": 136,
+          "id": 130,
           "keys": [
             "星见"
           ],
           "content": "background：巫女的领袖，以占卜星辰预测未来，以禁忌秘法守护大夏国运，通常终生都是处女；夏国皇廷供奉的巫女通常终生是处女，星见本人尤其如此\nidentity：夏国管理太庙的巫女领袖，按古规必须终生是处女",
           "enabled": true,
-          "insertion_order": 1370,
+          "insertion_order": 1310,
           "position": "after_char",
           "comment": "星见",
           "extensions": {}
         },
         {
-          "id": 137,
+          "id": 131,
           "keys": [
             "炽天铁骑Ⅳ型"
           ],
           "content": "appearance：身高2.47米，战术强化之后高度甚至能达到2.70米\nbackground：佛朗哥改进后的作品，炽天骑士团如今的主力甲胄\nidentity：教皇国炽天骑士团的机动甲胄，当今世界最先进的战争兵器",
           "enabled": true,
-          "insertion_order": 1380,
+          "insertion_order": 1320,
           "position": "after_char",
           "comment": "炽天铁骑Ⅳ型",
           "extensions": {}
         },
         {
-          "id": 138,
+          "id": 132,
           "keys": [
             "神怒Ⅱ型"
           ],
           "content": "ability：双动力核心，铍青铜装甲，峰值出力高达3000马力，是机动甲胄演进史的里程碑之作\nappearance：身高约2.5米，重接近150公斤，两个动力核心，峰值出力2800马力，材质为较柔软的铜合金\nbackground：世界上第一具拥有两个动力核心的机动甲胄，爆炸威力是神怒Ⅰ型的五倍以上\nstate：重大缺陷是对骑士极其挑剔，叶尼塞皇国半数骑士无法驾驭，导致它只是昙花一现",
           "enabled": true,
-          "insertion_order": 1390,
+          "insertion_order": 1330,
           "position": "after_char",
           "comment": "神怒Ⅱ型",
           "extensions": {}
         },
         {
-          "id": 139,
-          "keys": [
-            "莉诺雅骑士团"
-          ],
-          "content": "identity：校内高年级男生组成、立志守护莉诺雅的组织，莉诺雅本人并不知道",
-          "enabled": true,
-          "insertion_order": 1400,
-          "position": "after_char",
-          "comment": "莉诺雅骑士团",
-          "extensions": {}
-        },
-        {
-          "id": 140,
+          "id": 133,
           "keys": [
             "中央圣所"
           ],
           "content": "background：当初制造炽天使甲胄的地方，至今是密涅瓦机关最神圣的实验场；位于地面以下175米，是天然的地下空穴而非人类开凿（指这一带地底）",
           "enabled": true,
-          "insertion_order": 1410,
+          "insertion_order": 1340,
           "position": "after_char",
           "comment": "中央圣所",
           "extensions": {}
         },
         {
-          "id": 141,
+          "id": 134,
           "keys": [
             "利维坦级飞艇"
           ],
           "content": "background：教皇国最杰出的战争工具之一，有百余米长的巨型气囊，填充轻质气体，能载重上浮到云层，出其不意且绝对无声\nstate：下降高度后被涂白磷的来复枪弹击中气囊焚毁，以自身生命为代价把黑箱丢进圣堂",
           "enabled": true,
-          "insertion_order": 1420,
+          "insertion_order": 1350,
           "position": "after_char",
           "comment": "利维坦级飞艇",
           "extensions": {}
         },
         {
-          "id": 142,
-          "keys": [
-            "剑舞者"
-          ],
-          "content": "possession：配备加长版格斗双剑“天秤座”，格斗技巧在炽天铁骑中居前列",
-          "enabled": true,
-          "insertion_order": 1430,
-          "position": "after_char",
-          "comment": "剑舞者",
-          "extensions": {}
-        },
-        {
-          "id": 143,
+          "id": 135,
           "keys": [
             "教皇厅"
           ],
           "content": "goal：要的不是黑龙的追随者而是竞争者，是空前绝后的骑士之王",
           "enabled": true,
-          "insertion_order": 1440,
+          "insertion_order": 1360,
           "position": "after_char",
           "comment": "教皇厅",
           "extensions": {}
         },
         {
-          "id": 144,
+          "id": 136,
           "keys": [
             "迪迪埃"
           ],
           "content": "background：年近六十，是恋童癖\ngoal：为其子克莱德曼向阿黛尔求婚",
           "enabled": true,
-          "insertion_order": 1450,
+          "insertion_order": 1370,
           "position": "after_char",
           "comment": "迪迪埃",
           "extensions": {}
         },
         {
-          "id": 145,
+          "id": 137,
           "keys": [
             "雷霆牙"
           ],
           "content": "ability：后坐力惊人、重量惊人、生产成本惊人，以暴力闻名但准头有缺陷\nbackground：教皇国历史上最失败的武器设计之一，量产计划作废\nhistory：薇若兰受命主持研发，只用三个月拿出试制版",
           "enabled": true,
-          "insertion_order": 1460,
+          "insertion_order": 1380,
           "position": "after_char",
           "comment": "雷霆牙",
           "extensions": {}
         },
         {
-          "id": 146,
+          "id": 138,
           "keys": [
             "教皇宫"
           ],
           "content": "state：新年酒会警戒级别是全年的最高级，必要时重炮群可把广场轰成废墟",
           "enabled": true,
-          "insertion_order": 1470,
+          "insertion_order": 1390,
           "position": "after_char",
           "comment": "教皇宫",
           "extensions": {}
         },
         {
-          "id": 147,
+          "id": 139,
           "keys": [
             "朱砂"
           ],
           "content": "appearance：毛色红如朱砂，是夔龙马马群中的王者\nstate：额头上带着一个被子弹打穿的可怕弹洞",
           "enabled": true,
-          "insertion_order": 1480,
+          "insertion_order": 1400,
           "position": "after_char",
           "comment": "朱砂",
           "extensions": {}
         },
         {
-          "id": 148,
+          "id": 140,
           "keys": [
             "海格力斯之架"
           ],
           "content": "identity：武装炽天使的机械，用于装脱甲胄，体积太大无法带走；武装炽天使的专属机械",
           "enabled": true,
-          "insertion_order": 1490,
+          "insertion_order": 1410,
           "position": "after_char",
           "comment": "海格力斯之架",
           "extensions": {}
         },
         {
-          "id": 149,
+          "id": 141,
           "keys": [
             "男生"
           ],
           "content": "goal：考察新来的四人，背景够强就拉进圣峰狮子会，不够格就让他们滚远\nstate：戴家徽戒指，是贵族少爷，穆法兰正讨好他",
           "enabled": true,
-          "insertion_order": 1500,
+          "insertion_order": 1420,
           "position": "after_char",
           "comment": "男生",
           "extensions": {}
         },
         {
-          "id": 150,
-          "keys": [
-            "白狼"
-          ],
-          "content": "background：翡冷翠郊外的山中这种狼为数不少",
-          "enabled": true,
-          "insertion_order": 1510,
-          "position": "after_char",
-          "comment": "白狼",
-          "extensions": {}
-        },
-        {
-          "id": 151,
+          "id": 142,
           "keys": [
             "紫瞳"
           ],
           "content": "background：神话里恶魔的眼睛就是紫色，多数家庭视紫瞳孩子为不祥；历代炽天使骑士中紫瞳比例相当大，被认为在驾驭炽天使方面有特殊优势",
           "enabled": true,
-          "insertion_order": 1520,
+          "insertion_order": 1430,
           "position": "after_char",
           "comment": "紫瞳",
           "extensions": {}
         },
         {
-          "id": 152,
-          "keys": [
-            "老神父"
-          ],
-          "content": "state：为抢救数学研究资料连续进出火场，被浓烟熏倒身亡",
-          "enabled": true,
-          "insertion_order": 1530,
-          "position": "after_char",
-          "comment": "老神父",
-          "extensions": {}
-        },
-        {
-          "id": 153,
-          "keys": [
-            "史宾赛大主教"
-          ],
-          "content": "ability：神学造诣堪称教团第一，辩论从不犯错",
-          "enabled": true,
-          "insertion_order": 1540,
-          "position": "after_char",
-          "comment": "史宾赛大主教",
-          "extensions": {}
-        },
-        {
-          "id": 154,
+          "id": 143,
           "keys": [
             "圣域"
           ],
           "content": "background：以摩斯密码箱通报的地址为中心，半径一公里内标记为圣域，法律不生效，无关的人须尽快撤走；圣域内法律与指挥权皆不生效，只有枢机会的神权生效；以灾难发生地为中心、一公里为半径，只有教廷军队有执法权",
           "enabled": true,
-          "insertion_order": 1550,
+          "insertion_order": 1440,
           "position": "after_char",
           "comment": "圣域",
           "extensions": {}
         },
         {
-          "id": 155,
+          "id": 144,
           "keys": [
             "夏宫"
           ],
           "content": "background：本来是夏天家里老人们避暑的地方，现在是家族聚会的场地；其实是一座机械的圣堂，地下有类似维苏威火山的熔炉提供动力",
           "enabled": true,
-          "insertion_order": 1560,
+          "insertion_order": 1450,
           "position": "after_char",
           "comment": "夏宫",
           "extensions": {}
         },
         {
-          "id": 156,
+          "id": 145,
           "keys": [
             "夔龙马"
           ],
           "content": "ability：能够扛得动五十公斤重的重甲\nbackground：身形惊人的巨型战马，由特殊的繁育机关培育；惊人的体力靠藏在马鞍中的兴奋剂提供，兴奋剂令它们不知疲倦直到战死",
           "enabled": true,
-          "insertion_order": 1570,
+          "insertion_order": 1460,
           "position": "after_char",
           "comment": "夔龙马",
           "extensions": {}
         },
         {
-          "id": 157,
+          "id": 146,
           "keys": [
             "女老师"
           ],
           "content": "ability：用自上而下的方式讲授机械的逻辑和哲学，主张机械是另外一种生命\nappearance：穿色彩绚丽的真丝短旗袍，白色长发，巧克力色肌肤，尖而细的白色高跟鞋",
           "enabled": true,
-          "insertion_order": 1580,
+          "insertion_order": 1470,
           "position": "after_char",
           "comment": "女老师",
           "extensions": {}
         },
         {
-          "id": 158,
-          "keys": [
-            "拜伦侯爵"
-          ],
-          "content": "identity：新罗马帝国军部的要员，曾任皇帝的首席参谋长",
-          "enabled": true,
-          "insertion_order": 1590,
-          "position": "after_char",
-          "comment": "拜伦侯爵",
-          "extensions": {}
-        },
-        {
-          "id": 159,
+          "id": 147,
           "keys": [
             "摩斯密码箱"
           ],
           "content": "ability：密涅瓦机关的新型设备，使最高指挥官不必亲临前线\nbackground：报警时接收者须停下所有工作解读地址并传达给友方",
           "enabled": true,
-          "insertion_order": 1600,
+          "insertion_order": 1480,
           "position": "after_char",
           "comment": "摩斯密码箱",
           "extensions": {}
         },
         {
-          "id": 160,
+          "id": 148,
           "keys": [
             "撒旦教团"
           ],
           "content": "background：异端中的极恶组织，用各种方式挑战弥赛亚圣教的统治，首脑占据通缉榜前列",
           "enabled": true,
-          "insertion_order": 1610,
+          "insertion_order": 1490,
           "position": "after_char",
           "comment": "撒旦教团",
           "extensions": {}
         },
         {
-          "id": 161,
+          "id": 149,
           "keys": [
             "来访的中年男人"
           ],
           "content": "identity：自称此次前来只是作为学生家长\npossession：佩戴黄金圣徽",
           "enabled": true,
-          "insertion_order": 1620,
+          "insertion_order": 1500,
           "position": "after_char",
           "comment": "来访的中年男人",
           "extensions": {}
         },
         {
-          "id": 162,
+          "id": 150,
           "keys": [
             "蒂塔夫人"
           ],
           "content": "identity：翡冷翠最有名的沙龙女王之一，代表市民给教皇献花\npossession：戴着用名钻“婆罗多之星”镶嵌的项链，穿着孔雀羽装饰的拖地长裙",
           "enabled": true,
-          "insertion_order": 1630,
+          "insertion_order": 1510,
           "position": "after_char",
           "comment": "蒂塔夫人",
           "extensions": {}
         },
         {
-          "id": 163,
+          "id": 151,
           "keys": [
             "蜘蛛巢"
           ],
           "content": "background：阿方索亲手制作、专为战场指挥官设计的腕表，西泽尔十五岁时的生日礼物\npossession：一块指挥官腕表，由他手下一名机械师赠送",
           "enabled": true,
-          "insertion_order": 1640,
+          "insertion_order": 1520,
           "position": "after_char",
           "comment": "蜘蛛巢",
           "extensions": {}
         },
         {
-          "id": 164,
+          "id": 152,
           "keys": [
             "金刚猛士"
           ],
           "content": "ability：加厚装甲板令它能扛住军用火铳的近距离射击",
           "enabled": true,
-          "insertion_order": 1650,
+          "insertion_order": 1530,
           "position": "after_char",
           "comment": "金刚猛士",
           "extensions": {}
         },
         {
-          "id": 165,
+          "id": 153,
           "keys": [
             "马其顿阵"
           ],
           "content": "ability：小型化后可一次发射上百枚全金属箭矢，破甲箭头\nbackground：本由教皇国研发，用蒸汽炮发射成束长矛，威力聚集在矛尖，足以贯穿机动甲胄装甲板；教皇国认为它对自己用处不大，怕落到东方人手里，于是把图纸封存起来",
           "enabled": true,
-          "insertion_order": 1660,
+          "insertion_order": 1540,
           "position": "after_char",
           "comment": "马其顿阵",
           "extensions": {}
         },
         {
-          "id": 166,
-          "keys": [
-            "幕后权力者"
-          ],
-          "content": "goal：认定西泽尔没有用，决定放弃他并让一切结束在西斯廷大教堂",
-          "enabled": true,
-          "insertion_order": 1670,
-          "position": "after_char",
-          "comment": "幕后权力者",
-          "extensions": {}
-        },
-        {
-          "id": 167,
+          "id": 154,
           "keys": [
             "美第奇家族"
           ],
           "content": "background：家徽是蛇发女妖美杜莎，以银行业发家，掌握西方世界的金融大权",
           "enabled": true,
-          "insertion_order": 1680,
+          "insertion_order": 1550,
           "position": "after_char",
           "comment": "美第奇家族",
           "extensions": {}
         },
         {
-          "id": 168,
+          "id": 155,
           "keys": [
             "金伦加隧道"
           ],
           "content": "appearance：在山腹挖掘的长达十二公里的隧道，花整整五年，耗费十二节车厢的炸药；是楚舜华的目标",
           "enabled": true,
-          "insertion_order": 1690,
+          "insertion_order": 1560,
           "position": "after_char",
           "comment": "金伦加隧道",
           "extensions": {}
         },
         {
-          "id": 169,
+          "id": 156,
           "keys": [
             "魔女"
           ],
           "content": "background：弥赛亚圣教教义中最危险的恶魔，化成美女的模样蛊惑世人\nstate：触碰魔女是绝大禁忌，许多撒旦教团神父警告会引发不可预测的恐怖后果",
           "enabled": true,
-          "insertion_order": 1700,
+          "insertion_order": 1570,
           "position": "after_char",
           "comment": "魔女",
           "extensions": {}
         },
         {
-          "id": 170,
-          "keys": [
-            "医疗组长"
-          ],
-          "content": "background：几年之前换了新人，没有参与过西泽尔当年的实验",
-          "enabled": true,
-          "insertion_order": 1710,
-          "position": "after_char",
-          "comment": "医疗组长",
-          "extensions": {}
-        },
-        {
-          "id": 171,
-          "keys": [
-            "安东尼元帅"
-          ],
-          "content": "identity：十字禁卫军元帅，教皇国级别最高的现役军人",
-          "enabled": true,
-          "insertion_order": 1720,
-          "position": "after_char",
-          "comment": "安东尼元帅",
-          "extensions": {}
-        },
-        {
-          "id": 172,
+          "id": 157,
           "keys": [
             "家族晚宴"
           ],
           "content": "background：入镜厅用餐的都是十几岁的男孩女孩，最小的与西泽尔差不多大，年长的约十八岁\ngoal：为选拔最优秀的后代而举行，表现出色者获家族最大支持",
           "enabled": true,
-          "insertion_order": 1730,
+          "insertion_order": 1580,
           "position": "after_char",
           "comment": "家族晚宴",
           "extensions": {}
         },
         {
-          "id": 173,
-          "keys": [
-            "家族邮差"
-          ],
-          "content": "identity：只有翡冷翠最大的几个家族才有，进入任何豪华住宅都不会被阻拦",
-          "enabled": true,
-          "insertion_order": 1740,
-          "position": "after_char",
-          "comment": "家族邮差",
-          "extensions": {}
-        },
-        {
-          "id": 174,
+          "id": 158,
           "keys": [
             "巴别塔"
           ],
           "content": "background：密涅瓦机关对圆台的称呼，取自弥赛亚圣教神话中通往天国的高塔",
           "enabled": true,
-          "insertion_order": 1750,
+          "insertion_order": 1590,
           "position": "after_char",
           "comment": "巴别塔",
           "extensions": {}
         },
         {
-          "id": 175,
+          "id": 159,
           "keys": [
             "狮心骑士团"
           ],
           "content": "background：皇帝座下的部队，号称能和教皇国的炽天骑士团相比，却在锡兰山地作战中遭重创",
           "enabled": true,
-          "insertion_order": 1760,
+          "insertion_order": 1600,
           "position": "after_char",
           "comment": "狮心骑士团",
           "extensions": {}
         },
         {
-          "id": 176,
-          "keys": [
-            "神怒骑士"
-          ],
-          "content": "appearance：都是见过血的老兵，熊虎一般的后背微微隆起",
-          "enabled": true,
-          "insertion_order": 1770,
-          "position": "after_char",
-          "comment": "神怒骑士",
-          "extensions": {}
-        },
-        {
-          "id": 177,
+          "id": 160,
           "keys": [
             "铁十字堡"
           ],
           "content": "appearance：位于教廷区内的巨大白色建筑，平实如白色岩石，从正上方看呈完美正十字形，建了近百年\nstate：独立的系统，不完全服从于教廷，建立了一套复杂的军功系统",
           "enabled": true,
-          "insertion_order": 1780,
+          "insertion_order": 1610,
           "position": "after_char",
           "comment": "铁十字堡",
           "extensions": {}
         },
         {
-          "id": 178,
+          "id": 161,
           "keys": [
             "阿瓦隆之舟"
           ],
           "content": "identity：配备重型装甲的白色礼车，是教皇博尔吉亚三世的座驾",
           "enabled": true,
-          "insertion_order": 1790,
+          "insertion_order": 1620,
           "position": "after_char",
           "comment": "阿瓦隆之舟",
           "extensions": {}
         },
         {
-          "id": 179,
-          "keys": [
-            "风部队"
-          ],
-          "content": "background：兼具高速和重甲的骑兵，承担冲锋任务",
-          "enabled": true,
-          "insertion_order": 1800,
-          "position": "after_char",
-          "comment": "风部队",
-          "extensions": {}
-        },
-        {
-          "id": 180,
-          "keys": [
-            "高文·美第奇"
-          ],
-          "content": "identity：美第奇家的少爷，法老宫赌局的组织者，以能花钱和会玩著称",
-          "enabled": true,
-          "insertion_order": 1810,
-          "position": "after_char",
-          "comment": "高文·美第奇",
-          "extensions": {}
-        },
-        {
-          "id": 181,
+          "id": 162,
           "keys": [
             "黑骑士团"
           ],
           "content": "state：进攻翡冷翠时被炽天铁骑全歼，几乎没有生还者",
           "enabled": true,
-          "insertion_order": 1820,
+          "insertion_order": 1630,
           "position": "after_char",
           "comment": "黑骑士团",
           "extensions": {}
         },
         {
-          "id": 182,
+          "id": 163,
           "keys": [
             "Longinus"
           ],
           "content": "background：足长四米的异形枪械，没人能抵挡它的一击\nstate：破城弹已经顶入枪膛，但龙德施泰特暂未射击",
           "enabled": true,
-          "insertion_order": 1830,
+          "insertion_order": 1640,
           "position": "after_char",
           "comment": "Longinus",
           "extensions": {}
         },
         {
-          "id": 183,
+          "id": 164,
           "keys": [
             "伏羲金钱"
           ],
           "content": "appearance：八角形钱币，正面男神、背面女神，皆人面蛇身，蛇尾越过边缘纠缠在一起",
           "enabled": true,
-          "insertion_order": 1840,
+          "insertion_order": 1650,
           "position": "after_char",
           "comment": "伏羲金钱",
           "extensions": {}
         },
         {
-          "id": 184,
+          "id": 165,
           "keys": [
             "克里特岛"
           ],
           "content": "background：教皇国属地，偏远落后，岛上只有初等学校",
           "enabled": true,
-          "insertion_order": 1850,
+          "insertion_order": 1660,
           "position": "after_char",
           "comment": "克里特岛",
           "extensions": {}
         },
         {
-          "id": 185,
+          "id": 166,
           "keys": [
             "圣女塔"
           ],
           "content": "background：百年前皇帝为深爱的一位立志成为修女的皇妃所建的修行地",
           "enabled": true,
-          "insertion_order": 1860,
+          "insertion_order": 1670,
           "position": "after_char",
           "comment": "圣女塔",
           "extensions": {}
         },
         {
-          "id": 186,
+          "id": 167,
           "keys": [
             "圣枪装具·Longinus"
           ],
           "content": "ability：世界上射程最长的枪，调整后射程能超过四公里，由龙德施泰特负责操作以射杀楚舜华\nappearance：外形像火枪但长度达四米，表面纠缠曲折铜管；弹头长达二十厘米、婴儿手臂粗细，表面有复杂螺旋花纹",
           "enabled": true,
-          "insertion_order": 1870,
+          "insertion_order": 1680,
           "position": "after_char",
           "comment": "圣枪装具·Longinus",
           "extensions": {}
         },
         {
-          "id": 187,
-          "keys": [
-            "奥古斯都"
-          ],
-          "content": "ability：昆提良的定制甲胄，冲锋型，强化装甲，动力核心为亥伯龙三代，配备完美金属盾牌与大型破甲斧",
-          "enabled": true,
-          "insertion_order": 1880,
-          "position": "after_char",
-          "comment": "奥古斯都",
-          "extensions": {}
-        },
-        {
-          "id": 188,
+          "id": 168,
           "keys": [
             "宗教秘密法",
             "《宗教秘密法》"
           ],
           "content": "background：星历1794年制定，教皇国盟友必须接受才能得到技术支持",
           "enabled": true,
-          "insertion_order": 1890,
+          "insertion_order": 1690,
           "position": "after_char",
           "comment": "宗教秘密法",
           "extensions": {}
         },
         {
-          "id": 189,
+          "id": 169,
           "keys": [
             "开罐刀"
           ],
           "content": "background：由密涅瓦机关发明的大口径破甲枪，锥形弹能有效穿透甲胄；骑士们戏称自己为铁皮罐头，故有此名",
           "enabled": true,
-          "insertion_order": 1900,
+          "insertion_order": 1700,
           "position": "after_char",
           "comment": "开罐刀",
           "extensions": {}
         },
         {
-          "id": 190,
+          "id": 170,
           "keys": [
             "悬空灯"
           ],
           "content": "ability：牛油灯烧热气囊中的空气，灯能在夜空悬浮半小时\nbackground：用牛皮表层制成一人高的半透明气囊，内安置牛油灯",
           "enabled": true,
-          "insertion_order": 1910,
+          "insertion_order": 1710,
           "position": "after_char",
           "comment": "悬空灯",
           "extensions": {}
         },
         {
-          "id": 191,
+          "id": 171,
           "keys": [
             "明堂"
           ],
           "content": "background：天子议事之所，取“兼听则明”之意",
           "enabled": true,
-          "insertion_order": 1920,
+          "insertion_order": 1720,
           "position": "after_char",
           "comment": "明堂",
           "extensions": {}
         },
         {
-          "id": 192,
-          "keys": [
-            "查士丁尼七世"
-          ],
-          "content": "appearance：英明果敢，是闻名西方的美男子",
-          "enabled": true,
-          "insertion_order": 1930,
-          "position": "after_char",
-          "comment": "查士丁尼七世",
-          "extensions": {}
-        },
-        {
-          "id": 193,
+          "id": 172,
           "keys": [
             "火车"
           ],
           "content": "appearance：整体漆黑、磨砂表面几乎无反光，运行极安静，车厢体积是正常车厢的几倍且全封闭，温度始终在零摄氏度以下\nbackground：不遵循任何列车时刻表，悄无声息来去，经过的铁路都为它清空，亲眼见过它的人极少，押车人频繁更换，所到之处战火蔓延",
           "enabled": true,
-          "insertion_order": 1940,
+          "insertion_order": 1730,
           "position": "after_char",
           "comment": "火车",
           "extensions": {}
         },
         {
-          "id": 194,
+          "id": 173,
           "keys": [
             "炽天武装"
           ],
           "content": "background：由教皇国核心技术机关密涅瓦机关制造，造价高昂、数量极其有限\nstate：跟炽天使比起来就是七拼八凑的二流货色",
           "enabled": true,
-          "insertion_order": 1950,
+          "insertion_order": 1740,
           "position": "after_char",
           "comment": "炽天武装",
           "extensions": {}
         },
         {
-          "id": 195,
+          "id": 174,
           "keys": [
             "破山弩"
           ],
           "content": "background：有数百年历史的钢铁弩机，威力极大，射程极远\nstate：唯一缺陷是必须由经验丰富的弩手操纵",
           "enabled": true,
-          "insertion_order": 1960,
+          "insertion_order": 1750,
           "position": "after_char",
           "comment": "破山弩",
           "extensions": {}
         },
         {
-          "id": 196,
+          "id": 175,
           "keys": [
             "神授骑士"
           ],
           "content": "background：适格者的另一种称呼，能力是神授的，无法通过学习强化；没有固定比例，最好的情况下百名侍从骑士中能出一个",
           "enabled": true,
-          "insertion_order": 1970,
+          "insertion_order": 1760,
           "position": "after_char",
           "comment": "神授骑士",
           "extensions": {}
         },
         {
-          "id": 197,
-          "keys": [
-            "苏珊娜·美第奇"
-          ],
-          "content": "background：路易吉和胡安的母亲，美第奇家族的女儿，地位不凡",
-          "enabled": true,
-          "insertion_order": 1980,
-          "position": "after_char",
-          "comment": "苏珊娜·美第奇",
-          "extensions": {}
-        },
-        {
-          "id": 198,
+          "id": 176,
           "keys": [
             "莲花广场"
           ],
           "content": "background：每年国庆时这里会举行泼水庆祝的仪式",
           "enabled": true,
-          "insertion_order": 1990,
+          "insertion_order": 1770,
           "position": "after_char",
           "comment": "莲花广场",
           "extensions": {}
         },
         {
-          "id": 199,
+          "id": 177,
           "keys": [
             "蔷薇之鬼"
           ],
           "content": "ability：刺客型甲胄，超轻护甲，极限速度，配备黑刃、锥枪与曲刃镰",
           "enabled": true,
-          "insertion_order": 2000,
+          "insertion_order": 1780,
           "position": "after_char",
           "comment": "蔷薇之鬼",
           "extensions": {}
         },
         {
-          "id": 200,
-          "keys": [
-            "那几位阁下"
-          ],
-          "content": "state：不愿听到西泽尔取得足以威胁黑龙成绩的消息，让他们不开心的后果很可怕",
-          "enabled": true,
-          "insertion_order": 2010,
-          "position": "after_char",
-          "comment": "那几位阁下",
-          "extensions": {}
-        },
-        {
-          "id": 201,
+          "id": 178,
           "keys": [
             "铛铛车"
           ],
           "content": "background：由马斯顿王立机械学院修建的试验性铁路，坚固程度无法跑重型列车，地图上标为虚线",
           "enabled": true,
-          "insertion_order": 2020,
+          "insertion_order": 1790,
           "position": "after_char",
           "comment": "铛铛车",
           "extensions": {}
         },
         {
-          "id": 202,
+          "id": 179,
           "keys": [
             "锡兰王都"
           ],
           "content": "state：人口约70万，一夜之间从不同道路逃散一空",
           "enabled": true,
-          "insertion_order": 2030,
+          "insertion_order": 1800,
           "position": "after_char",
           "comment": "锡兰王都",
-          "extensions": {}
-        },
-        {
-          "id": 203,
-          "keys": [
-            "仲夏夜庆典"
-          ],
-          "content": "background：马斯顿每年举办，游客与本地人载歌载舞豪饮香槟，男孩借礼服与香槟向心爱女孩表白",
-          "enabled": true,
-          "insertion_order": 2040,
-          "position": "after_char",
-          "comment": "仲夏夜庆典",
-          "extensions": {}
-        },
-        {
-          "id": 204,
-          "keys": [
-            "叹息之墙"
-          ],
-          "content": "identity：原意是分隔天堂和地狱的墙壁，任地狱中的灵魂怨念几千万年也绝不坍塌",
-          "enabled": true,
-          "insertion_order": 2050,
-          "position": "after_char",
-          "comment": "叹息之墙",
-          "extensions": {}
-        },
-        {
-          "id": 205,
-          "keys": [
-            "圣峰狮子会"
-          ],
-          "content": "background：与骷髅兄弟会并列为都灵圣教院最负盛名的两大秘密社团，二者相互敌对",
-          "enabled": true,
-          "insertion_order": 2060,
-          "position": "after_char",
-          "comment": "圣峰狮子会",
-          "extensions": {}
-        },
-        {
-          "id": 206,
-          "keys": [
-            "圣战之路"
-          ],
-          "content": "goal：计划从马斯顿出发，穿越高加索山的山隘，直达夏国的战略要塞龙城",
-          "enabled": true,
-          "insertion_order": 2070,
-          "position": "after_char",
-          "comment": "圣战之路",
-          "extensions": {}
-        },
-        {
-          "id": 207,
-          "keys": [
-            "天赋骑士"
-          ],
-          "content": "identity：是能够和神经接驳系统融合的怪物，只有这种人能穿上炽天使甲胄",
-          "enabled": true,
-          "insertion_order": 2080,
-          "position": "after_char",
-          "comment": "天赋骑士",
-          "extensions": {}
-        },
-        {
-          "id": 208,
-          "keys": [
-            "尼禄"
-          ],
-          "content": "state：被宣布为异端并烧死在火刑架上",
-          "enabled": true,
-          "insertion_order": 2090,
-          "position": "after_char",
-          "comment": "尼禄",
-          "extensions": {}
-        },
-        {
-          "id": 209,
-          "keys": [
-            "所罗门王"
-          ],
-          "content": "ability：阿方索的支援型甲胄，燃料舱最大，可为其他骑士补充能源，肩部火神炮射程达一公里",
-          "enabled": true,
-          "insertion_order": 2100,
-          "position": "after_char",
-          "comment": "所罗门王",
-          "extensions": {}
-        },
-        {
-          "id": 210,
-          "keys": [
-            "焚城炮"
-          ],
-          "content": "ability：炮弹灌满红水银，划陡峭弧线落下，把整座城市化为火海",
-          "enabled": true,
-          "insertion_order": 2110,
-          "position": "after_char",
-          "comment": "焚城炮",
-          "extensions": {}
-        },
-        {
-          "id": 211,
-          "keys": [
-            "狂化"
-          ],
-          "content": "identity：强行取得骑士之骨的控制权，这种事只会发生在天赋骑士身上",
-          "enabled": true,
-          "insertion_order": 2120,
-          "position": "after_char",
-          "comment": "狂化",
-          "extensions": {}
-        },
-        {
-          "id": 212,
-          "keys": [
-            "猎狐犬"
-          ],
-          "content": "state：只有屠龙者三分之二高的次品小号甲胄，锈迹斑斑、零件松动",
-          "enabled": true,
-          "insertion_order": 2130,
-          "position": "after_char",
-          "comment": "猎狐犬",
-          "extensions": {}
-        },
-        {
-          "id": 213,
-          "keys": [
-            "神圣灾难"
-          ],
-          "content": "background：关于神与魔鬼等超越人类认知范畴的事件",
-          "enabled": true,
-          "insertion_order": 2140,
-          "position": "after_char",
-          "comment": "神圣灾难",
-          "extensions": {}
-        },
-        {
-          "id": 214,
-          "keys": [
-            "美第奇"
-          ],
-          "content": "identity：翡冷翠与博尔吉亚并列的大姓氏之一",
-          "enabled": true,
-          "insertion_order": 2150,
-          "position": "after_char",
-          "comment": "美第奇",
-          "extensions": {}
-        },
-        {
-          "id": 215,
-          "keys": [
-            "诺丁山初等学校"
-          ],
-          "content": "background：由教廷出资创办的小学校，围绕一间小教堂建造，教师由牧师和修女兼任，学生住校",
-          "enabled": true,
-          "insertion_order": 2160,
-          "position": "after_char",
-          "comment": "诺丁山初等学校",
-          "extensions": {}
-        },
-        {
-          "id": 216,
-          "keys": [
-            "铁戒指"
-          ],
-          "content": "background：教皇国炽天骑士团的荣誉徽记，每枚不同，内圈雕刻持有者名字；荣誉战死后戒指供奉在翡冷翠的英灵殿",
-          "enabled": true,
-          "insertion_order": 2170,
-          "position": "after_char",
-          "comment": "铁戒指",
-          "extensions": {}
-        },
-        {
-          "id": 217,
-          "keys": [
-            "锡兰战争"
-          ],
-          "content": "background：星历1884年因贸易摩擦，新罗马帝国向夏国臣属国锡兰国宣战",
-          "enabled": true,
-          "insertion_order": 2180,
-          "position": "after_char",
-          "comment": "锡兰战争",
-          "extensions": {}
-        },
-        {
-          "id": 218,
-          "keys": [
-            "镜厅"
-          ],
-          "content": "appearance：数以百计的巨大镜子相互反射的大厅，晚宴在此进行，长桌能容纳五十人同时进餐",
-          "enabled": true,
-          "insertion_order": 2190,
-          "position": "after_char",
-          "comment": "镜厅",
-          "extensions": {}
-        },
-        {
-          "id": 219,
-          "keys": [
-            "马斯顿公爵"
-          ],
-          "content": "background：神秘的马斯顿公爵向教廷表忠并愿意承建圣战之路，随后马斯顿公国宣布脱离西方国家联盟、成为中立的商业国",
-          "enabled": true,
-          "insertion_order": 2200,
-          "position": "after_char",
-          "comment": "马斯顿公爵",
-          "extensions": {}
-        },
-        {
-          "id": 220,
-          "keys": [
-            "骑士圣堂"
-          ],
-          "content": "identity：所有炽天骑士团成员宣誓效忠之处，殿堂内有历代机动甲胄外壳与战旗",
-          "enabled": true,
-          "insertion_order": 2210,
-          "position": "after_char",
-          "comment": "骑士圣堂",
-          "extensions": {}
-        },
-        {
-          "id": 221,
-          "keys": [
-            "骑士舱"
-          ],
-          "content": "identity：巴别塔顶部那张极薄钢板打造的异形座椅，就是实验用的骑士舱",
-          "enabled": true,
-          "insertion_order": 2220,
-          "position": "after_char",
-          "comment": "骑士舱",
-          "extensions": {}
-        },
-        {
-          "id": 222,
-          "keys": [
-            "龙吼"
-          ],
-          "content": "background：是薇若兰改进的远程炮，一举增加30%射程和50%精确度",
-          "enabled": true,
-          "insertion_order": 2230,
-          "position": "after_char",
-          "comment": "龙吼",
-          "extensions": {}
-        },
-        {
-          "id": 223,
-          "keys": [
-            "不朽之王模式"
-          ],
-          "content": "ability：可通过电缆远距离控制甲胄来激活",
-          "enabled": true,
-          "insertion_order": 2240,
-          "position": "after_char",
-          "comment": "不朽之王模式",
-          "extensions": {}
-        },
-        {
-          "id": 224,
-          "keys": [
-            "东方"
-          ],
-          "content": "background：人类已知世界以阿尔卑斯山为界分为东方和西方，东方国土浩瀚、国家众多，以古老的夏国最强大，夏国领土比西方各国加起来还大",
-          "enabled": true,
-          "insertion_order": 2250,
-          "position": "after_char",
-          "comment": "东方",
-          "extensions": {}
-        },
-        {
-          "id": 225,
-          "keys": [
-            "东方总督"
-          ],
-          "content": "goal：由一位空前绝后的开拓者打通前往东方的道路，为教廷统一整个世界",
-          "enabled": true,
-          "insertion_order": 2260,
-          "position": "after_char",
-          "comment": "东方总督",
-          "extensions": {}
-        },
-        {
-          "id": 226,
-          "keys": [
-            "低温车厢"
-          ],
-          "content": "ability：靠蒸汽驱动，用冷凝方式制造低温，便于运输特殊货物，主要运输食材如北方冰海的蓝鳍金枪鱼",
-          "enabled": true,
-          "insertion_order": 2270,
-          "position": "after_char",
-          "comment": "低温车厢",
-          "extensions": {}
-        },
-        {
-          "id": 227,
-          "keys": [
-            "军徽"
-          ],
-          "content": "appearance：一般军徽是十字架加盾牌，西泽尔的军徽是十字架加火焰，火焰象征炽天使",
-          "enabled": true,
-          "insertion_order": 2280,
-          "position": "after_char",
-          "comment": "军徽",
-          "extensions": {}
-        },
-        {
-          "id": 228,
-          "keys": [
-            "冰霜巨人"
-          ],
-          "content": "ability：冷凝机，必要时释放大量冷空气给维苏威火山降温",
-          "enabled": true,
-          "insertion_order": 2290,
-          "position": "after_char",
-          "comment": "冰霜巨人",
-          "extensions": {}
-        },
-        {
-          "id": 229,
-          "keys": [
-            "十连战"
-          ],
-          "content": "background：腓特烈连续对战十名格斗者的一场特殊赌局",
-          "enabled": true,
-          "insertion_order": 2300,
-          "position": "after_char",
-          "comment": "十连战",
-          "extensions": {}
-        },
-        {
-          "id": 230,
-          "keys": [
-            "占卜"
-          ],
-          "content": "background：在东方是寻常事，在西方则是禁忌之术；占卜者必损害自己的性命根本",
-          "enabled": true,
-          "insertion_order": 2310,
-          "position": "after_char",
-          "comment": "占卜",
-          "extensions": {}
-        },
-        {
-          "id": 231,
-          "keys": [
-            "卡巴拉之树"
-          ],
-          "content": "background：又称生命之树，古老圣典中有记载，是弥赛亚圣教最庞大也最神秘的圣徽",
-          "enabled": true,
-          "insertion_order": 2320,
-          "position": "after_char",
-          "comment": "卡巴拉之树",
-          "extensions": {}
-        },
-        {
-          "id": 232,
-          "keys": [
-            "史前文明"
-          ],
-          "content": "background：发源于世界的东方，阿瓦隆只是遗落在西方的一处小小遗迹",
-          "enabled": true,
-          "insertion_order": 2330,
-          "position": "after_char",
-          "comment": "史前文明",
-          "extensions": {}
-        },
-        {
-          "id": 233,
-          "keys": [
-            "吗啡"
-          ],
-          "content": "background：能镇痛并减轻心理压力，但副作用大且会成瘾，医生只开给眼看没救的人",
-          "enabled": true,
-          "insertion_order": 2340,
-          "position": "after_char",
-          "comment": "吗啡",
-          "extensions": {}
-        },
-        {
-          "id": 234,
-          "keys": [
-            "咆哮雷神"
-          ],
-          "content": "possession：配备超重型的手持式连射炮与粗壮弹链",
-          "enabled": true,
-          "insertion_order": 2350,
-          "position": "after_char",
-          "comment": "咆哮雷神",
-          "extensions": {}
-        },
-        {
-          "id": 235,
-          "keys": [
-            "天使"
-          ],
-          "content": "background：弥赛亚圣教认为天使是神创造的仆人，最高等级称炽天使，由纯净光焰构成，守护神的御座",
-          "enabled": true,
-          "insertion_order": 2360,
-          "position": "after_char",
-          "comment": "天使",
-          "extensions": {}
-        },
-        {
-          "id": 236,
-          "keys": [
-            "家徽戒指"
-          ],
-          "content": "ability：持有者在城中享有特权，即使犯法警察和法官也会格外优待",
-          "enabled": true,
-          "insertion_order": 2370,
-          "position": "after_char",
-          "comment": "家徽戒指",
-          "extensions": {}
-        },
-        {
-          "id": 237,
-          "keys": [
-            "家族圣堂"
-          ],
-          "content": "appearance：位于荒无人烟的裂谷对岸，建造水准与教皇宫相当，前方有建在裂谷石柱上的白色大理石长桥",
-          "enabled": true,
-          "insertion_order": 2380,
-          "position": "after_char",
-          "comment": "家族圣堂",
-          "extensions": {}
-        },
-        {
-          "id": 238,
-          "keys": [
-            "封邑"
-          ],
-          "content": "background：家族的专属土地，家族在专属土地上享有一切权力，绝大部分法律不生效而代之以家族法则",
-          "enabled": true,
-          "insertion_order": 2390,
-          "position": "after_char",
-          "comment": "封邑",
-          "extensions": {}
-        },
-        {
-          "id": 239,
-          "keys": [
-            "山中修道院"
-          ],
-          "content": "background：修道士避开城市喧嚣研究神学，清苦度日，自酿啤酒",
-          "enabled": true,
-          "insertion_order": 2400,
-          "position": "after_char",
-          "comment": "山中修道院",
-          "extensions": {}
-        },
-        {
-          "id": 240,
-          "keys": [
-            "手杖剑"
-          ],
-          "content": "ability：柄里藏高纯度红水银，真实用途是炸死持剑者",
-          "enabled": true,
-          "insertion_order": 2410,
-          "position": "after_char",
-          "comment": "手杖剑",
-          "extensions": {}
-        },
-        {
-          "id": 241,
-          "keys": [
-            "斩铁剑"
-          ],
-          "content": "ability：蒸汽机驱动的硬金铡刀，几乎可切断一切人造物，甚至一次切断一辆虎式战车",
-          "enabled": true,
-          "insertion_order": 2420,
-          "position": "after_char",
-          "comment": "斩铁剑",
-          "extensions": {}
-        },
-        {
-          "id": 242,
-          "keys": [
-            "杀凰"
-          ],
-          "content": "goal：狙杀楚舜华的任务代号",
-          "enabled": true,
-          "insertion_order": 2430,
-          "position": "after_char",
-          "comment": "杀凰",
-          "extensions": {}
-        },
-        {
-          "id": 243,
-          "keys": [
-            "林部队"
-          ],
-          "content": "background：弩弓部队，负责压制和控场",
-          "enabled": true,
-          "insertion_order": 2440,
-          "position": "after_char",
-          "comment": "林部队",
-          "extensions": {}
-        },
-        {
-          "id": 244,
-          "keys": [
-            "格里高利家族"
-          ],
-          "content": "background：家徽是双头狮鹫，被称为狮鹫家族，把持着对西方最重要的资源红水银",
-          "enabled": true,
-          "insertion_order": 2450,
-          "position": "after_char",
-          "comment": "格里高利家族",
-          "extensions": {}
-        },
-        {
-          "id": 245,
-          "keys": [
-            "熔岩之心"
-          ],
-          "content": "background：从不打扫的区域积起接近半尺的炭化层，历史甚至长于教皇国本身",
-          "enabled": true,
-          "insertion_order": 2460,
-          "position": "after_char",
-          "comment": "熔岩之心",
-          "extensions": {}
-        },
-        {
-          "id": 246,
-          "keys": [
-            "特赦令"
-          ],
-          "content": "background：每一份经教皇签字生效的特赦令都是枢机会批准过的，教皇的签名只是走形式，强行签出也不会生效",
-          "enabled": true,
-          "insertion_order": 2470,
-          "position": "after_char",
-          "comment": "特赦令",
-          "extensions": {}
-        },
-        {
-          "id": 247,
-          "keys": [
-            "白蜡木杆"
-          ],
-          "content": "appearance：长约3.5米、直径10厘米，两端磨成圆形，多年来一直未开封",
-          "enabled": true,
-          "insertion_order": 2480,
-          "position": "after_char",
-          "comment": "白蜡木杆",
-          "extensions": {}
-        },
-        {
-          "id": 248,
-          "keys": [
-            "肩辇"
-          ],
-          "content": "background：夏皇赐予臣子的最高礼遇，赐“入朝乘辇，面君不拜”",
-          "enabled": true,
-          "insertion_order": 2490,
-          "position": "after_char",
-          "comment": "肩辇",
-          "extensions": {}
-        },
-        {
-          "id": 249,
-          "keys": [
-            "脑白质切除手术"
-          ],
-          "content": "background：术后病人会变得迟钝麻木、连身边的人也不认识，但自理能力还有",
-          "enabled": true,
-          "insertion_order": 2500,
-          "position": "after_char",
-          "comment": "脑白质切除手术",
-          "extensions": {}
-        },
-        {
-          "id": 250,
-          "keys": [
-            "英雄人格"
-          ],
-          "content": "background：部分人类在极端情绪下由英雄人格取代表层人格，潜能被彻底激发，但也是自毁人格",
-          "enabled": true,
-          "insertion_order": 2510,
-          "position": "after_char",
-          "comment": "英雄人格",
-          "extensions": {}
-        },
-        {
-          "id": 251,
-          "keys": [
-            "铁钥匙"
-          ],
-          "content": "ability：唯一能打开世界之蟒号车厢的钥匙，由贝隆随身携带",
-          "enabled": true,
-          "insertion_order": 2520,
-          "position": "after_char",
-          "comment": "铁钥匙",
-          "extensions": {}
-        },
-        {
-          "id": 252,
-          "keys": [
-            "镇流开关"
-          ],
-          "content": "background：机动甲胄濒临崩溃时会强制熄火的安全装置",
-          "enabled": true,
-          "insertion_order": 2530,
-          "position": "after_char",
-          "comment": "镇流开关",
-          "extensions": {}
-        },
-        {
-          "id": 253,
-          "keys": [
-            "阿修罗"
-          ],
-          "content": "identity：原诚为将来仿造的机动甲胄提议的名字",
-          "enabled": true,
-          "insertion_order": 2540,
-          "position": "after_char",
-          "comment": "阿修罗",
-          "extensions": {}
-        },
-        {
-          "id": 254,
-          "keys": [
-            "陆行战舰"
-          ],
-          "content": "state：三年前封存入库，至今没有合适的新晋骑士",
-          "enabled": true,
-          "insertion_order": 2550,
-          "position": "after_char",
-          "comment": "陆行战舰",
-          "extensions": {}
-        },
-        {
-          "id": 255,
-          "keys": [
-            "零玖式火铳"
-          ],
-          "content": "background：夏国大约十年前制造的军品，算是东方阵营相当先进的武器",
-          "enabled": true,
-          "insertion_order": 2560,
-          "position": "after_char",
-          "comment": "零玖式火铳",
-          "extensions": {}
-        },
-        {
-          "id": 256,
-          "keys": [
-            "露天测试场"
-          ],
-          "content": "appearance：圆形，地面盖一层铸铁板，铸铁板上再铺设轨道，用于测试中大型机械",
-          "enabled": true,
-          "insertion_order": 2570,
-          "position": "after_char",
-          "comment": "露天测试场",
-          "extensions": {}
-        },
-        {
-          "id": 257,
-          "keys": [
-            "青丝"
-          ],
-          "content": "appearance：血色重锦上的古剑，剑长两尺，剑刃淡青色，靠近剑锷处有错金篆字“青丝”",
-          "enabled": true,
-          "insertion_order": 2580,
-          "position": "after_char",
-          "comment": "青丝",
-          "extensions": {}
-        },
-        {
-          "id": 258,
-          "keys": [
-            "青铜切断者"
-          ],
-          "content": "possession：装备蒸汽驱动的刀锯，能切开天启战车的装甲",
-          "enabled": true,
-          "insertion_order": 2590,
-          "position": "after_char",
-          "comment": "青铜切断者",
-          "extensions": {}
-        },
-        {
-          "id": 259,
-          "keys": [
-            "风金属"
-          ],
-          "content": "identity：教廷的技师们研制出的轻盈且柔韧的金属，贵族旅行箱都用它制造",
-          "enabled": true,
-          "insertion_order": 2600,
-          "position": "after_char",
-          "comment": "风金属",
-          "extensions": {}
-        },
-        {
-          "id": 260,
-          "keys": [
-            "骑枪297"
-          ],
-          "content": "background：密涅瓦机关最沉重的制式骑枪之一，重达297磅",
-          "enabled": true,
-          "insertion_order": 2610,
-          "position": "after_char",
-          "comment": "骑枪297",
-          "extensions": {}
-        },
-        {
-          "id": 261,
-          "keys": [
-            "骸骨场"
-          ],
-          "content": "background：一处专门用于遗弃炽天使甲胄的深槽，深不见底，像堆满钢铁骨骸的坟墓",
-          "enabled": true,
-          "insertion_order": 2620,
-          "position": "after_char",
-          "comment": "骸骨场",
-          "extensions": {}
-        },
-        {
-          "id": 262,
-          "keys": [
-            "黄金套管"
-          ],
-          "content": "background：植入后背让电极从套管内走，手术中可用麻醉药，但术后恢复期会痛得要命",
-          "enabled": true,
-          "insertion_order": 2630,
-          "position": "after_char",
-          "comment": "黄金套管",
-          "extensions": {}
-        },
-        {
-          "id": 263,
-          "keys": [
-            "黑色石拱门"
-          ],
-          "content": "background：星历1824年锡兰“千年国诞”时建造的重要标记物",
-          "enabled": true,
-          "insertion_order": 2640,
-          "position": "after_char",
-          "comment": "黑色石拱门",
-          "extensions": {}
-        },
-        {
-          "id": 264,
-          "keys": [
-            "龙城"
-          ],
-          "content": "background：夏国的军事要塞，堪称夏国的国门，装配了千门重炮",
-          "enabled": true,
-          "insertion_order": 2650,
-          "position": "after_char",
-          "comment": "龙城",
-          "extensions": {}
-        },
-        {
-          "id": 265,
-          "keys": [
-            "龙炎"
-          ],
-          "content": "ability：指挥官佩枪，蜂巢式弹夹可装六发子弹，近距离可打爆一匹马的脑袋",
-          "enabled": true,
-          "insertion_order": 2660,
-          "position": "after_char",
-          "comment": "龙炎",
           "extensions": {}
         }
       ]
