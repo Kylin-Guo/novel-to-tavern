@@ -59,3 +59,27 @@ def test_build_artifacts_are_ignored():
 def test_source_files_are_not_ignored():
     for path in ("src/novel_to_tavern/cli.py", "docs/PLAN.md", "config/config.example.yaml"):
         assert not _is_ignored(path), path
+
+
+def test_copyrighted_novel_is_ignored():
+    """受版权保护的原文只作本地只读输入，绝不能进仓库。"""
+    assert _is_ignored("天之炽/天之炽Ⅰ：红龙的归来.txt")
+    assert _is_ignored("天之炽/天之炽Ⅱ：女武神1.txt")
+    assert _is_ignored("天之炽/天之炽Ⅱ：女武神2.txt")
+
+
+def test_git_itself_confirms_the_novel_is_ignored():
+    """用 git 自己的判定兜底，避免手写匹配器与 git 行为不一致。"""
+    import subprocess
+
+    novel = REPO_ROOT / "天之炽" / "天之炽Ⅰ：红龙的归来.txt"
+    if not novel.exists():
+        import pytest
+
+        pytest.skip("本机没有该小说原文")
+    result = subprocess.run(
+        ["git", "check-ignore", "-q", str(novel)],
+        cwd=REPO_ROOT,
+        capture_output=True,
+    )
+    assert result.returncode == 0, "小说原文未被 .gitignore 排除"
