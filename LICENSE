@@ -19,14 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
--------------------------------------------------------------------------------
-
-NOTICE — 上述 MIT 许可的适用范围
-
-MIT 许可覆盖本仓库的**软件代码与文档**。
-
-它**不覆盖** `exports/` 目录下的角色卡与世界书。那些文件是第三方小说的衍生
-作品，其权利归原著权利人所有；本仓库对它们不授予任何许可，也不声称拥有
-再分发、公开发布或商业化的权利。详见 exports/README.md 与
-docs/THIRD_PARTY_NOTICES.md。

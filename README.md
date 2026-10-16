@@ -198,4 +198,4 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 > **例外：`exports/` 下的角色卡不在 MIT 授权范围内。**
 > 那些文件是原著小说的衍生作品，其权利归原著权利人；本仓库对导出的卡片
 > 不授予任何许可，也不声称拥有再分发或公开发布的权利。
-> 见 [`exports/README.md`](exports/README.md)。
+> 见 [`NOTICE.md`](NOTICE.md) 与 [`exports/README.md`](exports/README.md)。

@@ -29,5 +29,5 @@ n2t ingest && n2t extract --run-id <id> && n2t resolve --run-id <id> \
 这张卡是《天之炽》（作者：江南）的衍生作品，其权利归原著权利人所有。
 本仓库对它不授予任何许可，也不声称拥有再分发、公开发布或商业化的权利。
 
-详见根目录 [`README.md`](../README.md) 的「许可」与「版权与免责」，
+详见根目录 [`NOTICE.md`](../NOTICE.md) 与 [`README.md`](../README.md) 的「许可」与「版权与免责」，
 以及 [`../docs/THIRD_PARTY_NOTICES.md`](../docs/THIRD_PARTY_NOTICES.md)。
