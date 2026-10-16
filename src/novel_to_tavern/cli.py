@@ -71,6 +71,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="起始章节（1 起）。指定后会按 valid_from_chapter 屏蔽该章节之后的内容",
     )
 
+    verify_parser = sub.add_parser(
+        "verify", help="语义支持校验：引文支不支持这条主张（Phase 6）"
+    )
+    verify_parser.add_argument("--run-id", required=True, help="要校验的 run id")
+    verify_parser.add_argument(
+        "--sample", type=int, metavar="N", help="只校验前 N 条（抽样；报告会写明是抽样）"
+    )
+    verify_parser.add_argument(
+        "--only-high-impact",
+        action="store_true",
+        help="只校验高风险事实（身份/生死/秘密/关系/能力/立场）",
+    )
+
     export_parser = sub.add_parser(
         "export", help="导出角色卡与世界书（Phase 5）"
     )
@@ -324,6 +337,52 @@ def _cmd_timeline(args: argparse.Namespace, log) -> int:
     return 0
 
 
+def _cmd_verify(args: argparse.Namespace, log) -> int:
+    from .llm import ProviderError, build_provider
+    from .verify import VerificationError, run_verification
+
+    try:
+        config = config_module.load_config(args.config)
+    except config_module.ConfigError as exc:
+        print(f"配置校验失败：{exc}", file=sys.stderr)
+        return 1
+
+    run_dir = Path(config.project.output_root) / args.run_id
+    if not run_dir.is_dir():
+        print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
+        return 1
+
+    try:
+        provider = build_provider(config, log=log)
+    except ProviderError as exc:
+        print(f"无法装配校验引擎：{exc}", file=sys.stderr)
+        return 1
+
+    try:
+        report = run_verification(
+            run_dir,
+            provider,
+            sample=args.sample,
+            only_high_impact=args.only_high_impact,
+            log=log,
+        )
+    except VerificationError as exc:
+        print(f"语义校验失败：{exc}", file=sys.stderr)
+        return 1
+
+    print(f"校验引擎：{report.verifier}")
+    print(f"canon 事实总数：{report.facts_total}")
+    print(f"本次校验：{report.facts_checked} 条")
+    for verdict in ("entailed", "partially_supported", "contradicted", "insufficient_evidence"):
+        if report.counts.get(verdict):
+            print(f"  {verdict}：{report.counts[verdict]}")
+    print(f"排除在条目正文之外：{len(report.excluded_fact_ids)} 条")
+    print(f"报告：{run_dir / 'reports' / 'semantic_report.md'}")
+    if args.sample:
+        print("注意：这是抽样结果，报告里已写明，不要当成全量结论。")
+    return 0
+
+
 def _cmd_export(args: argparse.Namespace, log) -> int:
     from .export import ExportError, export
 
@@ -396,6 +455,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_resolve(args, log)
     if args.command == "timeline":
         return _cmd_timeline(args, log)
+    if args.command == "verify":
+        return _cmd_verify(args, log)
     if args.command == "export":
         return _cmd_export(args, log)
 

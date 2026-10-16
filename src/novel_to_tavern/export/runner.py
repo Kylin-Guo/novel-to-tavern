@@ -302,6 +302,14 @@ def export(
             "parity_errors": parity_report.errors,
             "card_warnings": card_report.warnings,
         },
+        "metrics": {
+            **_evidence_stats(run_path),
+            "quote_location_success_rate_meaning": (
+                "引文在原文里逐字定位成功的比例。**这是来源定位指标，"
+                "不是事实正确率** —— 引文存在不等于主张被正确解读或归属。"
+            ),
+            "semantic_support": _semantic_metrics(run_path),
+        },
         "note": "不包含任何 API 凭据。token 为粗估，非具体分词器计数。",
     }
 
@@ -473,6 +481,52 @@ def _export_strict(
     }
 
 
+def _evidence_stats(run_dir: Path) -> dict[str, int | float]:
+    """从抽取结果汇总**证据定位**指标。
+
+    名字要说清楚它是什么：这是 `quote_location_success_rate`
+    —— 引文能不能在原文里逐字找到，**不是**事实正确率。
+    """
+    total = located = 0
+    for path in sorted((run_dir / "extraction").glob("*.json")):
+        if path.name.startswith("_"):
+            continue
+        data = json.loads(path.read_text(encoding="utf-8"))
+        total += int(data.get("evidence_total", 0) or 0)
+        located += int(data.get("evidence_located", 0) or 0)
+    return {
+        "quotes_total": total,
+        "quotes_located": located,
+        "quote_location_success_rate": round(located / total, 6) if total else 0.0,
+    }
+
+
+def _semantic_metrics(run_dir: Path) -> dict[str, object]:
+    """语义支持校验的指标。**没跑过就如实写未执行**，不写成 0 分。"""
+    from ..verify import load_verdicts
+
+    verdicts = load_verdicts(run_dir)
+    if verdicts is None:
+        return {
+            "executed": False,
+            "note": "未执行 n2t verify —— 本次只做了证据定位，没有做语义支持判断",
+        }
+    return {
+        "executed": True,
+        "verifier": verdicts.verifier,
+        "prompt_version": verdicts.prompt_version,
+        "facts_checked": verdicts.facts_checked,
+        "facts_total": verdicts.facts_total,
+        "entailed": verdicts.counts.get("entailed", 0),
+        "partially_supported": verdicts.counts.get("partially_supported", 0),
+        "contradicted": verdicts.counts.get("contradicted", 0),
+        "insufficient_evidence": verdicts.counts.get("insufficient_evidence", 0),
+        "semantic_entailed_rate": round(verdicts.passed_rate, 6),
+        "excluded_fact_count": len(verdicts.excluded_fact_ids),
+        "note": "这是模型判定，不是人工审校；且只覆盖已校验的那部分事实",
+    }
+
+
 def _prompt_versions(run_dir: Path) -> dict[str, str]:
     versions: dict[str, str] = {}
     for path in sorted((run_dir / "extraction").glob("*.json")):
@@ -511,6 +565,21 @@ def _render_audit(
     with_refs = sum(1 for e in entries if e.source_refs)
     characters = [e for e in entities if e.kind == "character"]
 
+    evidence = _evidence_stats(run_dir)
+    semantic = _semantic_metrics(run_dir)
+    if semantic.get("executed"):
+        semantic_cell = (
+            f"{semantic['entailed']} / {semantic['facts_checked']} = "
+            f"{semantic['semantic_entailed_rate']:.1%} 判为 entailed"
+        )
+    else:
+        semantic_cell = "**未执行**"
+    review_failures = len(_read_json(run_dir / "canonical" / "facts.json")) and sum(
+        1
+        for f in _read_json(run_dir / "canonical" / "facts.json")
+        if f.get("review_status") == "needs_review"
+    )
+
     lines = [
         "# 导出审计报告",
         "",
@@ -529,6 +598,21 @@ def _render_audit(
         f"| exports/{WORLDBOOK_AFTER_END} | 独立世界书（从结局之后开始，全部内容） | {len(after_card.data.character_book.entries)} |",
         f"| exports/{TIMELINE_NAME} | 时间线 | {len(timeline)} 个事件 |",
         f"| exports/{MANIFEST_NAME} | 导出清单 | — |",
+        "",
+        "## 指标口径（先读这一节）",
+        "",
+        "| 指标 | 数值 | 它说明了什么 | 它**不**说明什么 |",
+        "|---|---|---|---|",
+        f"| 引文逐字定位率 | {evidence['quotes_located']} / {evidence['quotes_total']} = "
+        f"{evidence['quote_location_success_rate']:.2%} | 引文**逐字存在于原文**，行号是程序算的 "
+        "| 事实被**正确解读/归属**，也没有说明抽取有没有漏 |",
+        f"| 语义支持校验 | {semantic_cell} | 引文**支持**该主张 | "
+        "见 `semantic_report.md`；未执行时这一列是空的 |",
+        "",
+        f"- 待人工复核（引文定位失败）：{review_failures} 条 —— 这**不是**「已人工审校」",
+        "",
+        "> 「引文 100% 定位」只证明引文在原文里存在。归属错误、漏掉否定、"
+        "把角色信念当成客观事实，都不会被这一层发现。",
         "",
         "## 来源覆盖",
         "",

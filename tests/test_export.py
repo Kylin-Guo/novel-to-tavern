@@ -520,3 +520,37 @@ def test_strict_export_is_deterministic(tmp_path):
     first = (run / "exports" / "card_start_chapter_3.json").read_text(encoding="utf-8")
     export(run, config_module.Config(), start_chapter=2)
     assert (run / "exports" / "card_start_chapter_3.json").read_text(encoding="utf-8") == first
+
+
+# --- 指标口径 --------------------------------------------------------------
+
+
+def test_manifest_names_the_location_metric_precisely(tmp_path):
+    """「引文定位率」必须叫得像它本来的意思，不能让人读成事实正确率。"""
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    metrics = json.loads((run / "exports" / "export_manifest.json").read_text(encoding="utf-8"))["metrics"]
+    assert "quote_location_success_rate" in metrics
+    assert "不是事实正确率" in metrics["quote_location_success_rate_meaning"]
+    assert metrics["quotes_total"] >= metrics["quotes_located"] >= 0
+
+
+def test_manifest_says_semantic_check_was_not_executed(tmp_path):
+    """没跑 verify 就写「未执行」，不能写 0 分让人以为跑过且全错。"""
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    semantic = json.loads((run / "exports" / "export_manifest.json").read_text(encoding="utf-8"))[
+        "metrics"
+    ]["semantic_support"]
+    assert semantic["executed"] is False
+    assert "未执行" in semantic["note"]
+
+
+def test_audit_states_the_metric_boundary(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    audit = (run / "reports" / "audit.md").read_text(encoding="utf-8")
+    assert "指标口径" in audit
+    assert "说明什么" in audit and "不**说明什么" in audit
+    assert "引文逐字定位率" in audit
+    assert "不是**已人工审校**" in audit or "**不是**「已人工审校」" in audit

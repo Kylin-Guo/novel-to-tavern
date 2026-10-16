@@ -273,12 +273,21 @@ def headline_for(entity: CanonicalEntity, facts: list[FactRecord]) -> str:
 
 
 def _render_facts(
-    facts: list[FactRecord], *, with_sources: bool
+    facts: list[FactRecord],
+    *,
+    with_sources: bool,
+    excluded_fact_ids: frozenset[str] | set[str] = frozenset(),
 ) -> str:
-    """把原子事实渲染成条目正文。只取 review_status=accepted 的 canon 事实。"""
+    """把原子事实渲染成条目正文。只取 review_status=accepted 的 canon 事实。
+
+    `excluded_fact_ids` 来自语义支持校验：判定为 `contradicted` /
+    `insufficient_evidence` 的事实不进正文，但**保留**在 canonical 数据里。
+    """
     buckets: dict[str, list[FactRecord]] = defaultdict(list)
     for fact in facts:
         if fact.review_status != "accepted" or fact.fact_type != "canon_fact":
+            continue
+        if fact.fact_id in excluded_fact_ids:
             continue
         buckets[fact.predicate].append(fact)
 
@@ -317,6 +326,7 @@ def plan_entity_entries(
     facts: list[FactRecord],
     *,
     start_chapter: int | None = None,
+    excluded_fact_ids: frozenset[str] | set[str] = frozenset(),
 ) -> list[PlannedEntry]:
     """为**有已校验事实**的实体规划世界书条目。
 
@@ -329,7 +339,13 @@ def plan_entity_entries(
     `start_chapter` 非空时只使用该章节及之前的事实 —— **严格起始点导出**。
     这不是加一句「别看后面」，而是后面的事实根本不出现在条目正文里。
     """
-    by_entity = _facts_by_entity(entities, facts, start_chapter=start_chapter)
+    if start_chapter is not None or excluded_fact_ids:
+        facts = [
+            f
+            for f in facts_upto_chapter(facts, start_chapter)
+            if f.fact_id not in excluded_fact_ids
+        ]
+    by_entity = _facts_by_entity(entities, facts)
 
     entries: list[PlannedEntry] = []
     for entity in sorted(entities, key=lambda e: (-e.evidence_count, e.canonical_name)):
@@ -338,7 +354,9 @@ def plan_entity_entries(
         if not qualifies:
             continue
 
-        runtime = _render_facts(own_facts, with_sources=False)
+        runtime = _render_facts(
+            own_facts, with_sources=False, excluded_fact_ids=excluded_fact_ids
+        )
         if not runtime.strip():
             # 事实值全为空串之类的边界情况 —— 宁可不出条目，也不产出空条目
             continue

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from ..extract.schema import EventRecord, FactRecord, RelationRecord
 from ..resolve.entities import CanonicalEntity
+from ..verify import load_verdicts
 from .build import (
     ContradictionFinding,
     KnowledgeItem,
@@ -85,15 +86,23 @@ def build(run_dir: str | Path, *, start_chapter: int | None = None) -> dict:
         ),
     }
 
+    # 语义校验是可选的：跑过就用它的结论排除站不住的事实，没跑过就照旧。
+    # **不**在缺失时伪造一份结果。
+    verdicts = load_verdicts(run_path)
+    excluded = frozenset(verdicts.excluded_fact_ids) if verdicts else frozenset()
+    usable_facts = [f for f in facts if f.fact_id not in excluded]
+
     entries: list[PlannedEntry] = []
-    overview = plan_world_overview(entities, facts)
+    overview = plan_world_overview(entities, usable_facts)
     if overview:
         entries.append(overview)
     index_entry = plan_character_index(entities)
     if index_entry:
         entries.append(index_entry)
-    entries.extend(plan_entity_entries(entities, facts))
-    skipped_entities = entities_skipped_from_worldbook(entities, facts)
+    entries.extend(
+        plan_entity_entries(entities, usable_facts, excluded_fact_ids=excluded)
+    )
+    skipped_entities = entities_skipped_from_worldbook(entities, usable_facts)
     # 章节事件条目已移除：它们与「剧情主线」内容重复，且触发词取的是该章在场人物，
     # 主要人物出场上百章 → 一句话会同时命中上百条（实测 117 条 ≈ 6 万 token）。
 
@@ -128,6 +137,7 @@ def build(run_dir: str | Path, *, start_chapter: int | None = None) -> dict:
         plan_stats=plan_stats,
         start_chapter=start_chapter,
         total_chapters=total_chapters,
+        verdicts=verdicts,
     )
     (run_path / "reports" / SUMMARY_NAME).write_text(report, encoding="utf-8")
 
@@ -157,6 +167,7 @@ def _render_report(
     plan_stats: dict,
     start_chapter: int | None,
     total_chapters: int,
+    verdicts=None,
 ) -> str:
     lines = [
         "# 时间线、知识边界与世界书规划报告",
@@ -165,6 +176,34 @@ def _render_report(
         f"- 生成时间：{datetime.now(timezone.utc).isoformat(timespec='seconds')}",
         f"- 覆盖章节：{total_chapters}",
         "",
+        "## 语义支持校验",
+        "",
+    ]
+    if verdicts is None:
+        lines += [
+            "- 状态：**未执行**。没跑过 `n2t verify`，所以本条流水线里"
+            "**只**做了证据定位，**没有**做「引文支不支持这条主张」的判断。",
+            "- 这意味着：条目正文里的事实**只**保证引文逐字存在于原文，"
+            "**不**保证被正确解读或归属。",
+            "",
+        ]
+    else:
+        excluded = len(verdicts.excluded_fact_ids)
+        lines += [
+            f"- 校验引擎：`{verdicts.verifier}`",
+            f"- 已校验 {verdicts.facts_checked} / {verdicts.facts_total} 条 canon 事实",
+            f"- `entailed`（引文足以支持）：{verdicts.counts.get('entailed', 0)} 条",
+            f"- `partially_supported`：{verdicts.counts.get('partially_supported', 0)} 条",
+            f"- `contradicted`：{verdicts.counts.get('contradicted', 0)} 条",
+            f"- `insufficient_evidence`：{verdicts.counts.get('insufficient_evidence', 0)} 条",
+            f"- **已排除出条目正文**：{excluded} 条（仍保留在 canonical 数据里）",
+            "",
+            "> 这是**模型判定**，本身也会有错，不等于人工审校。"
+            "详见 `reports/semantic_report.md`。",
+            "",
+        ]
+
+    lines += [
         "## 时间线",
         "",
         f"- 事件数：{len(timeline)}",
