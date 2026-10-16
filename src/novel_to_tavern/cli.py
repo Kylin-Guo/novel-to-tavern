@@ -349,7 +349,12 @@ def _cmd_timeline(args: argparse.Namespace, log) -> int:
     start_index = start_chapter - 1 if start_chapter is not None else None
 
     try:
-        result = build(run_dir, start_chapter=start_index)
+        result = build(
+            run_dir,
+            start_chapter=start_index,
+            always_on_world_overview=config.worldbook.always_on_world_overview,
+            always_on_character_index=config.worldbook.always_on_character_index,
+        )
     except TimelineError as exc:
         print(f"构建时间线失败：{exc}", file=sys.stderr)
         return 1

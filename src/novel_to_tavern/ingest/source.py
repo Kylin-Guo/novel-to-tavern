@@ -69,11 +69,22 @@ def slugify_source_id(name: str) -> str:
     return slug or "source"
 
 
-def read_source(path: str | Path, *, encoding: str = "utf-8", source_id: str | None = None) -> SourceText:
+def read_source(
+    path: str | Path,
+    *,
+    encoding: str = "utf-8",
+    source_id: str | None = None,
+    normalize_newlines: bool = True,
+) -> SourceText:
     """读取一个原文文件。
 
     `lines` 用 `str.splitlines(keepends=True)` 切分，保证
-    `"".join(lines) == text` —— 这是无损重组测试的基础。
+    `"".join(lines) == text` —— 这是无损重组测试的基础（归一化发生在切行**之前**，
+    所以不变量仍然成立）。
+
+    `normalize_newlines=True` 时先把 `\\r\\n` / `\\r` 统一成 `\\n`：
+    否则同一个文件在 CRLF 与 LF 下会切出不同的行，章节标题的正则匹配跟着变。
+    这个开关影响分块内容，所以参与配置指纹。`sha256` 始终对**原始字节**计算。
     """
     file_path = Path(path)
     if not file_path.is_file():
@@ -88,6 +99,9 @@ def read_source(path: str | Path, *, encoding: str = "utf-8", source_id: str | N
         text = raw.decode(encoding)
     except UnicodeDecodeError as exc:
         raise SourceReadError(f"{file_path} 无法按 {encoding} 解码：{exc}") from exc
+
+    if normalize_newlines:
+        text = text.replace("\r\n", "\n").replace("\r", "\n")
 
     lines = text.splitlines(keepends=True)
     return SourceText(

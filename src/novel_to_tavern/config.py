@@ -36,18 +36,22 @@ class ProjectConfig(_Base):
     name: str = "novel-to-tavern"
     source_path: str = "./input/novel.txt"
     output_root: str = "./runs"
-    default_start_chapter: int | None = None
     mode: StartMode = "branch_start"
 
 
 class InputConfig(_Base):
+    #: 目录导入时认哪些后缀。**真的会被用来筛选文件**（见 `discover_sources`）。
     formats: list[InputFormat] = Field(default_factory=lambda: ["txt", "md"])
     encoding: str = "utf-8"
     chapter_detection: ChapterDetection = "auto"
     chapter_heading_regex: str | None = None
     chunk_target_chars: int = Field(default=10000, gt=0)
     chunk_max_chars: int = Field(default=16000, gt=0)
-    preserve_chapter_boundaries: bool = True
+    #: 章节边界永远是分块边界 —— 这是不变量，不是开关。
+    #: 写成 `Literal[True]` 是为了让「想关掉它」的人在这里就撞墙，而不是
+    #: 改成一个没有任何代码读的 `false` 然后以为生效了。
+    preserve_chapter_boundaries: Literal[True] = True
+    #: 是否把 `\r\n` / `\r` 统一成 `\n` 再切行。影响分块内容，所以进配置指纹。
     normalize_newlines: bool = True
 
 
@@ -58,41 +62,35 @@ class LLMConfig(_Base):
     base_url_env: str = "NOVEL_TAVERN_BASE_URL"
     api_key_env: str = "NOVEL_TAVERN_API_KEY"
     extraction_model: str | None = None
-    synthesis_model: str | None = None
-    audit_model: str | None = None
     temperature_extract: float = Field(default=0.1, ge=0.0, le=2.0)
-    temperature_synthesis: float = Field(default=0.2, ge=0.0, le=2.0)
     request_timeout_seconds: int = Field(default=180, gt=0)
     max_retries: int = Field(default=3, ge=0)
     retry_backoff_seconds: float = Field(default=2.0, ge=0)
     max_concurrent_requests: int = Field(default=2, gt=0)
     max_output_tokens: int | None = Field(default=None, gt=0)
-    log_token_usage_when_available: bool = True
-    never_auto_switch_provider: bool = True
 
 
 class PipelineConfig(_Base):
     resume: bool = True
     cache_enabled: bool = True
     cache_dir: str = "./cache"
-    preserve_raw_responses: bool = True
-    require_source_refs_for_canon: bool = True
-    merge_low_confidence_entities: bool = False
-    drop_characters_by_default: bool = False
-    fail_on_invalid_model_json: bool = False
     quarantine_invalid_responses: bool = True
 
 
 class WorldbookConfig(_Base):
+    #: 三个常驻条目各自的开关。常驻内容每轮都进上下文，是唯一确定能省额度的地方，
+    #: 所以给用户真正的开关 —— 关掉是真的不生成那个条目。
     always_on_core_rules: bool = True
     always_on_world_overview: bool = True
     always_on_character_index: bool = True
     max_always_on_entries: int = Field(default=3, ge=0)
-    #: 常驻条目的**粗估** token 上限。常驻内容每轮都在上下文里，
-    #: 是唯一确定能省额度的地方。超了只报警告，不阻断导出 —— 粗估不足以做硬门禁。
+    #: 常驻条目的**粗估** token 上限。超了只报警告，不阻断导出 —— 粗估不足以做硬门禁。
     max_always_on_tokens: int = Field(default=2500, gt=0)
+    #: 单轮上下文的**粗估**预算上限，用于预算报告里的告警。同样是粗估，不阻断。
     target_runtime_budget_tokens: int = Field(default=5000, gt=0)
-    enable_recursive_scan: bool = False
+    #: 递归扫描本项目没有实现。写成 `Literal[False]` 而不是 `bool = False`：
+    #: 前者改不动（写 true 直接报错），后者会让用户以为自己打开了什么。
+    enable_recursive_scan: Literal[False] = False
     allow_mvu: Literal[False] = False
     allow_ejs: Literal[False] = False
     allow_html_beautification: Literal[False] = False
@@ -100,11 +98,9 @@ class WorldbookConfig(_Base):
 
 class ExportConfig(_Base):
     character_card_spec: CardSpec = "chara_card_v2"
-    include_embedded_character_book: bool = True
-    also_export_standalone_worldbook: bool = True
-    include_individual_npc_cards: bool = False
-    validate_before_export: bool = True
-    overwrite_existing_run: bool = False
+    #: 单张 NPC 卡（P2-2）尚未实现。同 `enable_recursive_scan`，用 `Literal[False]` 表达
+    #: 「这条路还没修」，而不是给一个改了也没反应的开关。
+    include_individual_npc_cards: Literal[False] = False
 
 
 class PrivacyConfig(_Base):
@@ -160,12 +156,13 @@ def config_warnings(config: Config) -> list[str]:
     warnings: list[str] = []
     if not config.llm.extraction_model:
         warnings.append("llm.extraction_model 未设置：Phase 0 不需要模型，进入 Phase 2 前必须填写。")
-    if config.export.overwrite_existing_run:
-        warnings.append("export.overwrite_existing_run=true：将允许覆盖已有 run 产物，请确认已备份。")
-    if config.worldbook.allow_mvu or config.worldbook.allow_ejs:
-        warnings.append("worldbook 中 MVU/EJS 已启用：超出 MVP 范围，需用户明确要求。")
-    if config.pipeline.drop_characters_by_default:
-        warnings.append("pipeline.drop_characters_by_default=true：与本项目「默认不丢人物」原则冲突。")
+    if not config.worldbook.always_on_core_rules:
+        warnings.append(
+            "worldbook.always_on_core_rules=false：卡里将没有「世界运行规则」条目，"
+            "模型失去时间纪律与知识边界的约束。只在你自己另配规则时才关。"
+        )
+    if config.input.formats and set(config.input.formats) - {"txt", "md"}:
+        warnings.append(f"input.formats 含未支持的后缀：{config.input.formats}")
     return warnings
 
 
@@ -183,5 +180,7 @@ def summarize(config: Config) -> dict[str, Any]:
         "llm.api_key_env": config.llm.api_key_env,
         "llm.extraction_model": config.llm.extraction_model,
         "export.character_card_spec": config.export.character_card_spec,
-        "export.include_embedded_character_book": config.export.include_embedded_character_book,
+        "worldbook.always_on_core_rules": config.worldbook.always_on_core_rules,
+        "worldbook.always_on_world_overview": config.worldbook.always_on_world_overview,
+        "worldbook.always_on_character_index": config.worldbook.always_on_character_index,
     }

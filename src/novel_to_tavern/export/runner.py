@@ -119,6 +119,7 @@ def _assemble_entries(
     upto_chapter: int | None = None,
     strict_label: str = "",
     include_plot: bool = True,
+    include_core_rules: bool = True,
 ) -> list[PlannedEntry]:
     """核心规则 + 规划条目 + 剧情主线。顺序决定插入次序。
 
@@ -128,7 +129,9 @@ def _assemble_entries(
     always_on = [e for e in plan if e.always_on]
     triggered = [e for e in plan if not e.always_on]
 
-    entries: list[PlannedEntry] = [build_core_rules_entry(strict_start=strict_label)]
+    entries: list[PlannedEntry] = []
+    if include_core_rules:
+        entries.append(build_core_rules_entry(strict_start=strict_label))
     for entry in always_on:
         if entry.entry_id != "wb_core_rules":
             entries.append(entry)
@@ -177,7 +180,9 @@ def export(
     if not digests:
         raise ExportError("抽取结果里没有章节摘要，无法生成剧情主线与开场白。")
 
-    entries = _assemble_entries(plan, digests)
+    entries = _assemble_entries(
+        plan, digests, include_core_rules=config.worldbook.always_on_core_rules
+    )
 
     try:
         greetings: Greetings = build_greetings(
@@ -385,6 +390,7 @@ def export(
             budget,
             run_dir=run_path,
             max_always_on_tokens=config.worldbook.max_always_on_tokens,
+            target_runtime_budget_tokens=config.worldbook.target_runtime_budget_tokens,
         ),
     )
 
@@ -447,7 +453,11 @@ def _export_strict(
         entities=entities, facts=facts, events=events, digests=digests, start=start
     )
     assembled = _assemble_entries(
-        plan.entries, digests, strict_label=start.chapter_label, include_plot=False
+        plan.entries,
+        digests,
+        strict_label=start.chapter_label,
+        include_plot=False,
+        include_core_rules=config.worldbook.always_on_core_rules,
     )
     greetings = build_greetings(
         book_title=book_title,
@@ -530,14 +540,24 @@ def _trigger_probes(
 
 
 def render_budget_report(
-    budget, *, run_dir: Path, max_always_on_tokens: int
+    budget,
+    *,
+    run_dir: Path,
+    max_always_on_tokens: int,
+    target_runtime_budget_tokens: int | None = None,
 ) -> str:
     lines = [
         "# 世界书触发与上下文预算体检",
         "",
         f"- run_id：`{run_dir.name}`",
         f"- 条目总数：{budget.entry_total}（常驻 {budget.always_on_entries}，触发 {budget.triggered_entries}）",
-        f"- 全部条目粗估：{budget.total_tokens} token",
+        f"- 全部条目粗估：{budget.total_tokens} token"
+        + (
+            f"（单轮预算上限 {target_runtime_budget_tokens}）"
+            f"{' —— **超出单轮预算**' if budget.total_tokens > target_runtime_budget_tokens else ''}"
+            if target_runtime_budget_tokens is not None
+            else ""
+        ),
         f"- **常驻预算**：{budget.always_on_tokens} token"
         f"（配置上限 {max_always_on_tokens}）"
         f"{' —— **超出上限**' if budget.always_on_tokens > max_always_on_tokens else ''}",

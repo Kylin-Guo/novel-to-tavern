@@ -125,22 +125,38 @@ def _append_note(note: str, extra: str) -> str:
     return f"{note}；{extra}" if note else extra
 
 
-def cache_key(*, model: str, provider: str, chunk_sha: str, temperature: float) -> str:
+def cache_key(
+    *,
+    model: str,
+    provider: str,
+    chunk_sha: str,
+    temperature: float,
+    endpoint: str = "",
+    max_output_tokens: int | None = None,
+) -> str:
     """缓存键必须包含**全部语义相关输入**。
 
     漏掉任何一项都会造成「改了东西但结果没变」这种最难查的故障：
-    模型、引擎、提示词版本、提示词模板 hash、输出 schema 版本、
-    输入 chunk 的 hash、以及 temperature。
+    引擎、**具体连到哪个 endpoint**、模型、提示词版本、提示词模板 hash、
+    输出 schema 版本、输入 chunk 的 hash、temperature、输出长度上限。
+
+    `endpoint` 这一项是补上的：`provider` 对 OpenAI 兼容引擎永远是常量
+    `"openai_compatible"`，换一家兼容服务而模型名相同时，缓存会静默命中
+    上一家的响应。归一化规则见 `llm.provider.normalize_endpoint` ——
+    它**丢掉 query 与 fragment**，因为有些服务把 key 写在查询串里，
+    而缓存文件名是会被列目录看到的。
     """
     payload = json.dumps(
         {
             "provider": provider,
+            "endpoint": endpoint,
             "model": model,
             "prompt_version": PROMPT_VERSION,
             "prompt_template_sha256": prompt_template_hash(),
             "schema_version": SCHEMA_VERSION,
             "chunk_sha256": chunk_sha,
             "temperature": temperature,
+            "max_output_tokens": max_output_tokens,
         },
         sort_keys=True,
     )
@@ -251,8 +267,10 @@ class ExtractionRunner:
         key = cache_key(
             model=model,
             provider=self.provider.name,
+            endpoint=getattr(self.provider, "endpoint_fingerprint", ""),
             chunk_sha=chunk.sha256,
             temperature=self.config.llm.temperature_extract,
+            max_output_tokens=self.config.llm.max_output_tokens,
         )
 
         problems: list[str] = []

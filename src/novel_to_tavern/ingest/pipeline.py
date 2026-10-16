@@ -46,21 +46,32 @@ def _config_fingerprint(config: config_module.Config) -> str:
         "chunk_target_chars": config.input.chunk_target_chars,
         "chunk_max_chars": config.input.chunk_max_chars,
         "preserve_chapter_boundaries": config.input.preserve_chapter_boundaries,
+        # 换行归一化会改变切行结果，所以必须进指纹；否则改了它续跑会复用旧边界。
+        "normalize_newlines": config.input.normalize_newlines,
     }
     return sha256_of(json.dumps(payload, ensure_ascii=False, sort_keys=True))
 
 
-def discover_sources(target: str | Path) -> list[Path]:
-    """目标可以是单个文件，也可以是目录（按文件名排序）。"""
+def discover_sources(target: str | Path, *, formats: list[str] | None = None) -> list[Path]:
+    """目标可以是单个文件，也可以是目录（按文件名排序）。
+
+    目录模式按 `input.formats` 筛选后缀 —— 早先这里把 `.txt` / `.md` 写死，
+    于是配置里改了 `formats` 而行为完全不变（见 docs/REVIEW_RECHECK.md P2-05）。
+    单文件模式不看后缀：用户明确指了一个文件，就按他说的读。
+    """
+    allowed = {f".{f.lower().lstrip('.')}" for f in (formats or ["txt", "md"])}
     path = Path(target)
     if path.is_file():
         return [path]
     if path.is_dir():
         found = sorted(
-            p for p in path.iterdir() if p.is_file() and p.suffix.lower() in (".txt", ".md")
+            p for p in path.iterdir() if p.is_file() and p.suffix.lower() in allowed
         )
         if not found:
-            raise IngestError(f"目录里没有 .txt/.md 文件：{path}")
+            raise IngestError(
+                f"目录里没有 {'/'.join(sorted(allowed))} 文件：{path}"
+                "（认哪些后缀由 input.formats 决定）"
+            )
         return found
     raise IngestError(f"找不到输入路径：{path}")
 
@@ -116,13 +127,21 @@ def ingest(
         run_id=run_dir.name, started_at=_now(), updated_at=_now()
     )
 
-    sources = source_paths if source_paths is not None else discover_sources(config.project.source_path)
+    sources = (
+        source_paths
+        if source_paths is not None
+        else discover_sources(config.project.source_path, formats=config.input.formats)
+    )
     processed: list[str] = []
     skipped: list[str] = []
 
     for path in sources:
         try:
-            source = read_source(path, encoding=config.input.encoding)
+            source = read_source(
+                path,
+                encoding=config.input.encoding,
+                normalize_newlines=config.input.normalize_newlines,
+            )
         except SourceReadError as exc:
             raise IngestError(str(exc)) from exc
 
@@ -238,7 +257,12 @@ def _validate_and_report(
     lines_by_source: dict[str, list[str]] = {}
 
     for record in manifest.sources:
-        source = read_source(record.path, encoding=record.encoding, source_id=record.source_id)
+        source = read_source(
+            record.path,
+            encoding=record.encoding,
+            source_id=record.source_id,
+            normalize_newlines=config.input.normalize_newlines,
+        )
         if source.sha256 != record.sha256:
             raise IngestError(
                 f"来源文件在处理后被修改：{record.path}。请重新跑一次导入。"

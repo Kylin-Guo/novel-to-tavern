@@ -521,6 +521,52 @@ def test_report_does_not_leak_source_text(tmp_path):
     assert "北风从山口压下来" not in report
 
 
+def test_endpoint_is_part_of_the_cache_key():
+    """`provider` 对兼容引擎永远是常量 —— 光靠它区分不出两家服务。"""
+    from novel_to_tavern.extract import cache_key
+
+    base = dict(model="m", provider="openai_compatible", chunk_sha="abc", temperature=0.1)
+    a = cache_key(**base, endpoint="https://a.example.com/v1")
+    b = cache_key(**base, endpoint="https://b.example.com/v1")
+    assert a != b
+    assert a == cache_key(**base, endpoint="https://a.example.com/v1")
+
+
+def test_generation_params_are_part_of_the_cache_key():
+    """影响输出的参数必须进键，否则改了它结果不变，看起来像「没生效」。"""
+    from novel_to_tavern.extract import cache_key
+
+    base = dict(model="m", provider="p", chunk_sha="abc", temperature=0.1, endpoint="e")
+    assert cache_key(**base) != cache_key(**base, max_output_tokens=512)
+
+
+def test_switching_the_precomputed_dir_does_not_reuse_the_cache(tmp_path):
+    """file 引擎的「endpoint」就是那个目录 —— 换目录必须换缓存。"""
+    from novel_to_tavern.llm import FileProvider
+
+    (tmp_path / "one").mkdir()
+    (tmp_path / "two").mkdir()
+    assert FileProvider(tmp_path / "one").endpoint_fingerprint != (
+        FileProvider(tmp_path / "two").endpoint_fingerprint
+    )
+
+
+def test_normalize_endpoint_drops_credentials_from_the_query_string():
+    """有些兼容服务把 key 放在查询串里 —— 缓存文件名会被列目录看到。"""
+    from novel_to_tavern.llm.provider import normalize_endpoint
+
+    got = normalize_endpoint("https://api.example.com/v1/?api_key=sk-should-not-appear#frag")
+    assert got == "https://api.example.com/v1"
+    assert "sk-should-not-appear" not in got
+
+
+def test_normalize_endpoint_ignores_case_and_trailing_slash():
+    from novel_to_tavern.llm.provider import normalize_endpoint
+
+    assert normalize_endpoint("HTTPS://API.Example.COM/v1/") == "https://api.example.com/v1"
+    assert normalize_endpoint("https://api.example.com/v1") == "https://api.example.com/v1"
+
+
 def test_prompt_template_hash_is_part_of_the_cache_key():
     """改提示词但忘了改版本号时，缓存必须仍然失效 —— 本项目真踩过这个坑。"""
     import json as _json

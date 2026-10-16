@@ -57,7 +57,13 @@ def _write_json(path: Path, payload) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def build(run_dir: str | Path, *, start_chapter: int | None = None) -> dict:
+def build(
+    run_dir: str | Path,
+    *,
+    start_chapter: int | None = None,
+    always_on_world_overview: bool = True,
+    always_on_character_index: bool = True,
+) -> dict:
     run_path = Path(run_dir)
     canonical = run_path / "canonical"
 
@@ -93,12 +99,16 @@ def build(run_dir: str | Path, *, start_chapter: int | None = None) -> dict:
     usable_facts = [f for f in facts if f.fact_id not in excluded]
 
     entries: list[PlannedEntry] = []
-    overview = plan_world_overview(entities, usable_facts)
-    if overview:
-        entries.append(overview)
-    index_entry = plan_character_index(entities)
-    if index_entry:
-        entries.append(index_entry)
+    # 两个常驻条目各自可关。关掉是真的不生成 —— 而不是生成后标个标记，
+    # 那等于没关（常驻内容每轮都在上下文里）。
+    if always_on_world_overview:
+        overview = plan_world_overview(entities, usable_facts)
+        if overview:
+            entries.append(overview)
+    if always_on_character_index:
+        index_entry = plan_character_index(entities)
+        if index_entry:
+            entries.append(index_entry)
     entries.extend(
         plan_entity_entries(entities, usable_facts, excluded_fact_ids=excluded)
     )

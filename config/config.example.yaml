@@ -1,70 +1,65 @@
+# novel-to-tavern 配置示例。
+#
+# 规则：**只写会被读取的键**。未知键直接报错（config.py 用 extra="forbid"），
+# 这是有意的 —— 一个改了却没有任何反应的开关，比没有这个开关更误导人。
+# 每个键的「定义 → 消费 → 测试」对应关系见 docs/CONFIG_REFERENCE.md。
+#
+# 唯一一类例外是单值 `Literal` 字段（`preserve_chapter_boundaries` /
+# `enable_recursive_scan` / `include_individual_npc_cards` / `allow_*`）：
+# 它们只能取一个值，是「这条路还没修 / 这是不变量」的声明，不是开关。
+
 project:
   name: novel-to-tavern
   source_path: ./input/novel.txt
   output_root: ./runs
-  default_start_chapter: null
   mode: branch_start # canon_start | branch_start | freeform_start
 
 input:
-  formats: [txt, md]
+  formats: [txt, md] # 目录导入时认哪些后缀（真的会用来筛文件）
   encoding: utf-8
   chapter_detection: auto # auto | regex | manual
   chapter_heading_regex: null
   chunk_target_chars: 10000
   chunk_max_chars: 16000
-  preserve_chapter_boundaries: true
-  normalize_newlines: true
+  preserve_chapter_boundaries: true # 不变量：章节边界永远是分块边界，只能为 true
+  normalize_newlines: true # 把 \r\n / \r 统一成 \n 再切行；影响切分，进配置指纹
 
 llm:
   provider: openai_compatible # openai_compatible | file（file = 读预生成响应，离线跑通管线）
   precomputed_responses_dir: null # provider=file 时必填，按 <chunk_id>.json 命名
   base_url_env: NOVEL_TAVERN_BASE_URL
   api_key_env: NOVEL_TAVERN_API_KEY
-  extraction_model: null # required: set to a model available in your free API tier
-  synthesis_model: null  # default to extraction_model until testing justifies a second model
-  audit_model: null      # optional; do not configure unless required
+  extraction_model: null # 必填：填你能用的模型名
   temperature_extract: 0.1
-  temperature_synthesis: 0.2
   request_timeout_seconds: 180
   max_retries: 3
   retry_backoff_seconds: 2
   max_concurrent_requests: 2
   max_output_tokens: null
-  log_token_usage_when_available: true
-  never_auto_switch_provider: true
 
 pipeline:
   resume: true
   cache_enabled: true
   cache_dir: ./cache
-  preserve_raw_responses: true
-  require_source_refs_for_canon: true
-  merge_low_confidence_entities: false
-  drop_characters_by_default: false
-  fail_on_invalid_model_json: false # false means retry then quarantine, never silently accept
-  quarantine_invalid_responses: true
+  quarantine_invalid_responses: true # 非法响应隔离到 extraction/_errors/ 并写原因
 
 worldbook:
-  always_on_core_rules: true
+  always_on_core_rules: true # 关掉 = 卡里没有「世界运行规则」条目（会失去时间纪律约束）
   always_on_world_overview: true
   always_on_character_index: true
   max_always_on_entries: 3
   max_always_on_tokens: 2500 # 常驻条目粗估上限；超了只报警告，不阻断导出
-  target_runtime_budget_tokens: 5000 # planning estimate; not a guaranteed client token count
-  enable_recursive_scan: false
-  allow_mvu: false
-  allow_ejs: false
-  allow_html_beautification: false
+  target_runtime_budget_tokens: 5000 # 单轮上下文粗估预算；超了在预算报告里告警
+  enable_recursive_scan: false # 未实现。只能为 false —— 写 true 会被配置校验拒绝
+  allow_mvu: false # 未实现。只能为 false
+  allow_ejs: false # 未实现。只能为 false
+  allow_html_beautification: false # 未实现。只能为 false
 
 export:
   character_card_spec: chara_card_v2
-  include_embedded_character_book: true
-  also_export_standalone_worldbook: true
-  include_individual_npc_cards: false
-  validate_before_export: true
-  overwrite_existing_run: false
+  include_individual_npc_cards: false # 未实现（P2-2）。只能为 false
 
 privacy:
-  never_log_api_keys: true
-  never_include_api_keys_in_exports: true
-  do_not_upload_novel_without_explicit_user_action: true
+  never_log_api_keys: true # 不变量，只能为 true
+  never_include_api_keys_in_exports: true # 不变量，只能为 true
+  do_not_upload_novel_without_explicit_user_action: true # 不变量，只能为 true

@@ -14,6 +14,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
+from urllib.parse import urlsplit
 
 from .client import LLMError, OpenAIChatClient
 
@@ -34,8 +35,29 @@ class Completion:
     finish_reason: str | None = None
 
 
+def normalize_endpoint(base_url: str) -> str:
+    """把 base_url 归一成一个**不含凭据**的指纹串。
+
+    为什么需要它：`provider.name` 对 OpenAI 兼容引擎永远是常量
+    `"openai_compatible"`。换一家兼容服务、模型名又恰好相同时，缓存会命中
+    上一家的响应 —— 而且命中是静默的，看起来就像「改了配置但结果没变」。
+
+    归一化规则：小写 scheme/host，去掉末尾 `/`，**丢掉 query 与 fragment**。
+    丢掉 query 是因为有些服务把 key 放在查询串里 —— 那绝不能进缓存键，
+    缓存文件名是会被列目录看到的。
+    """
+    parsed = urlsplit(base_url.strip())
+    if not parsed.scheme or not parsed.netloc:
+        # 不是完整 URL（例如用户只写了主机名）：只做大小写与斜杠归一。
+        return base_url.strip().rstrip("/").lower()
+    path = parsed.path.rstrip("/")
+    return f"{parsed.scheme.lower()}://{parsed.netloc.lower()}{path}"
+
+
 class Provider(Protocol):
     name: str
+    #: 这个引擎**具体连到哪里**。缓存键必须包含它，否则换 endpoint 会静默复用旧结果。
+    endpoint_fingerprint: str
 
     def complete(self, *, chunk_id: str, system_prompt: str, user_prompt: str) -> Completion: ...
 
@@ -53,6 +75,8 @@ class FileProvider:
         self.root = Path(root)
         if not self.root.is_dir():
             raise ProviderError(f"file provider 的响应目录不存在：{self.root}")
+        # 换一个预生成目录就是换了一份数据源，缓存必须跟着失效。
+        self.endpoint_fingerprint = f"file:{self.root.resolve()}"
 
     def _path_for(self, chunk_id: str) -> Path:
         return self.root / f"{chunk_id}.json"
@@ -99,6 +123,7 @@ class OpenAICompatibleProvider:
         self.model = model
         self.temperature = temperature
         self.max_output_tokens = max_output_tokens
+        self.endpoint_fingerprint = normalize_endpoint(base_url)
         self._client = OpenAIChatClient(
             base_url=base_url,
             api_key=api_key,
