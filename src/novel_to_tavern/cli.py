@@ -75,6 +75,14 @@ def build_parser() -> argparse.ArgumentParser:
         "export", help="导出角色卡与世界书（Phase 5）"
     )
     export_parser.add_argument("--run-id", required=True, help="要导出的 run id")
+    export_parser.add_argument(
+        "--start-chapter",
+        type=int,
+        metavar="N",
+        help="额外产出一套严格起始点产物（1 起的章节号）："
+        "第 N 章之后的内容不写入任何条目，做到结构性无剧透。"
+        "不指定则只产出默认的「尽力而为」档。",
+    )
 
     return parser
 
@@ -330,8 +338,9 @@ def _cmd_export(args: argparse.Namespace, log) -> int:
         print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
         return 1
 
+    start_chapter = args.start_chapter - 1 if args.start_chapter else None
     try:
-        result = export(run_dir, config)
+        result = export(run_dir, config, start_chapter=start_chapter)
     except ExportError as exc:
         print(f"导出失败：{exc}", file=sys.stderr)
         return 1
@@ -343,6 +352,21 @@ def _cmd_export(args: argparse.Namespace, log) -> int:
     print(f"常驻条目：{stats['always_on_entries']}（约 {stats['always_on_tokens']} token，粗估）")
     print(f"开场白：1 个主开场 + {len(card.data.alternate_greetings)} 个备用开场")
     print(f"按起始点屏蔽：{len(result['blocked_begin'])} 个条目")
+
+    strict = result.get("strict")
+    if strict:
+        plan = strict["plan"]
+        state = strict["state"]
+        print()
+        print(f"严格起始点：{state.start_chapter_label}（结构性无剧透）")
+        print(f"  角色卡：{run_dir / 'exports' / strict['files'][0]}")
+        print(f"  世界书：{run_dir / 'exports' / strict['files'][1]}")
+        print(f"  状态快照：{run_dir / 'exports' / strict['files'][2]}")
+        print(
+            f"  canon 事实：采用 {plan.facts_included}，隐藏 {plan.facts_excluded}"
+            f"；条目删 {state.entries_dropped} / 截断 {state.entries_truncated}"
+        )
+
     print(f"审计报告：{run_dir / 'reports' / 'audit.md'}")
     log.info("export 完成：%d 个条目", len(card.data.character_book.entries))
     return 0

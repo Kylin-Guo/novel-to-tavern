@@ -23,6 +23,7 @@ from novel_to_tavern.export import (
     export,
     plan_to_drafts,
 )
+from novel_to_tavern.extract.schema import EventRecord, FactRecord, RelationRecord, SourceRef
 from novel_to_tavern.resolve import CanonicalEntity
 from novel_to_tavern.tavern import CardV2, validate_card, validate_parity
 from novel_to_tavern.tavern.wi_standalone import WorldbookFile
@@ -234,12 +235,66 @@ def _prepare_run(tmp_path: Path, chapters: int = 6) -> Path:
             encoding="utf-8",
         )
 
+    # id 必须互不相同：条目 id 由实体 id 派生，撞 id 会让后面的条目顶掉前面的。
+    entities = [_entity("ent_0000", "甲")]
+    for i in range(1, chapters):
+        entities.append(
+            CanonicalEntity(
+                id=f"ent_{i:04d}",
+                kind="character",
+                canonical_name=f"角色{i}",
+                appearance_chapters=[i],
+                first_appearance_chapter=i,
+                evidence_count=5,
+                importance=0.5,
+            )
+        )
     (run / "canonical" / "entities.json").write_text(
-        json.dumps([_entity("ent_0001", "甲").model_dump(mode="json")], ensure_ascii=False),
+        json.dumps([e.model_dump(mode="json") for e in entities], ensure_ascii=False),
         encoding="utf-8",
     )
     (run / "canonical" / "timeline.json").write_text(
         json.dumps([e.model_dump(mode="json") for e in _timeline(chapters)], ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    # 严格起始点路径要用的逐条事实：每章两条，取值里带该章独有的标记串。
+    facts = []
+    for i in range(chapters):
+        name = "甲" if i == 0 else f"角色{i}"
+        for suffix, predicate in (("a", "state"), ("b", "background")):
+            facts.append(
+                FactRecord(
+                    fact_id=f"f{i}_{suffix}", chunk_id=f"ch{i:04d}_p000", source_id="s",
+                    chapter_id=f"c{i}", chapter_index=i, subject=name, predicate=predicate,
+                    value=f"{_marker(i)}的{predicate}", fact_type="canon_fact",
+                    source_refs=[SourceRef(source_id="s", chapter_id=f"c{i}", start_line=1, end_line=2, quote="q")],
+                )
+            )
+    (run / "canonical" / "facts.json").write_text(
+        json.dumps([f.model_dump(mode="json") for f in facts], ensure_ascii=False), encoding="utf-8"
+    )
+    (run / "canonical" / "events.json").write_text(
+        json.dumps([
+            EventRecord(
+                event_id=f"ev{i}", chunk_id=f"ch{i:04d}_p000", source_id="s", chapter_id=f"c{i}",
+                chapter_index=i, order_in_chapter=0, title=f"事件{i + 1}",
+                summary=f"{_marker(i)}发生的事", fact_type="canon_fact",
+                source_refs=[SourceRef(source_id="s", chapter_id=f"c{i}", start_line=1, end_line=2, quote="q")],
+            ).model_dump(mode="json")
+            for i in range(chapters)
+        ], ensure_ascii=False),
+        encoding="utf-8",
+    )
+    (run / "canonical" / "relations.json").write_text(
+        json.dumps([
+            RelationRecord(
+                relation_id=f"r{i}", chunk_id=f"ch{i:04d}_p000", source_id="s", chapter_id=f"c{i}",
+                chapter_index=i, from_entity="甲", to_entity="甲", relation="自己",
+                source_refs=[SourceRef(source_id="s", chapter_id=f"c{i}", start_line=1, end_line=2, quote="q")],
+            ).model_dump(mode="json")
+            for i in range(chapters)
+        ], ensure_ascii=False),
         encoding="utf-8",
     )
     (run / "worldbook" / "plan.json").write_text(
@@ -247,6 +302,11 @@ def _prepare_run(tmp_path: Path, chapters: int = 6) -> Path:
         encoding="utf-8",
     )
     return run
+
+
+def _marker(chapter: int) -> str:
+    """每章独有的标记串 —— 严格档的对抗性断言靠它。"""
+    return f"〈第{chapter + 1}章独有ZZ{chapter}ZZ〉"
 
 
 def test_export_writes_all_artifacts(tmp_path):
@@ -336,3 +396,127 @@ def test_plan_to_drafts_orders_entries_deterministically():
     drafts = plan_to_drafts(_plan(3))
     assert [d.entry_id for d in drafts] == [e.entry_id for e in _plan(3)]
     assert [d.insertion_order for d in drafts] == sorted(d.insertion_order for d in drafts)
+
+
+# --- 严格起始点（端到端） --------------------------------------------------
+
+
+def _all_entry_text(path: Path) -> str:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    entries = raw["data"]["character_book"]["entries"]
+    return "\n".join(e.get("content") or "" for e in entries) + "\n" + json.dumps(
+        raw["data"].get("first_mes", ""), ensure_ascii=False
+    )
+
+
+def test_strict_export_writes_its_own_artifacts(tmp_path):
+    run = _prepare_run(tmp_path)
+    result = export(run, config_module.Config(), start_chapter=1)
+    assert result["strict"] is not None
+    for name in result["strict"]["files"]:
+        assert (run / "exports" / name).is_file(), name
+    assert result["strict"]["files"][0] == "card_start_chapter_2.json"
+
+
+def test_strict_card_contains_no_marker_from_later_chapters(tmp_path):
+    """核心断言：起点之后的内容**不在文件里**，不是「在但标明别看」。"""
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config(), start_chapter=1)
+    text = _all_entry_text(run / "exports" / "card_start_chapter_2.json")
+    for later in range(2, 6):
+        assert _marker(later) not in text, f"第 {later + 1} 章的内容泄漏进严格档卡片"
+    assert _marker(0) in text and _marker(1) in text
+
+
+def test_strict_card_carries_fewer_entity_entries_than_the_full_view(tmp_path):
+    """严格档的「变小」体现在实体条目数与剧情长度上，不是整卡字符数
+    —— 核心规则与开场白无论哪一档都在。"""
+    from novel_to_tavern.timeline.worldbible import plan_entity_entries
+    from novel_to_tavern.extract.schema import FactRecord
+    from novel_to_tavern.resolve import CanonicalEntity
+
+    run = _prepare_run(tmp_path)
+    entities = [CanonicalEntity.model_validate(e) for e in json.loads(
+        (run / "canonical" / "entities.json").read_text(encoding="utf-8"))]
+    facts = [FactRecord.model_validate(f) for f in json.loads(
+        (run / "canonical" / "facts.json").read_text(encoding="utf-8"))]
+
+    full = plan_entity_entries(entities, facts)
+    cut = plan_entity_entries(entities, facts, start_chapter=1)
+    assert 0 < len(cut) < len(full)
+    assert {e.title for e in cut} == {"甲", "角色1"}
+
+    full_plot = build_plot_entry(_digests(6))
+    cut_plot = build_plot_entry(_digests(6), upto_chapter=1)
+    assert len(cut_plot.content_runtime) < len(full_plot.content_runtime)
+
+
+def test_strict_card_offers_no_alternate_start_points(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config(), start_chapter=1)
+    raw = json.loads((run / "exports" / "card_start_chapter_2.json").read_text(encoding="utf-8"))
+    assert raw["data"].get("alternate_greetings") in (None, [])
+    assert "从故事的最终结尾之后开始" not in raw["data"]["first_mes"]
+
+
+def test_strict_card_is_structurally_valid(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config(), start_chapter=1)
+    card = CardV2.model_validate(
+        json.loads((run / "exports" / "card_start_chapter_2.json").read_text(encoding="utf-8"))
+    )
+    assert validate_card(card, strict=True).ok
+
+
+def test_strict_start_state_records_what_is_hidden(tmp_path):
+    run = _prepare_run(tmp_path)
+    result = export(run, config_module.Config(), start_chapter=1)
+    state = result["strict"]["state"]
+    assert state.facts_included == 4  # 第 1–2 章各 2 条
+    assert state.facts_excluded == 8
+    assert set(state.active_fact_ids).isdisjoint(state.hidden_fact_ids)
+    assert state.strict is True
+
+
+def test_strict_manifest_states_the_guarantee(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config(), start_chapter=1)
+    manifest = json.loads((run / "exports" / "export_manifest.json").read_text(encoding="utf-8"))
+    block = manifest["strict_start_point"]
+    assert block["enabled"] is True
+    assert block["facts_excluded"] == 8
+    assert "结构性" in block["guarantee"]
+    for name in block["files"]:
+        assert name in manifest["outputs"]
+
+
+def test_default_export_declares_strict_disabled(tmp_path):
+    """没指定起始点时必须如实标注「尽力而为」，不能默认写成有保证。"""
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    manifest = json.loads((run / "exports" / "export_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["strict_start_point"]["enabled"] is False
+    assert "尽力而为" in manifest["strict_start_point"]["note"]
+
+
+def test_strict_audit_reports_dropped_and_truncated(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config(), start_chapter=1)
+    audit = (run / "reports" / "audit.md").read_text(encoding="utf-8")
+    assert "严格起始点产物（结构性无剧透）" in audit
+    assert "删了什么" in audit
+    assert "被整条删去的条目" in audit
+
+
+def test_out_of_range_start_chapter_is_refused(tmp_path):
+    run = _prepare_run(tmp_path, chapters=6)
+    with pytest.raises(ExportError, match="起始点无效"):
+        export(run, config_module.Config(), start_chapter=99)
+
+
+def test_strict_export_is_deterministic(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config(), start_chapter=2)
+    first = (run / "exports" / "card_start_chapter_3.json").read_text(encoding="utf-8")
+    export(run, config_module.Config(), start_chapter=2)
+    assert (run / "exports" / "card_start_chapter_3.json").read_text(encoding="utf-8") == first

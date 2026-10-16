@@ -135,10 +135,16 @@ def test_test_fixture_is_self_authored_and_tiny():
 # --- 内容扫描 --------------------------------------------------------------
 
 
+#: 本文件自己定义了这些标记串，扫描时要跳过，否则永远自报。
+_SELF = "tests/test_repo_hygiene.py"
+
+
 def test_no_internal_markers_in_tracked_files(tracked):
     """公司域名、内网主机名、本机绝对路径都不得出现在公开仓库里。"""
     offenders: list[str] = []
     for rel in tracked:
+        if rel == _SELF:
+            continue
         path = REPO_ROOT / rel
         if not path.is_file() or path.stat().st_size > 2_000_000:
             continue

@@ -104,12 +104,52 @@ def estimate_tokens(text: str) -> int:
     return cjk + (other + 3) // 4
 
 
+def _reject_duplicate_entity_ids(entities: list[CanonicalEntity]) -> None:
+    """实体 id 必须唯一。
+
+    这里挡的是一个**静默**故障：条目 id 由 `entity.id` 派生、事实也按 `entity.id`
+    归集，所以两个实体撞 id 时，后者的事实会顶掉前者的 —— 而卡片结构完全合法，
+    校验也通不过任何一项。宁可在这里报错，也不要产出一张看起来正常的错卡。
+    """
+    seen: dict[str, str] = {}
+    duplicates: list[str] = []
+    for entity in entities:
+        if entity.id in seen:
+            duplicates.append(f"{entity.id}（{seen[entity.id]!r} 与 {entity.canonical_name!r}）")
+        else:
+            seen[entity.id] = entity.canonical_name
+    if duplicates:
+        raise ValueError(
+            "实体 id 重复，事实会互相顶掉：" + "；".join(duplicates[:5])
+        )
+
+
+def facts_upto_chapter(
+    facts: list[FactRecord], start_chapter: int | None
+) -> list[FactRecord]:
+    """截到第 `start_chapter` 章（含）为止的事实。
+
+    `None` 表示不过滤。这是**严格起始点导出**的核心：起点之后的内容
+    不进入条目正文，而不是进了正文再叫模型别看。
+    """
+    if start_chapter is None:
+        return facts
+    return [f for f in facts if f.chapter_index <= start_chapter]
+
+
 def _facts_by_entity(
-    entities: list[CanonicalEntity], facts: list[FactRecord]
+    entities: list[CanonicalEntity],
+    facts: list[FactRecord],
+    *,
+    start_chapter: int | None = None,
 ) -> dict[str, list[FactRecord]]:
-    """`{entity.id: [该实体的已校验 canon 事实]}`。"""
+    """`{entity.id: [该实体的已校验 canon 事实]}`。
+
+    `start_chapter` 非空时只收该章节及之前的 fact —— 严格起始点用。
+    """
+    _reject_duplicate_entity_ids(entities)
     by_subject: dict[str, list[FactRecord]] = defaultdict(list)
-    for fact in facts:
+    for fact in facts_upto_chapter(facts, start_chapter):
         if fact.review_status != "accepted" or fact.fact_type != "canon_fact":
             continue
         by_subject[fact.subject].append(fact)
@@ -140,18 +180,38 @@ def entry_qualification(entity: CanonicalEntity, own_facts: list[FactRecord]) ->
 
 
 def entities_skipped_from_worldbook(
-    entities: list[CanonicalEntity], facts: list[FactRecord]
+    entities: list[CanonicalEntity],
+    facts: list[FactRecord],
+    *,
+    start_chapter: int | None = None,
 ) -> list[tuple[CanonicalEntity, str]]:
     """不该单开世界书条目的实体及原因。
 
     这些实体仍保留在 canonical 数据里（来源可追溯），只是不进世界书。
     名单会写进报告，不是静默丢弃。
+
+    `start_chapter` 非空时按该章节截断事实再判定 —— 严格起始点下
+    「后面才有了事实」的实体此刻确实写不出内容，与「抽取漏了」不是一回事，
+    所以原因里会写清楚。
     """
-    by_entity = _facts_by_entity(entities, facts)
+    by_entity = _facts_by_entity(entities, facts, start_chapter=start_chapter)
+    full_counts: dict[str, int] = {}
+    if start_chapter is not None:
+        full_counts = {
+            key: len(value) for key, value in _facts_by_entity(entities, facts).items()
+        }
+
     result: list[tuple[CanonicalEntity, str]] = []
     for entity in entities:
-        ok, reason = entry_qualification(entity, by_entity.get(entity.id, []))
+        own = by_entity.get(entity.id, [])
+        ok, reason = entry_qualification(entity, own)
         if not ok:
+            total = full_counts.get(entity.id, len(own))
+            if start_chapter is not None and total > len(own):
+                reason = (
+                    f"起始点之前只有 {len(own)} 条事实（全书共 {total} 条）"
+                    "—— 严格起始点下此刻内容不足，不是抽取遗漏"
+                )
             result.append((entity, reason))
     return result
 
@@ -265,8 +325,11 @@ def plan_entity_entries(
     被跳过的名单由 `entities_without_facts` 给出并写进报告，不是静默丢弃。
 
     有事实的实体**不按体量裁剪**，重要性只体现在 `priority` 上。
+
+    `start_chapter` 非空时只使用该章节及之前的事实 —— **严格起始点导出**。
+    这不是加一句「别看后面」，而是后面的事实根本不出现在条目正文里。
     """
-    by_entity = _facts_by_entity(entities, facts)
+    by_entity = _facts_by_entity(entities, facts, start_chapter=start_chapter)
 
     entries: list[PlannedEntry] = []
     for entity in sorted(entities, key=lambda e: (-e.evidence_count, e.canonical_name)):
@@ -312,9 +375,22 @@ def plan_entity_entries(
     return entries
 
 
-def plan_character_index(entities: list[CanonicalEntity]) -> PlannedEntry | None:
-    """常驻的紧凑人物索引，让模型知道世界里有谁。"""
+def plan_character_index(
+    entities: list[CanonicalEntity], *, start_chapter: int | None = None
+) -> PlannedEntry | None:
+    """常驻的紧凑人物索引，让模型知道世界里有谁。
+
+    `start_chapter` 非空时只列**在该章节之前已经出场**的人物。
+    严格起始点下把还没登场的人列进索引本身就是剧透（名字本身就是信息）。
+    """
     characters = [e for e in entities if e.kind == "character"]
+    if start_chapter is not None:
+        characters = [
+            e
+            for e in characters
+            if e.first_appearance_chapter is not None
+            and e.first_appearance_chapter <= start_chapter
+        ]
     if not characters:
         return None
     characters.sort(key=lambda e: (-e.evidence_count, e.canonical_name))
@@ -341,15 +417,21 @@ def plan_character_index(entities: list[CanonicalEntity]) -> PlannedEntry | None
 
 
 def plan_world_overview(
-    entities: list[CanonicalEntity], facts: list[FactRecord]
+    entities: list[CanonicalEntity],
+    facts: list[FactRecord],
+    *,
+    start_chapter: int | None = None,
 ) -> PlannedEntry | None:
     """常驻的世界概况。
 
     这才是「概括这个世界」的地方：按势力/地点/核心设定分组，每组挑几个最有
     证据的实体各配**一句**来自原著的说明，其余只列名字。
     早先的实现只输出「地点：A、B、C」这种名字清单，信息量接近零。
+
+    `start_chapter` 非空时说明句只从该章节之前的事实里挑 ——
+    否则「世界概况」会用后面的设定介绍一个此刻还不存在的东西。
     """
-    by_entity = _facts_by_entity(entities, facts)
+    by_entity = _facts_by_entity(entities, facts, start_chapter=start_chapter)
     sections: list[tuple[str, str]] = [
         ("faction", "势力"),
         ("place", "地点"),

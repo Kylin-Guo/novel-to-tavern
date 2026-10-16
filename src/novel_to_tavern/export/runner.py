@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .. import __version__, config as config_module
-from ..extract.schema import SourceRef
+from ..extract.schema import EventRecord, FactRecord, RelationRecord, SourceRef
 from ..resolve.entities import CanonicalEntity
 from ..tavern import (
     CardV2,
@@ -34,6 +34,7 @@ from .builder import (
     build_exports,
     build_greetings,
     build_plot_entry,
+    chapter_label,
 )
 
 CARD_NAME = "world_simulator_v2.json"
@@ -43,6 +44,11 @@ WORLDBOOK_AFTER_END = "worldbook_start_after_ending.json"
 TIMELINE_NAME = "timeline.json"
 MANIFEST_NAME = "export_manifest.json"
 AUDIT_NAME = "audit.md"
+
+#: 严格起始点卡与它的世界书、状态快照。`{n}` 是 1 基章节号。
+STRICT_CARD_TMPL = "card_start_chapter_{n}.json"
+STRICT_BOOK_TMPL = "worldbook_start_chapter_{n}.json"
+START_STATE_TMPL = "start_state_chapter_{n}.json"
 
 
 class ExportError(RuntimeError):
@@ -104,25 +110,45 @@ def _collect_digests(run_dir: Path) -> list[ChapterDigest]:
 
 
 def _assemble_entries(
-    plan: list[PlannedEntry], digests: list[ChapterDigest]
+    plan: list[PlannedEntry],
+    digests: list[ChapterDigest],
+    *,
+    upto_chapter: int | None = None,
+    strict_label: str = "",
+    include_plot: bool = True,
 ) -> list[PlannedEntry]:
-    """核心规则 + 规划条目 + 剧情主线。顺序决定插入次序。"""
+    """核心规则 + 规划条目 + 剧情主线。顺序决定插入次序。
+
+    `include_plot=False` 用于严格起始点路径 —— 那里剧情主线已经由
+    `startpoint.plan_strict` 放进 `plan` 里了，不能重复添加。
+    """
     always_on = [e for e in plan if e.always_on]
     triggered = [e for e in plan if not e.always_on]
 
-    entries: list[PlannedEntry] = [build_core_rules_entry()]
+    entries: list[PlannedEntry] = [build_core_rules_entry(strict_start=strict_label)]
     for entry in always_on:
         if entry.entry_id != "wb_core_rules":
             entries.append(entry)
 
-    plot = build_plot_entry(digests)
-    if plot is not None:
-        entries.append(plot)
+    if include_plot:
+        plot = build_plot_entry(digests, upto_chapter=upto_chapter)
+        if plot is not None:
+            entries.append(plot)
     entries.extend(triggered)
     return entries
 
 
-def export(run_dir: str | Path, config: config_module.Config) -> dict:
+def export(
+    run_dir: str | Path,
+    config: config_module.Config,
+    *,
+    start_chapter: int | None = None,
+) -> dict:
+    """导出。
+
+    `start_chapter`（**0 基**）非空时，除了默认产物，还会另外产出**严格起始点**的一整套：
+    起点之后的事实不进任何条目正文。默认产物不受影响。
+    """
     run_path = Path(run_dir)
     exports_dir = run_path / "exports"
     reports_dir = run_path / "reports"
@@ -200,6 +226,33 @@ def export(run_dir: str | Path, config: config_module.Config) -> dict:
         version=__version__,
     )
 
+    # --- 严格起始点（可选）：起点之后的内容不进文件 ---
+    strict_result: dict | None = None
+    if start_chapter is not None:
+        # 只有严格档需要逐条事实/事件/关系 —— 默认档不必因为这些文件缺失而失败。
+        strict_result = _export_strict(
+            run_path=run_path,
+            exports_dir=exports_dir,
+            config=config,
+            book_title=book_title,
+            start_chapter=start_chapter,
+            digests=digests,
+            entities=entities,
+            facts=[
+                FactRecord.model_validate(item)
+                for item in _read_json(run_path / "canonical" / "facts.json")
+            ],
+            events=[
+                EventRecord.model_validate(item)
+                for item in _read_json(run_path / "canonical" / "events.json")
+            ],
+            relations=[
+                RelationRecord.model_validate(item)
+                for item in _read_json(run_path / "canonical" / "relations.json")
+            ],
+            timeline=timeline,
+        )
+
     # --- 落盘 ---
     _write_text(exports_dir / CARD_NAME, card_text + "\n")
     _write_text(exports_dir / WORLDBOOK_NAME, book_text + "\n")
@@ -251,6 +304,29 @@ def export(run_dir: str | Path, config: config_module.Config) -> dict:
         },
         "note": "不包含任何 API 凭据。token 为粗估，非具体分词器计数。",
     }
+
+    if strict_result is not None:
+        strict_plan = strict_result["plan"]
+        strict_state = strict_result["state"]
+        export_manifest["strict_start_point"] = {
+            "enabled": True,
+            "chapter_index": strict_state.start_chapter_index,
+            "chapter_label": strict_state.start_chapter_label,
+            "guarantee": "起始点之后的事实不写入任何条目正文（结构性，非提示词约束）",
+            "facts_included": strict_plan.facts_included,
+            "facts_excluded": strict_plan.facts_excluded,
+            "events_included": strict_plan.events_included,
+            "events_excluded": strict_plan.events_total - strict_plan.events_included,
+            "entries_dropped": strict_state.entries_dropped,
+            "entries_truncated": strict_state.entries_truncated,
+            "files": strict_result["files"],
+        }
+        export_manifest["outputs"].extend(strict_result["files"])
+    else:
+        export_manifest["strict_start_point"] = {
+            "enabled": False,
+            "note": "未指定 --start-chapter。主卡为「尽力而为」档，见 README 的剧透防护说明。",
+        }
     _write_text(
         exports_dir / MANIFEST_NAME,
         json.dumps(export_manifest, ensure_ascii=False, indent=2) + "\n",
@@ -272,6 +348,7 @@ def export(run_dir: str | Path, config: config_module.Config) -> dict:
         digests=digests,
         timeline=timeline,
         entities=entities,
+        strict_result=strict_result,
     )
     _write_text(reports_dir / AUDIT_NAME, audit)
 
@@ -283,6 +360,116 @@ def export(run_dir: str | Path, config: config_module.Config) -> dict:
         "stats": stats,
         "manifest": export_manifest,
         "greetings": greetings,
+        "strict": strict_result,
+    }
+
+
+def _export_strict(
+    *,
+    run_path: Path,
+    exports_dir: Path,
+    config: config_module.Config,
+    book_title: str,
+    start_chapter: int,
+    digests: list[ChapterDigest],
+    entities: list[CanonicalEntity],
+    facts: list[FactRecord],
+    events: list[EventRecord],
+    relations: list[RelationRecord],
+    timeline: list[TimelineEvent],
+) -> dict:
+    """产出一整套**严格起始点**产物。
+
+    与默认卡的区别只有一条，但是关键的一条：**起始点之后的事实不写进条目正文**。
+    模型读不到不存在的东西 —— 这是结构性保证，不是提示词要求。
+    """
+    from .startpoint import (
+        build_start_state,
+        load_knowledge,
+        plan_strict,
+        resolve_start_point,
+        write_start_state,
+    )
+
+    label = f"第 {start_chapter + 1} 章"
+    for digest in digests:
+        if digest.chapter_index == start_chapter:
+            label = chapter_label(digest.chapter_index, digest.title)
+            break
+
+    try:
+        start = resolve_start_point(
+            mode="chapter",
+            chapter_index=start_chapter,
+            digests_chapters=[d.chapter_index for d in digests],
+            chapter_label=label,
+        )
+    except ValueError as exc:
+        raise ExportError(f"起始点无效：{exc}") from exc
+
+    plan = plan_strict(
+        entities=entities, facts=facts, events=events, digests=digests, start=start
+    )
+    assembled = _assemble_entries(
+        plan.entries, digests, strict_label=start.chapter_label, include_plot=False
+    )
+    greetings = build_greetings(
+        book_title=book_title,
+        digests=digests,
+        entities=entities,
+        timeline=timeline,
+        strict_label=start.chapter_label,
+        strict_chapter_index=start_chapter,
+    )
+    card, worldbook = build_exports(
+        book_title=f"{book_title}（{start.chapter_label} 起）",
+        entries=assembled,
+        greetings=greetings,
+        tags=["世界模拟器", "严格起始点", start.chapter_label],
+        version=__version__,
+    )
+
+    card_report = validate_card(
+        card, strict=True, max_always_on=config.worldbook.max_always_on_entries
+    )
+    book_report = validate_worldbook(worldbook, strict=True)
+    parity_report = validate_parity(card, worldbook)
+    problems = [*card_report.errors, *book_report.errors, *parity_report.errors]
+    if problems:
+        raise ExportError("严格起始点导出校验未通过：\n  - " + "\n  - ".join(problems))
+
+    card_text = dumps(card)
+    book_text = dumps(worldbook, exclude_none=False)
+    if not validate_no_secrets(card_text + book_text).ok:
+        raise ExportError("严格起始点产物中检出疑似密钥，已中止。")
+
+    state = build_start_state(
+        start=start,
+        plan=plan,
+        facts=facts,
+        events=events,
+        relations=relations,
+        knowledge=load_knowledge(run_path),
+    )
+
+    n = start_chapter + 1
+    card_name = STRICT_CARD_TMPL.format(n=n)
+    book_name = STRICT_BOOK_TMPL.format(n=n)
+    state_name = START_STATE_TMPL.format(n=n)
+    _write_text(exports_dir / card_name, card_text + "\n")
+    _write_text(exports_dir / book_name, book_text + "\n")
+    write_start_state(exports_dir / state_name, state)
+
+    stats = summarize_plan(assembled)
+    return {
+        "start": start,
+        "plan": plan,
+        "state": state,
+        "card": card,
+        "worldbook": worldbook,
+        "stats": stats,
+        "files": [card_name, book_name, state_name],
+        "card_report": card_report,
     }
 
 
@@ -316,6 +503,7 @@ def _render_audit(
     digests: list[ChapterDigest],
     timeline: list[TimelineEvent],
     entities: list[CanonicalEntity],
+    strict_result: dict | None = None,
 ) -> str:
     from ..timeline.worldbible import estimate_tokens
 
@@ -384,6 +572,58 @@ def _render_audit(
         "两个起点都能选：卡片的开场白会先让用户挑一个，"
         "并额外提供两条 alternate_greetings 直接进入对应场景。",
         "",
+        "> ⚠️ **这一档是「尽力而为」，不是硬保证。** 人物与地点条目聚合了全书事实，"
+        "剧情主线条目也在卡里（触发式）。剧透防护靠的是核心规则的时间纪律，"
+        "不是访问控制。要硬保证请用下面的严格起始点产物。",
+        "",
+    ]
+
+    if strict_result is not None:
+        sp = strict_result["plan"]
+        state = strict_result["state"]
+        files = strict_result["files"]
+        lines += [
+            "## 严格起始点产物（结构性无剧透）",
+            "",
+            f"- 起点：**{state.start_chapter_label}**（第 {state.start_chapter_index + 1} 章）",
+            "- 保证方式：起点之后的事实**不写入任何条目正文** —— 模型读不到不存在的东西",
+            "",
+            "| 产物 | 文件 | 条目数 |",
+            "|---|---|---|",
+            f"| 严格起始点角色卡 | exports/{files[0]} | "
+            f"{len(strict_result['card'].data.character_book.entries)} |",
+            f"| 严格起始点世界书 | exports/{files[1]} | {len(strict_result['worldbook'].entries)} |",
+            f"| 起始状态快照 | exports/{files[2]} | — |",
+            "",
+            "### 删了什么",
+            "",
+            f"- canon 事实：采用 {sp.facts_included} 条，隐藏 {sp.facts_excluded} 条"
+            f"（共 {sp.facts_total} 条）",
+            f"- 事件：采用 {sp.events_included} 个，隐藏 "
+            f"{sp.events_total - sp.events_included} 个（共 {sp.events_total} 个）",
+            f"- 被整条删去的条目：{state.entries_dropped} 个",
+            f"- 被截断的条目：{state.entries_truncated} 个",
+            f"- 生成条目的实体：{sp.entities_with_entries} / {sp.entities_total}",
+            "",
+        ]
+        if sp.dropped:
+            lines += ["被删条目（起始点之前内容不足）：", ""]
+            for delta in sp.dropped[:20]:
+                lines.append(f"- {delta.title}：{delta.reason}")
+            if len(sp.dropped) > 20:
+                lines.append(f"- …另有 {len(sp.dropped) - 20} 个，见 start_state 文件")
+            lines.append("")
+        truncated = [d for d in sp.truncated if d.chars_before > d.chars_after]
+        if truncated:
+            lines += ["被截断的代表性条目：", ""]
+            for delta in sorted(truncated, key=lambda d: d.chars_before - d.chars_after, reverse=True)[:10]:
+                lines.append(
+                    f"- {delta.title}：{delta.chars_before} → {delta.chars_after} 字"
+                    f"（删去 {delta.chars_before - delta.chars_after} 字）"
+                )
+            lines.append("")
+
+    lines += [
         "## 已知限制",
         "",
         "1. **Tavo 只验证到「导入成功」这一步**（角色卡与内嵌世界书能被接受并显示）。"

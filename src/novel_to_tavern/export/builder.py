@@ -74,22 +74,47 @@ def chapter_label(index: int, title: str = "") -> str:
     return f"第{index + 1}章" + (f" {title}" if title else "")
 
 
-def build_plot_entry(digests: list[ChapterDigest]) -> PlannedEntry | None:
-    """完整剧情走向（逐章），作为触发条目。
+def build_plot_entry(
+    digests: list[ChapterDigest], *, upto_chapter: int | None = None
+) -> PlannedEntry | None:
+    """剧情走向（逐章），作为触发条目。
 
-    这是"角色卡必须包含当前完整剧情走向"的落点：整条走向都在卡里，
-    但按章标注，配合核心规则里的时间纪律使用。
+    两种形态：
 
-    `valid_from_chapter` 设为**末章**：整本走向相当于故事讲完才知道的东西。
-    这样"从故事开头开始"的过滤版世界书会把它屏蔽掉，避免一开局就剧透全书。
+    - **默认（`upto_chapter=None`）**：整本书的走向都在条目里，
+      `valid_from_chapter` 设为末章，配合核心规则的时间纪律使用。
+    - **严格起始点（`upto_chapter=N`）**：只渲染到第 N 章为止。
+      起始点之后的内容**根本不写进条目** —— 这是结构性保证，
+      而不是靠提示词要求模型自觉。
+
+    条目键在两处都会命中「剧情」等词，所以严格档必须真的删内容，不能只加标注。
     """
     if not digests:
         return None
+
+    selected = [d for d in digests if upto_chapter is None or d.chapter_index <= upto_chapter]
+    if not selected:
+        return None
+
     lines = [
         f"{chapter_label(d.chapter_index, d.title)}：{d.summary.strip() or '（无摘要）'}"
-        for d in digests
+        for d in selected
     ]
-    body = "原著剧情主线（逐章，按时间顺序）：\n" + "\n".join(lines)
+    strict = upto_chapter is not None
+    header = "原著剧情主线（逐章，按时间顺序）："
+    if strict:
+        header = (
+            f"原著剧情主线（截至第 {upto_chapter + 1} 章，按时间顺序）。"
+            "此后的事尚未发生："
+        )
+    body = header + "\n" + "\n".join(lines)
+
+    flags = []
+    if strict:
+        flags.append(f"已按起始点过滤：只含第 1–{upto_chapter + 1} 章，后续剧情不在条目内")
+    else:
+        flags.append("含全书剧情，需配合时间纪律使用，避免剧透到起始点之前")
+
     return PlannedEntry(
         entry_id="wb_plot_main",
         category="concept",
@@ -98,70 +123,35 @@ def build_plot_entry(digests: list[ChapterDigest]) -> PlannedEntry | None:
         content_canonical=body,
         keys=list(PLOT_ENTRY_KEYS),
         always_on=False,
-        valid_from_chapter=max(d.chapter_index for d in digests),
+        valid_from_chapter=(
+            max(d.chapter_index for d in selected) if strict else max(d.chapter_index for d in digests)
+        ),
         chapter_gated=True,
         estimated_tokens=estimate_tokens(body),
         priority=80,
-        quality_flags=["含全书剧情，需配合时间纪律使用，避免剧透到起始点之前"],
+        quality_flags=flags,
     )
 
 
-def build_plot_entry(digests: list[ChapterDigest]) -> PlannedEntry | None:
-    """完整剧情走向（逐章），作为触发条目。
-
-    这是"角色卡必须包含当前完整剧情走向"的落点：整条走向都在卡里，
-    但按章标注，配合核心规则里的时间纪律使用。
-
-    `valid_from_chapter` 设为**末章**：整本走向相当于故事讲完才知道的东西。
-    这样"从故事开头开始"的过滤版世界书会把它屏蔽掉，避免一开局就剧透全书。
-    """
-    if not digests:
-        return None
-    lines = [
-        f"{chapter_label(d.chapter_index, d.title)}：{d.summary.strip() or '（无摘要）'}"
-        for d in digests
-    ]
-    body = "原著剧情主线（逐章，按时间顺序）：\n" + "\n".join(lines)
-    return PlannedEntry(
-        entry_id="wb_plot_main",
-        category="concept",
-        title="剧情主线（逐章）",
-        content_runtime=body,
-        content_canonical=body,
-        keys=list(PLOT_ENTRY_KEYS),
-        always_on=False,
-        valid_from_chapter=max(d.chapter_index for d in digests),
-        chapter_gated=True,
-        estimated_tokens=estimate_tokens(body),
-        priority=80,
-        quality_flags=["含全书剧情，需配合时间纪律使用，避免剧透到起始点之前"],
-    )
+#: 严格起始点卡片追加到规则末尾的一段。规则本身不变，只是把「时间纪律」
+#: 从「要求模型自觉」换成「内容本来就不在」。
+STRICT_START_NOTE = """
+本卡为**严格起始点**版本，起点已固定：{label}。起始点之后的内容
+**没有写进任何条目** —— 不是要求你忽略，是它们不在你的资料里。
+若用户问到起始点之后的事，如实回答「尚未发生 / 我不知道」，不要推测原著后续。"""
 
 
-def plot_skeleton_text(digests: list[ChapterDigest]) -> str:
-    """常驻的极简剧情骨架：只给阶段划分，让模型知道故事的大致形态。
-
-    并入核心规则条目，而不是单开一个常驻条目 —— 常驻条目数要留在配置上限内。
-    """
-    if not digests:
-        return ""
-    step = max(1, len(digests) // MAX_SKELETON_LINES)
-    picked = digests[::step][:MAX_SKELETON_LINES]
-    body = "\n".join(
-        f"　　{chapter_label(d.chapter_index)}：{(d.summary or d.title).strip()[:60]}"
-        for d in picked
-    )
-    return f"\n剧情阶段（完整逐章走向见「剧情主线」条目，需要时检索它）：\n{body}"
-
-
-def build_core_rules_entry() -> PlannedEntry:
+def build_core_rules_entry(*, strict_start: str = "") -> PlannedEntry:
     """常驻的核心规则条目。
 
     只放**运行规则**。原先还把逐章剧情骨架塞在这里，结果是：条目叫「世界运行规则」，
     内容却是一份被 `[:60]` 硬切、句子断在半截的章节大纲 —— 名实不符且难读。
     剧情走向由「剧情主线」条目负责；概括世界由「世界概况」条目负责。
+
+    `strict_start` 非空时（严格起始点卡）在末尾追加一段说明，告诉模型
+    后续内容不存在而不是「存在但你不许看」。
     """
-    body = CORE_RULES
+    body = CORE_RULES + (STRICT_START_NOTE.format(label=strict_start) if strict_start else "")
     return PlannedEntry(
         entry_id="wb_core_rules",
         category="core_rules",
@@ -193,13 +183,26 @@ def build_greetings(
     digests: list[ChapterDigest],
     entities: list[CanonicalEntity],
     timeline: list[TimelineEvent],
+    strict_label: str = "",
+    strict_chapter_index: int | None = None,
 ) -> Greetings:
-    """三个开场：一个让用户选起点，两个分别对应两个起点。
+    """默认产出三个开场：一个让用户选起点，两个分别对应两个起点。
 
-    起点信息写进开场白，模型才能知道"现在是哪一刻"。
+    `strict_label` 非空时（严格起始点卡）改成**只描述那一个起点**，
+    并且不再提供 alternate_greetings —— 那张卡里根本没有别的起点可选，
+    给了按钮反而是误导。
     """
     if not digests:
         raise ValueError("没有章节摘要，无法生成开场白")
+
+    if strict_label:
+        return _build_strict_greetings(
+            book_title=book_title,
+            digests=digests,
+            entities=entities,
+            strict_label=strict_label,
+            strict_chapter_index=strict_chapter_index,
+        )
 
     first = digests[0]
     last = digests[-1]
@@ -281,6 +284,76 @@ def build_greetings(
     return Greetings(
         first_mes=first_mes,
         alternate_greetings=[greeting_beginning, greeting_after_ending],
+        mes_example=mes_example,
+        scenario=scenario,
+        description=description,
+    )
+
+
+def _build_strict_greetings(
+    *,
+    book_title: str,
+    digests: list[ChapterDigest],
+    entities: list[CanonicalEntity],
+    strict_label: str,
+    strict_chapter_index: int | None,
+) -> Greetings:
+    """严格起始点卡的单一开场。
+
+    这里**不复述该章节之后**的任何剧情：场景描述只用到起始点为止的章节摘要。
+    """
+    roster = _character_roster(entities)
+    places = _places(entities)
+
+    if strict_chapter_index is None:
+        visible = digests
+    else:
+        visible = [d for d in digests if d.chapter_index <= strict_chapter_index]
+
+    scene = ""
+    if visible:
+        tail = visible[-1]
+        scene = tail.summary.strip() or tail.title or ""
+    if not scene:
+        scene = "故事尚未开始。"
+
+    upto_note = (
+        f"本卡只包含到「{strict_label}」为止的内容，之后的事尚未发生。"
+        "你可以自由行动，世界会按自己的逻辑推进；不必遵循原著后续。"
+    )
+
+    description = (
+        f"《{book_title}》世界模拟器（严格起始点：{strict_label}）。"
+        f"{CORE_RULES}{STRICT_START_NOTE.format(label=strict_label)}\n"
+        f"当前时间点：{strict_label}。"
+    )
+    scenario = (
+        f"世界：{book_title}。\n"
+        f"当前时间点：{strict_label}。\n"
+        f"已出场人物：{roster or '（见人物条目）'}\n"
+        f"已提及地点：{places or '（见地点条目）'}"
+    )
+    first_mes = (
+        f"【{book_title} · 世界模拟器】\n"
+        f"【起点：{strict_label}】\n\n"
+        f"{scene}\n\n"
+        f"{upto_note}\n\n"
+        f"先说两件事：\n"
+        f"1. 你扮演谁？（可以说一个已出场人物，也可以是你自己带来的角色）\n"
+        f"2. 你此刻在哪里、正在做什么？"
+    )
+    mes_example = (
+        f"<START>\n"
+        f"{{{{user}}}}: 后来会发生什么？\n"
+        f"{{{{char}}}}: （本卡的时间点固定在「{strict_label}」。"
+        f"之后的事尚未发生，如实回答不知道，不推测。）\n"
+        f"<START>\n"
+        f"{{{{user}}}}: {roster.split('、')[0] if roster else '某人'}现在在想什么？\n"
+        f"{{{{char}}}}: （以该人物的性格与目标作答，只使用此刻有合法渠道获知的信息。）"
+    )
+    return Greetings(
+        first_mes=first_mes,
+        alternate_greetings=[],
         mes_example=mes_example,
         scenario=scenario,
         description=description,
