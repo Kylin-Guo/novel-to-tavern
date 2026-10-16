@@ -57,7 +57,7 @@ cd novel-to-tavern
 python3 -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
 
-.venv/bin/python -m pytest      # 603 项离线测试，不联网、不花 API 额度
+.venv/bin/python -m pytest      # 605 项离线测试，不联网、不花 API 额度
 .venv/bin/n2t --help
 ```
 
@@ -124,11 +124,28 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 2. **没有证据的内容不进 canon。**
    声称是原著事实却定位不到引文的条目，降级为 `needs_review` 并注明原因；
    后续阶段的条目正文只取 `accepted` 的 canon 事实。
-3. **引文存在还要问「支不支持」。** `n2t verify` 逐条判断引文是否支持那条主张，
+3. **「找到了」还要问「是不是只有一处」。** 只取首次匹配会让「同一句话在书里出现两次」
+   静默落到靠前那处。`locate_quote` 现在统计**全部**命中，多处命中降级为待复核；
+   引文另有 4 字下限（短串在长篇里必然多处命中）。报告分别给出
+   `引文逐字定位率` 与 `唯一定位率` —— 前者回答「能不能找到」，后者回答「是不是只有一处」。
+4. **引文存在还要问「支不支持」。** `n2t verify` 逐条判断引文是否支持那条主张，
    判定为 `contradicted` / `insufficient_evidence` 的事实不进条目正文。
    调用失败**不静默放过** —— 一条都调不通就整体中止。
-4. **导出前强制校验。**
+5. **导出前强制校验。**
    结构校验 + 内嵌/独立世界书一致性比对 + 密钥扫描，任一有 error 就中止导出。
+
+### 这张卡的口径：世界模拟器，不是考据
+
+定位是**多角色世界模拟器资料**，不是「逐字考据的原始文献」。由此有两个刻意的取舍：
+
+- 语义校验判为 `partially_supported`（只支持了一半的复合事实）**照常进正文** ——
+  在世界模拟器里它仍是有用的设定。计数独立出现在校验报告里，随时可查。
+- **不设**「语义校验没跑完就不许导出」的硬门禁 —— 那会让没有 API 额度的人
+  彻底无法离线导出。取而代之是如实标注：清单写 `executed: false`，
+  audit 报告该列写「未执行」。
+
+要换成严格考据口径，改动点是 `verify/schema.py` 的 `PROBLEM_VERDICTS`
+（加上 `partially_supported`）；两处都有测试锁着当前行为，改时会失败提醒。
 
 ### 这些指标说明了什么，不说明什么
 
@@ -136,6 +153,7 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 |---|---|---|
 | `引文逐字定位率` | 引文**逐字存在于原文**，行号是程序算的 | 事实被**正确解读/归属**、没有漏掉否定、抽取没有遗漏 |
 | `semantic_entailed_rate` | 引文**支持**那条主张 | 这是**模型判定**，不是人工审校；只覆盖已校验的那部分 |
+| `唯一定位率` | 引文在原文里**只有一处**命中 | 那一处就是这条事实的出处（仍可能有归属错误） |
 | 「待人工复核 0 条」 | **引文定位**没有失败 | 「已逐条人工审校」 |
 
 本次运行**没有**跑语义校验（需要可用的 API 额度），只做了**抽样核对**
@@ -179,7 +197,7 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 
 | 等级 | 内容 | 状态 |
 |---|---|---|
-| ① 单元 / 集成测试 | 603 项离线测试 | ✅ **已跑通**（`python -m pytest`） |
+| ① 单元 / 集成测试 | 605 项离线测试 | ✅ **已跑通**（`python -m pytest`） |
 | ② 结构与一致性校验 | V2 结构 + 内嵌/独立世界书一致 + 密钥扫描 | ✅ **已跑通**（导出时强制） |
 | ③ JSON 可解析 | 卡能被 JSON 解析器读入 | ✅ 已验证 |
 | ④ 卡导入客户端 | 导入 Tavo | ✅ **已实测通过**（单文件，含内嵌世界书） |
@@ -225,7 +243,7 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 │   ├── config.py      配置模型（未知键直接报错）
 │   ├── env.py  secrets.py  logging_setup.py   .env 读取 · 密钥脱敏 · 日志
 │   └── paths.py       runs/<run_id>/ 隔离，拒绝覆盖
-├── tests/             603 项离线单元测试
+├── tests/             605 项离线单元测试
 ├── docs/              架构 · 数据模型 · 格式依据 · 实施计划 · 运行报告
 ├── exports/           生成的产物（含一张可直接导入的示例卡）
 ├── examples/fixtures/ 最小合法卡与世界书 fixture（自创内容）
@@ -250,6 +268,8 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 | [`docs/PLAN.md`](docs/PLAN.md) | 当前阶段的实施计划与验收划分 |
 | [`docs/QUALITY_GATES.md`](docs/QUALITY_GATES.md) | 质量门禁清单 |
 | [`docs/RUN_REPORT.md`](docs/RUN_REPORT.md) | 端到端运行报告与产物说明 |
+| [`docs/REVIEW_RECHECK.md`](docs/REVIEW_RECHECK.md) | 对审查报告的**逐条本地复核**：结论、证据、修了什么 |
+| [`docs/CONFIG_REFERENCE.md`](docs/CONFIG_REFERENCE.md) | 每个配置键读在哪里（由测试生成，不是手抄） |
 | [`docs/TAVO_IMPORT_CHECKLIST.md`](docs/TAVO_IMPORT_CHECKLIST.md) | Tavo 手工实测步骤 |
 | [`docs/UPSTREAM_ANALYSIS.md`](docs/UPSTREAM_ANALYSIS.md) | 上游项目借鉴与弃用取舍 |
 | [`docs/THIRD_PARTY_NOTICES.md`](docs/THIRD_PARTY_NOTICES.md) | 第三方许可证边界 |

@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -219,3 +220,35 @@ def test_history_never_contained_other_derivative_artifacts():
     ):
         hits = [p for p in paths if p.endswith(name) and not p.startswith("examples/")]
         assert hits == [], f"{name} 曾进过历史：{hits}"
+
+
+# --- 许可证元数据一致性（P2-01） ---------------------------------------------
+
+
+def test_package_license_metadata_matches_the_repository_license():
+    """`pyproject.toml` 曾写 `Proprietary`，而 LICENSE 与 README 都说 MIT。
+
+    三处互相矛盾时，读元数据的工具（打包、依赖扫描、包索引）拿到的是
+    与实际相反的结论。这一条把它钉住。
+    """
+    pyproject = (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    license_text = (REPO_ROOT / "LICENSE").read_text(encoding="utf-8")
+
+    # 只看生效的配置，不看注释 —— 注释里写明「以前是什么」是有价值的。
+    effective = "\n".join(
+        line for line in pyproject.splitlines() if not line.lstrip().startswith("#")
+    )
+
+    match = re.search(r'^license\s*=\s*\{\s*text\s*=\s*"([^"]+)"', effective, re.M)
+    assert match, "pyproject.toml 里找不到 license 声明"
+    assert match.group(1) == "MIT"
+    assert "Proprietary" not in effective
+    assert "MIT License" in license_text or "MIT" in license_text.splitlines()[0]
+    assert "OSI Approved :: MIT License" in pyproject
+
+
+def test_the_derivative_exports_are_not_packaged():
+    """包只能是 MIT 的代码 —— 衍生角色卡不能进 wheel。"""
+    pyproject = (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'where = ["src"]' in pyproject
+    assert "exports" not in re.sub(r"#.*", "", pyproject).split("[tool.setuptools")[0]

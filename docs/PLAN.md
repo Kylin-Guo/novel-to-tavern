@@ -1,8 +1,9 @@
 # 本阶段实施计划
 
-当前阶段：**Phase 5 — 世界书与角色卡导出**
-状态：已实施，待验收
-更新日期：2026-10-16
+当前阶段：**Phase 6 — 质量评估与 Tavo 实测**（Phase 2–5 均已实施；
+另加了原计划没有的 `verify` 语义支持校验阶段，见 `docs/IMPLEMENTATION_PLAN.md` Phase 4.5）
+状态：Phase 2–5 已实施并通过测试；Phase 6 的运行时部分**待人工实测**
+更新日期：2026-10-17
 上游依据：`docs/IMPLEMENTATION_PLAN.md` Phase 5
 
 > 每个阶段完成后更新本文；已完成的阶段摘要见 §7 历史。
@@ -15,7 +16,10 @@
 > [`docs/TAVO_IMPORT_CHECKLIST.md`](TAVO_IMPORT_CHECKLIST.md)。
 >
 > 具体到今天：Tavo **已实测导入成功**（不是「未实测」），
-> 但**运行时行为仍全部未验证**。
+> 但**运行时行为仍全部未验证**（触发、常驻注入、剧透行为、token 占用）。
+>
+> 逐项复核结论见 [`docs/REVIEW_RECHECK.md`](REVIEW_RECHECK.md)；
+> 配置键与消费点的对应关系见 [`docs/CONFIG_REFERENCE.md`](CONFIG_REFERENCE.md)。
 
 ---
 

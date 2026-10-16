@@ -21,7 +21,7 @@
 | P1-01 | 严格导出调用与函数签名不一致，可能 TypeError | **not_reproducible** | `builder.py:180-188` 已有 `strict_label` / `strict_chapter_index` | 无需修复 |
 | P1-02 | 严格档仍把全量数据交给 greeting builder | **confirmed** | `builder.py:305` `_character_roster(entities)` 未按起始点过滤 | 修：过滤 entities |
 | P1-03 | 缺 `fact_type` 默认成 canon | **confirmed** | `extract/schema.py:62,72` 默认 `CANON`；`:53` 默认 `"character"` | 修：改默认 + 进复核队列 |
-| P1-04 | `partially_supported` 仍当通过 | **confirmed** | `verify/schema.py:20,81`；已运行证明未支持部分留在条目正文 | 需用户定夺口径 |
+| P1-04 | `partially_supported` 仍当通过 | **confirmed，维持现状** | `verify/schema.py:20,81`；已运行证明未支持部分留在条目正文 | **口径已定**：卡是世界模拟器资料 → 不排除，只如实计数 |
 | P1-05 | 引文「命中」不等于唯一定位 | **confirmed** | `extract/evidence.py:74` `.find()` 只取首次；`:91` `matched_text` 为整行拼接 | 修：返回全部命中 + 歧义标记 |
 | P1-06 | 主线条目用「剧情 / 主线」做触发词 | **confirmed** | 真实卡内 `keys` 含 `剧情`/`主线`，正文 25,483 字 | 修：改显式检索词 |
 | P1-07 | 公开仓库含衍生角色卡 | **不在本次范围** | 按用户指示跳过 | —— |
@@ -30,7 +30,7 @@
 | P2-03 | `--start-chapter` 范围校验不足 | **confirmed** | `cli.py:318,400` `if start_chapter else None` | 修：正整数校验 |
 | P2-04 | 缓存键未区分真实 endpoint | **confirmed** | `extract/runner.py:113-132` 只含 `provider.name` | 修：加 base_url 指纹 |
 | P2-05 | 配置项未消费 / 未入指纹 | **confirmed** | 57 个字段中 **24 个可变字段无任何功能消费** | 修：接通或删除 |
-| P2-06 | 语义审核未跑就导出，缺 strict-fidelity 门 | **partially_confirmed** | 透明标记**已有**（`executed:false`）；**门禁没有** | 需用户定夺是否加门 |
+| P2-06 | 语义审核未跑就导出，缺 strict-fidelity 门 | **partially_confirmed，不加门** | 透明标记**已有**（`executed:false`）；**门禁没有** | **口径已定**：不加阻断门，理由见 §6 |
 | P2-07 | 实体覆盖阈值静默丢弃小角色 | **partially_confirmed** | 跳过名单与原因**已进报告**（`worldbible.py:182-216`）；缺「仅索引」名单与强制保留选项 | 修：补覆盖统计 + 强制保留 |
 | P2-08 | 世界书触发需真实运行测试 | **confirmed** | `TAVO_IMPORT_CHECKLIST.md` §9：除导入外全部「未测」 | 需用户在 Tavo 实测 |
 | P2-09 | 严格导出 / CLI 状态文档漂移 | **confirmed** | `cli.py:20` 写「Tavo（待实测）」；`PLAN.md`/`IMPLEMENTATION_PLAN.md` 对 `verify` **零提及** | 修文档 |
@@ -448,6 +448,50 @@ README 与 RUN_REPORT 里出现的数字包含真值。两处当前都写 472。
 按用户本次指示跳过。该条不是技术缺陷，而是权利状态确认，需要仓库所有者自行判断。
 
 > 本文件不含小说原文；所有结论可依文中的文件行号或脚本重跑复现。
+
+---
+
+## 6. 修复记录（2026-10-17）
+
+**口径先定：这张卡的定位是「多角色世界模拟器资料」，不是「逐字考据的原始文献」。**
+这一句决定了下面两处「不修」为什么不是遗漏：
+
+- **P1-04 不排除 `partially_supported`。** 一句只支持了一半的复合事实，
+  在世界模拟器里仍然是有用的设定；在考据场景里才必须排除。
+  当前的计数已经独立出现在校验报告里，所以「有多少条只是部分支持」是可查的。
+  要换成严格口径，改动点是 `verify/schema.py` 的 `PROBLEM_VERDICTS`
+  加上 `partially_supported`。已有测试锁着当前行为，改的时候会失败提醒。
+- **P2-06 不加「语义校验没跑完就不许导出」的硬门禁。** 那会让没有 API 额度的人
+  彻底无法离线导出 —— 而离线可跑通正是这个项目的既有能力。
+  取而代之的是如实标注：导出清单里 `metrics.semantic_support.executed = false`，
+  audit 报告该列写「未执行」，README 单列一行。三处都有了。
+
+| ID | 状态 | 落地方式 |
+|---|---|---|
+| P1-01 | 已确认不成立 | 无需改动 |
+| P1-02 | **已修** | `_visible_by()` 按 `first_appearance_chapter` 过滤名单；测试升级为「未来人物名不得出现」 |
+| P1-03 | **已修** | 默认值改 `unknown`；`model_fields_set` 区分「模型说 unknown」与「模型漏写」；`unknown` 在类别兼容里当通配符 |
+| P1-04 | **口径已定，维持现状** | 计数保留在报告里；口径写进 `QUALITY_GATES.md` §A2/§H |
+| P1-05 | **已修** | `locate_quote` 统计全部命中；多处命中降级并写明次数；新增 `MIN_QUOTE_CHARS`；`SourceRef` 拆出 `quote_exact` |
+| P1-06 | **已修** | 触发词只留组合词；新增 10 条真实中文说法的反向测试 |
+| P2-01 | **已修** | `pyproject.toml` 改为 MIT，与 LICENSE / README 一致 |
+| P2-02 | **已修** | 新增 `paths.resolve_run_dir()`，五个子命令统一走它；覆盖逃逸、空串、绝对路径、符号链接 |
+| P2-03 | **已修** | argparse `type=_chapter_number`；两处 `if x else None` 改 `is not None` |
+| P2-04 | **已修** | 缓存键纳入 endpoint 指纹（丢弃 query，避免密钥进文件名）与 `max_output_tokens` |
+| P2-05 | **已修** | 删 15 个死键、3 个改单值 `Literal`、6 个真正接通；新增 `tests/test_config_wiring.py` 逐字段查消费点 |
+| P2-06 | **口径已定，不加门** | 透明标注已有；理由见上 |
+| P2-07 | **已修** | 新增覆盖表与 `index_overflow()` 名单；新增 `--include-character` |
+| P2-08 | **清单已补，仍需人工实测** | 新增 §6.5 四类情形（条目冲突 / 未命中兜底 / 重复导入 / 重启持久性） |
+| P2-09 | **已修** | `TARGET_CLIENT` 与 README 统一；`verify` 补进 PLAN / IMPLEMENTATION_PLAN / QUALITY_GATES |
+| P2-10 | **已修** | 新增 `unique_quote_rate`；audit 指标表拆成两行并分别写明「说明什么 / 不说明什么」 |
+| P3-01 | 已确认不成立 | 无需改动 |
+| P3-02 | **已修** | `DetectionInfo.strategy` 增加 `manual`，与自动检测区分 |
+| P3-03 | **已修** | quarantine 截断到 2 万字符并记录原始长度；缓存不截断（需逐字完整才能复用） |
+| P3-04 | **已修** | `outputs` 改为 `{name, sha256, bytes, exists}`；非严格档补 `guarantee` 字段 |
+| P3-05 | 已确认已实现 | 无需改动 |
+
+**仍未完成的，只有一件：P2-08 的人工实测。** 触发、常驻注入、剧透行为、
+token 占用这四类，代码侧无法代替真机验证；清单里一律标 ⬜，不写成通过。
 
 ---
 

@@ -8,7 +8,19 @@ version = "0.0.1"
 description = "把小说文本转换成可导入 SillyTavern/Tavo 的世界模拟器角色卡与世界书"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "Proprietary" }
+# 代码与文档是 MIT（见 LICENSE、README「许可」）。
+# 这里以前写的是 "Proprietary"，与仓库 LICENSE 和 README 直接冲突：
+# 任何读元数据的工具（打包、依赖扫描、包索引）都会得到与实际相反的结论。
+#
+# 注意 `exports/` 下的角色卡**不随代码许可** —— 那是原著小说的衍生作品，
+# 权利归原著权利人。它不在 wheel 里（见下面的 packages 配置），
+# 所以「包 = MIT」这句话是准确的；例外写在 NOTICE.md 与 exports/README.md。
+license = { text = "MIT" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.12",
+]
 dependencies = [
     "pydantic>=2.5",
     "PyYAML>=6.0",
