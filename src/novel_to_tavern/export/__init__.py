@@ -9,6 +9,7 @@ from __future__ import annotations
 from .builder import (
     CORE_RULES,
     PLOT_ENTRY_KEYS,
+    PLOT_ENTRY_MUST_NOT_TRIGGER,
     ChapterDigest,
     Greetings,
     build_core_rules_entry,
@@ -37,6 +38,7 @@ __all__ = [
     "CORE_RULES",
     "MANIFEST_NAME",
     "PLOT_ENTRY_KEYS",
+    "PLOT_ENTRY_MUST_NOT_TRIGGER",
     "TIMELINE_NAME",
     "WORLDBOOK_AFTER_END",
     "WORLDBOOK_BEGINNING",

@@ -11,6 +11,8 @@ from novel_to_tavern import config as config_module
 from novel_to_tavern.export import (
     CARD_NAME,
     CORE_RULES,
+    PLOT_ENTRY_KEYS,
+    PLOT_ENTRY_MUST_NOT_TRIGGER,
     WORLDBOOK_AFTER_END,
     WORLDBOOK_BEGINNING,
     WORLDBOOK_NAME,
@@ -129,6 +131,45 @@ def test_core_rules_contain_only_rules_not_a_plot_outline():
     assert "第1章" not in entry.content_runtime
     assert "章：" not in entry.content_runtime
     assert CORE_RULES in entry.content_runtime
+
+
+# --- 主线条目：误触发一次就是 2.5 万字 ---------------------------------------
+
+
+@pytest.mark.parametrize("message", PLOT_ENTRY_MUST_NOT_TRIGGER)
+def test_ordinary_chat_does_not_pull_in_the_whole_plot(message):
+    """常见的自然说法一个都不许命中主线条目。
+
+    「剧情主线」条目是整本书的逐章走向。早先的触发词含「剧情」「主线」「前情」，
+    于是「这个剧情怎么发展」「主线任务是什么」「前情回顾」全都会把它拉进上下文。
+    """
+    entry = build_plot_entry(_digests())
+    assert entry is not None
+    hits = [k for k in entry.keys if k in message]
+    assert hits == [], f"{message!r} 命中了主线条目触发词 {hits}（会灌进整本书剧情）"
+
+
+def test_an_explicit_request_does_trigger_the_plot_entry():
+    """收窄不能收成「用户要也要不到」。"""
+    entry = build_plot_entry(_digests())
+    assert entry is not None
+    for message in ("给我原著逐章大纲", "看一下原著大纲", "全书大纲发我", "剧情主线是什么"):
+        assert any(k in message for k in entry.keys), f"{message!r} 应当命中主线条目"
+
+
+def test_plot_keys_are_all_multi_word_compounds():
+    """触发词必须都是组合词 —— 单个常用词在中文对白里必然误伤。"""
+    for key in PLOT_ENTRY_KEYS:
+        assert len(key) >= 4, f"触发词 {key!r} 太短，容易在日常对白里命中"
+    for banned in ("剧情", "主线", "前情", "故事线"):
+        assert banned not in PLOT_ENTRY_KEYS, f"{banned!r} 是自然对白高频词，不能作触发词"
+
+
+def test_plot_entry_trigger_cost_is_stated_in_its_flags():
+    """卡里要写清楚这个条目有多重，别让用户自己发现。"""
+    entry = build_plot_entry(_digests())
+    assert entry is not None
+    assert entry.quality_flags
 
 
 # --- 导出物 ---------------------------------------------------------------
