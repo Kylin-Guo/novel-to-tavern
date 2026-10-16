@@ -14,13 +14,32 @@ def _patterns() -> list[str]:
 
 
 def _is_ignored(path: str) -> bool:
-    """只处理本仓库实际用到的模式：目录、通配符与 `!` 取反。"""
+    """只处理本仓库实际用到的模式：目录、通配符、`!` 取反与前导斜杠锚定。
+
+    `/天之炽/` 只匹配仓库根下的 `天之炽/`；写成 `天之炽/` 会连带忽略
+    `exports/天之炽/` 这类同名子目录。
+    """
     ignored = False
     for pattern in _patterns():
         negated = pattern.startswith("!")
         candidate = pattern[1:] if negated else pattern
+        anchored = candidate.startswith("/")
+        if anchored:
+            candidate = candidate[1:]
         base = candidate.rstrip("/")
-        if fnmatch(path, base) or fnmatch(path, f"{base}/*") or Path(path).name == base:
+        if not base:
+            continue
+
+        if anchored:
+            hit = path == base or path.startswith(f"{base}/")
+        else:
+            hit = (
+                fnmatch(path, base)
+                or fnmatch(path, f"{base}/*")
+                or f"/{base}/" in f"/{path}"
+                or Path(path).name == base
+            )
+        if hit:
             ignored = not negated
     return ignored
 
@@ -66,6 +85,11 @@ def test_copyrighted_novel_is_ignored():
     assert _is_ignored("天之炽/天之炽Ⅰ：红龙的归来.txt")
     assert _is_ignored("天之炽/天之炽Ⅱ：女武神1.txt")
     assert _is_ignored("天之炽/天之炽Ⅱ：女武神2.txt")
+
+
+def test_novel_pattern_does_not_swallow_export_subdirectories():
+    """`天之炽/` 写成不锚定的形式会连带忽略 exports/天之炽/，导出物就进不了库。"""
+    assert not _is_ignored("exports/天之炽/world_simulator_v2.json")
 
 
 def test_git_itself_confirms_the_novel_is_ignored():
