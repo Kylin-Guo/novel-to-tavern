@@ -1,0 +1,2 @@
+[console_scripts]
+n2t = novel_to_tavern.cli:main
