@@ -5,9 +5,19 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .cache/
 cache/
 runs/
 input/
 *.log
+
+# 受版权保护的小说原文：只作为本地只读输入，绝不入库、绝不出现在测试 fixture 中
+天之炽/
+*.novel.txt
 .DS_Store

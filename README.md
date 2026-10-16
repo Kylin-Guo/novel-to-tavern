@@ -47,4 +47,47 @@
 
 ## 当前状态
 
-此仓库目前是项目规格和 Agent 执行指南，不是已经完成的程序。不要把本 README 视为代码已存在或功能已验证的声明。
+**Phase 0 已完成（格式与仓库基线）**，Phase 1 起尚未开始。
+
+已具备：
+
+- 可运行的 CLI 骨架：`n2t --help` / `version` / `config-check` / `doctor`
+- 配置加载与校验（`config/config.example.yaml` 逐键建模，未知键直接报错）
+- 密钥隔离：`.env` 不入库，日志经脱敏过滤器，导出前扫描密钥
+- 非破坏式 `runs/<run_id>/` 目录隔离，已存在的 run 拒绝覆盖
+- **酒馆格式层**：Character Card V2 + 内嵌 `character_book`、独立世界书，
+  字段依据 SillyTavern 1.19.0 源码逐项核对（见 `docs/FORMAT_COMPATIBILITY.md`）
+- 示例产物：`examples/fixtures/minimal_world_simulator_v2.json`（自创内容，可直接导入试）
+
+尚未具备（后续阶段）：
+
+- 小说导入、章节索引、分块（Phase 1）
+- LLM 原子事实提取（Phase 2）
+- 实体归一、时间线、知识边界（Phase 3–4）
+- 从真实小说生成世界书与角色卡（Phase 5）
+
+**尚未在 Tavo 实测。** 到 2026-10-16 为止没有任何导入记录，不得据此外推兼容性。
+实测步骤见 [`docs/TAVO_IMPORT_CHECKLIST.md`](docs/TAVO_IMPORT_CHECKLIST.md)。
+
+### 运行环境
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]"
+.venv/bin/python -m pytest          # 108 项离线测试，不访问网络、不花 API 额度
+.venv/bin/n2t --help
+.venv/bin/n2t config-check
+```
+
+Python 3.10+。运行期依赖只有 `pydantic` 与 `PyYAML`；不引入数据库、向量库或 Web 框架。
+
+## 文档索引
+
+| 文档 | 内容 |
+|---|---|
+| [`AGENTS.md`](AGENTS.md) | 项目执行规则（证据、忠实度、安全边界） |
+| [`docs/PLAN.md`](docs/PLAN.md) | 当前阶段的实施计划与验收划分 |
+| [`docs/FORMAT_COMPATIBILITY.md`](docs/FORMAT_COMPATIBILITY.md) | 酒馆目标格式的字段依据与已知陷阱 |
+| [`docs/TAVO_IMPORT_CHECKLIST.md`](docs/TAVO_IMPORT_CHECKLIST.md) | Tavo 手工实测步骤（待执行） |
+| [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) | Phase 0–7 路线图 |
+| [`docs/UPSTREAM_ANALYSIS.md`](docs/UPSTREAM_ANALYSIS.md) | 上游项目借鉴与弃用取舍 |

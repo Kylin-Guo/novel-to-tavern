@@ -1,6 +1,6 @@
 # 本阶段实施计划（Phase 0：格式与仓库基线）
 
-状态：待用户确认
+状态：**Phase 0 已实施完成**（2026-10-16），待用户验收
 创建日期：2026-10-16
 上游依据：`tasks/001-phase0.md`、`docs/IMPLEMENTATION_PLAN.md` Phase 0
 
@@ -248,7 +248,7 @@ WiStandaloneEntry （目标：42 字段子集，数字 position 0–7）
 
 ## 7. 验收：自动 vs 人工
 
-### 可自动完成（Phase 0 内必须全绿）
+### 可自动完成（Phase 0 内必须全绿）—— ✅ 已全部通过（105 项测试）
 
 - [ ] `n2t --help` / `python -m novel_to_tavern --help` 退出码 0
 - [ ] `config-check` 能加载 `config/config.example.yaml` 并通过 pydantic 校验
@@ -279,13 +279,24 @@ WiStandaloneEntry （目标：42 字段子集，数字 position 0–7）
 
 ## 8. 交付与提交边界
 
-Phase 0 拆成 **3 个独立提交**（待 git 决策后执行）：
+GitLab 仓库：`git@gitlab.example.invalid:10086/example-user/novel-to-tavern.git`（private，默认分支 master）
+工作分支：`feat/phase0-format-baseline`
 
-1. `chore: 建立 Python 项目骨架、CLI、配置与日志`
-2. `docs: 记录 SillyTavern 1.19 格式核查结果与字段映射依据`
-3. `test: 加入 V2 卡与独立世界书 fixture、往返与字段映射测试`
+| # | 提交 | 内容 |
+|---|---|---|
+| 1 | `chore: 建立 Python 项目骨架、CLI、配置与日志` | pyproject、cli、config、env、secrets、logging、paths |
+| 2 | `docs: 记录 SillyTavern 1.19.0 格式核查结果与字段映射依据` | `docs/FORMAT_COMPATIBILITY.md` |
+| 3 | `test: 加入 V2 卡与独立世界书 fixture、往返与字段映射测试` | tavern 格式层、fixture、生成脚本、格式测试 |
+| 4 | `docs: 补 Tavo 手工实测清单与 README 状态` | `docs/TAVO_IMPORT_CHECKLIST.md`、README、本文件 |
 
-每步完成后运行 `python -m pytest -q` 并更新本节状态。
+### 交付摘要
+
+- **改了什么**：从零建立可运行、离线可测的 Python CLI 与酒馆格式层；产出可导入试的最小示例产物。
+- **测试命令及结果**：`.venv/bin/python -m pytest` → **108 passed**；全程零网络、零 API 调用。
+- **尚未完成**：Phase 1–6 全部；V3 卡；PNG 打包；任何 Tavo 实测。
+- **兼容性尚未验证的点**：Tavo 的全部行为；ST 的真实「导入 → 导出」往返；
+  `insertion_order` 方向语义（本次仍未定论）。
+- **下一步**：用户验收 Phase 0 → 用 `docs/TAVO_IMPORT_CHECKLIST.md` 做一次手工导入 → 进入 Phase 1（章节导入）。
 
 ---
 
@@ -293,3 +304,5 @@ Phase 0 拆成 **3 个独立提交**（待 git 决策后执行）：
 
 - 2026-10-16：建立本计划，完成仓库现状核查与 SillyTavern 1.19.0 源码级格式验证。
 - 2026-10-16：补入上游规范（character-card-spec-v2 / v3）与 Tavo 官方文档核查结果；新增 `enabled` 缺失即禁用、`use_regex` 非 V2 字段、排序方向文档冲突三项发现。
+- 2026-10-16：用户确认在 GitLab 建私有仓库 → 已建 `example-user/novel-to-tavern`，master 推入初始提交。
+- 2026-10-16：Phase 0 实施完成，4 个提交，105 项离线测试通过，产出两个可导入试的 fixture。
