@@ -52,7 +52,9 @@ class InputConfig(_Base):
 
 
 class LLMConfig(_Base):
-    provider: Literal["openai_compatible"] = "openai_compatible"
+    #: `file` = 从目录读预生成响应，用于无凭据时离线跑通同一条管线。
+    provider: Literal["openai_compatible", "file"] = "openai_compatible"
+    precomputed_responses_dir: str | None = None
     base_url_env: str = "NOVEL_TAVERN_BASE_URL"
     api_key_env: str = "NOVEL_TAVERN_API_KEY"
     extraction_model: str | None = None
