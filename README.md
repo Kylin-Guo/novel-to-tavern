@@ -74,7 +74,7 @@
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
-.venv/bin/python -m pytest          # 107 项离线测试，不访问网络、不花 API 额度
+.venv/bin/python -m pytest          # 108 项离线测试，不访问网络、不花 API 额度
 .venv/bin/n2t --help
 .venv/bin/n2t config-check
 ```

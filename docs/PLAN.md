@@ -292,7 +292,7 @@ GitLab 仓库：`git@gitlab.example.invalid:10086/example-user/novel-to-tavern.g
 ### 交付摘要
 
 - **改了什么**：从零建立可运行、离线可测的 Python CLI 与酒馆格式层；产出可导入试的最小示例产物。
-- **测试命令及结果**：`.venv/bin/python -m pytest` → **107 passed**；全程零网络、零 API 调用。
+- **测试命令及结果**：`.venv/bin/python -m pytest` → **108 passed**；全程零网络、零 API 调用。
 - **尚未完成**：Phase 1–6 全部；V3 卡；PNG 打包；任何 Tavo 实测。
 - **兼容性尚未验证的点**：Tavo 的全部行为；ST 的真实「导入 → 导出」往返；
   `insertion_order` 方向语义（本次仍未定论）。

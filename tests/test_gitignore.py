@@ -47,6 +47,15 @@ def test_venv_and_pycache_are_ignored():
     assert _is_ignored("src/novel_to_tavern/__pycache__/cli.cpython-312.pyc")
 
 
+def test_build_artifacts_are_ignored():
+    """`pip install -e .` 会在 src/ 下生成 egg-info，曾误提交过一次。"""
+    assert _is_ignored("src/novel_to_tavern.egg-info/PKG-INFO")
+    assert _is_ignored("src/novel_to_tavern.egg-info/SOURCES.txt")
+    assert _is_ignored("build/lib/x.py")
+    assert _is_ignored("dist/pkg-0.0.1.tar.gz")
+    assert _is_ignored(".pytest_cache/v/cache/nodeids")
+
+
 def test_source_files_are_not_ignored():
     for path in ("src/novel_to_tavern/cli.py", "docs/PLAN.md", "config/config.example.yaml"):
         assert not _is_ignored(path), path
