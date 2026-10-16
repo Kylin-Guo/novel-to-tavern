@@ -13,11 +13,45 @@ from pathlib import Path
 
 from . import __version__, config as config_module, env as env_module
 from .logging_setup import get_logger, setup_logging
+from .paths import RunDirError, resolve_run_dir
 
 PROG = "n2t"
 
 #: 格式验证所锚定的目标客户端版本（见 docs/FORMAT_COMPATIBILITY.md）。
-TARGET_CLIENT = "SillyTavern 1.19.0 / Tavo（待实测）"
+#: 状态必须逐项写清楚：格式按 ST 1.19 源码核对，Tavo 只实测到「导入 + 显示」。
+#: 早先这里写「Tavo（待实测）」，而 README 的验证等级表写「已实测通过」——
+#: 同一件事两处相反。现在两处都写同一句话。见 REVIEW_RECHECK P2-09。
+TARGET_CLIENT = "SillyTavern 1.19.0（源码核对）/ Tavo（导入已实测，运行时未验证）"
+
+
+def _chapter_number(text: str) -> int:
+    """章节号：从 1 开始的正整数。
+
+    早先用 `type=int` 收下任何整数，随后 `start_chapter - 1 if start_chapter else None`
+    把 **0 当成「没指定」**（0 是 falsy），把负数原样减 1 传下去。
+    0 和负数都是真实会写错的输入，必须在参数层就报错，而不是让它走到下游才炸。
+    """
+    try:
+        value = int(text)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"章节号必须是整数，收到 {text!r}") from None
+    if value < 1:
+        raise argparse.ArgumentTypeError(f"章节号从 1 开始，不能是 {value}")
+    return value
+
+
+def _resolve_run(config, args) -> Path | None:
+    """解析并校验 `--run-id`。不合法就说明原因并返回 `None`。
+
+    每个读写既有 run 的子命令都必须走这里。早先各处直接
+    `Path(output_root) / args.run_id`，于是 `--run-id /etc` 会解析到 `/etc`
+    并通过 `is_dir()` 检查，接着在 `/etc/` 下写产物。详见 `paths.resolve_run_dir`。
+    """
+    try:
+        return resolve_run_dir(config.project.output_root, args.run_id)
+    except RunDirError as exc:
+        print(f"run 目录不可用：{exc}", file=sys.stderr)
+        return None
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -66,7 +100,7 @@ def build_parser() -> argparse.ArgumentParser:
     timeline_parser.add_argument("--run-id", required=True, help="要构建时间线的 run id")
     timeline_parser.add_argument(
         "--start-chapter",
-        type=int,
+        type=_chapter_number,
         metavar="N",
         help="起始章节（1 起）。指定后会按 valid_from_chapter 屏蔽该章节之后的内容",
     )
@@ -90,7 +124,7 @@ def build_parser() -> argparse.ArgumentParser:
     export_parser.add_argument("--run-id", required=True, help="要导出的 run id")
     export_parser.add_argument(
         "--start-chapter",
-        type=int,
+        type=_chapter_number,
         metavar="N",
         help="额外产出一套严格起始点产物（1 起的章节号）："
         "第 N 章之后的内容不写入任何条目，做到结构性无剧透。"
@@ -244,9 +278,8 @@ def _cmd_extract(args: argparse.Namespace, log) -> int:
         print(f"配置校验失败：{exc}", file=sys.stderr)
         return 1
 
-    run_dir = Path(config.project.output_root) / args.run_id
-    if not run_dir.is_dir():
-        print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
+    run_dir = _resolve_run(config, args)
+    if run_dir is None:
         return 1
 
     try:
@@ -280,9 +313,8 @@ def _cmd_resolve(args: argparse.Namespace, log) -> int:
         print(f"配置校验失败：{exc}", file=sys.stderr)
         return 1
 
-    run_dir = Path(config.project.output_root) / args.run_id
-    if not run_dir.is_dir():
-        print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
+    run_dir = _resolve_run(config, args)
+    if run_dir is None:
         return 1
 
     try:
@@ -309,13 +341,12 @@ def _cmd_timeline(args: argparse.Namespace, log) -> int:
         print(f"配置校验失败：{exc}", file=sys.stderr)
         return 1
 
-    run_dir = Path(config.project.output_root) / args.run_id
-    if not run_dir.is_dir():
-        print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
+    run_dir = _resolve_run(config, args)
+    if run_dir is None:
         return 1
 
     start_chapter = args.start_chapter
-    start_index = start_chapter - 1 if start_chapter else None
+    start_index = start_chapter - 1 if start_chapter is not None else None
 
     try:
         result = build(run_dir, start_chapter=start_index)
@@ -347,9 +378,8 @@ def _cmd_verify(args: argparse.Namespace, log) -> int:
         print(f"配置校验失败：{exc}", file=sys.stderr)
         return 1
 
-    run_dir = Path(config.project.output_root) / args.run_id
-    if not run_dir.is_dir():
-        print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
+    run_dir = _resolve_run(config, args)
+    if run_dir is None:
         return 1
 
     try:
@@ -392,12 +422,11 @@ def _cmd_export(args: argparse.Namespace, log) -> int:
         print(f"配置校验失败：{exc}", file=sys.stderr)
         return 1
 
-    run_dir = Path(config.project.output_root) / args.run_id
-    if not run_dir.is_dir():
-        print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
+    run_dir = _resolve_run(config, args)
+    if run_dir is None:
         return 1
 
-    start_chapter = args.start_chapter - 1 if args.start_chapter else None
+    start_chapter = args.start_chapter - 1 if args.start_chapter is not None else None
     try:
         result = export(run_dir, config, start_chapter=start_chapter)
     except ExportError as exc:

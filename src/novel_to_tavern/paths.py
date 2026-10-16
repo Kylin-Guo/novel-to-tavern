@@ -72,6 +72,43 @@ def create_run_dir(
     return run_dir
 
 
+def resolve_run_dir(
+    output_root: str | Path, run_id: str, *, must_exist: bool = True
+) -> Path:
+    """把 `--run-id` 解析成一个**确定落在 output_root 之下**的 run 目录。
+
+    所有读/写既有 run 的子命令都必须走这里，不能自己 `Path(root) / run_id`。
+
+    不做这一步会发生什么（都已实测）：
+
+    - `--run-id /etc` → `/etc`。`Path("runs") / "/etc"` 是 `/etc` ——
+      绝对路径直接吃掉前缀，而它通过 `is_dir()` 检查，于是工具会在 `/etc/exports/`
+      下写产物。
+    - `--run-id ''` → `runs` 本身，产物写进 run 根。
+    - `--run-id '../../etc'` → 跑出受控目录。
+
+    第一道闸是格式校验（run id 只能是 `<UTC 时间戳>_<6 位小写十六进制>`），
+    它顺带挡掉了所有含 `/`、`..`、空串、反斜杠的取值；第二道闸是 `resolve()`
+    后确认父目录就是 output_root，用来挡**符号链接**——那是格式校验看不见的。
+    """
+    if not is_valid_run_id(run_id):
+        raise RunDirError(
+            f"不合法的 run id：{run_id!r}。"
+            "格式应为 <8位日期>T<6位时间>Z_<6位十六进制>，例如 20261016T120000Z_1a2b3c。"
+        )
+
+    root = Path(output_root).resolve()
+    candidate = (root / run_id).resolve()
+    if candidate.parent != root:
+        raise RunDirError(
+            f"run id 解析后跑出了 run 根目录：{run_id!r} → {candidate}（根：{root}）。"
+            "若这是符号链接造成的，请先确认该链接指向哪里。"
+        )
+    if must_exist and not candidate.is_dir():
+        raise RunDirError(f"找不到 run 目录：{candidate}")
+    return candidate
+
+
 def run_layout(run_dir: str | Path) -> dict[str, Path]:
     """返回 run 目录下各子目录的路径映射。"""
     base = Path(run_dir)

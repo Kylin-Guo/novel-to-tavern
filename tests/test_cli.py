@@ -75,6 +75,67 @@ def test_doctor_fails_on_broken_config(tmp_path, capsys, monkeypatch):
     assert "配置文件" in capsys.readouterr().out
 
 
+# --- run-id 边界与章节号参数 ------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "bad_run_id",
+    ["/etc", "", "../../etc", "../escape", "a/b", r"..\\escape", "20261016T120000Z_ZZZZZZ", "."],
+)
+def test_escaping_run_ids_are_refused_before_any_write(tmp_path, capsys, bad_run_id):
+    """`--run-id /etc` 会让 `Path(root) / '/etc'` 变成 `/etc` 并写进去。
+
+    格式闸门必须先于任何文件访问生效 —— 所以断言错误信息里出现的是
+    「不合法的 run id」，而不是后续阶段的报错。
+    """
+    cfg = tmp_path / "c.yaml"
+    cfg.write_text(
+        f"project:\n  output_root: {tmp_path / 'runs'}\nllm:\n  provider: file\n",
+        encoding="utf-8",
+    )
+    assert main(["--config", str(cfg), "timeline", "--run-id", bad_run_id]) == 1
+    err = capsys.readouterr().err
+    assert "不合法的 run id" in err
+    assert not (tmp_path / "runs").exists()
+
+
+def test_a_valid_run_id_that_does_not_exist_is_reported_clearly(tmp_path, capsys):
+    cfg = tmp_path / "c.yaml"
+    cfg.write_text(
+        f"project:\n  output_root: {tmp_path / 'runs'}\nllm:\n  provider: file\n",
+        encoding="utf-8",
+    )
+    assert main(["--config", str(cfg), "timeline", "--run-id", "20261016T120000Z_abcdef"]) == 1
+    assert "找不到 run 目录" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("bad", ["0", "-1", "abc", ""])
+def test_start_chapter_rejects_non_positive_chapters(bad):
+    """0 是 falsy —— 早先被当成「没指定」，静默走默认档。"""
+    from novel_to_tavern.cli import build_parser
+
+    with pytest.raises(SystemExit) as exc:
+        build_parser().parse_args(["export", "--run-id", "20261016T120000Z_abcdef",
+                                   "--start-chapter", bad])
+    assert exc.value.code == 2
+
+
+def test_start_chapter_accepts_one():
+    from novel_to_tavern.cli import build_parser
+
+    args = build_parser().parse_args(
+        ["export", "--run-id", "20261016T120000Z_abcdef", "--start-chapter", "1"]
+    )
+    assert args.start_chapter == 1
+
+
+def test_omitting_start_chapter_is_none_not_zero():
+    from novel_to_tavern.cli import build_parser
+
+    args = build_parser().parse_args(["export", "--run-id", "20261016T120000Z_abcdef"])
+    assert args.start_chapter is None
+
+
 def test_log_file_gets_written_and_is_redacted(tmp_path, repo_root, monkeypatch):
     monkeypatch.chdir(repo_root)
     log_path = tmp_path / "run.log"
