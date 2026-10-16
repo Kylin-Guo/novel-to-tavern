@@ -24,3 +24,6 @@ input/
 
 # 本地运行配置（含本机路径），不入库
 config/config.yaml
+
+# 预生成的抽取响应（含原文引文），与原文同等对待，不入库
+precomputed/

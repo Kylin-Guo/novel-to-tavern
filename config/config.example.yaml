@@ -16,7 +16,8 @@ input:
   normalize_newlines: true
 
 llm:
-  provider: openai_compatible
+  provider: openai_compatible # openai_compatible | file（file = 读预生成响应，离线跑通管线）
+  precomputed_responses_dir: null # provider=file 时必填，按 <chunk_id>.json 命名
   base_url_env: NOVEL_TAVERN_BASE_URL
   api_key_env: NOVEL_TAVERN_API_KEY
   extraction_model: null # required: set to a model available in your free API tier

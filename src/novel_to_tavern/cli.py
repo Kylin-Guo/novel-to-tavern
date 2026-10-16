@@ -50,6 +50,32 @@ def build_parser() -> argparse.ArgumentParser:
         "--source", metavar="PATH", help="覆盖配置里的 source_path（文件或目录）"
     )
 
+    extract_parser = sub.add_parser("extract", help="分块原子事实提取（Phase 2）")
+    extract_parser.add_argument("--run-id", required=True, help="要抽取的 run id（来自 ingest）")
+    extract_parser.add_argument(
+        "--no-resume", action="store_true", help="忽略已有结果，重新抽取所有分块"
+    )
+    extract_parser.add_argument("--limit", type=int, metavar="N", help="只处理前 N 块（调试用）")
+
+    resolve_parser = sub.add_parser("resolve", help="实体消歧与角色档案（Phase 3）")
+    resolve_parser.add_argument("--run-id", required=True, help="要归一的 run id（来自 extract）")
+
+    timeline_parser = sub.add_parser(
+        "timeline", help="时间线、知识边界与世界书规划（Phase 4）"
+    )
+    timeline_parser.add_argument("--run-id", required=True, help="要构建时间线的 run id")
+    timeline_parser.add_argument(
+        "--start-chapter",
+        type=int,
+        metavar="N",
+        help="起始章节（1 起）。指定后会按 valid_from_chapter 屏蔽该章节之后的内容",
+    )
+
+    export_parser = sub.add_parser(
+        "export", help="导出角色卡与世界书（Phase 5）"
+    )
+    export_parser.add_argument("--run-id", required=True, help="要导出的 run id")
+
     return parser
 
 
@@ -187,6 +213,141 @@ def _cmd_ingest(args: argparse.Namespace, log) -> int:
     return 0
 
 
+def _cmd_extract(args: argparse.Namespace, log) -> int:
+    from .extract import ExtractionError, run_extraction
+    from .llm import ProviderError, build_provider
+
+    try:
+        config = config_module.load_config(args.config)
+    except config_module.ConfigError as exc:
+        print(f"配置校验失败：{exc}", file=sys.stderr)
+        return 1
+
+    run_dir = Path(config.project.output_root) / args.run_id
+    if not run_dir.is_dir():
+        print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
+        return 1
+
+    try:
+        provider = build_provider(config, log=log)
+    except ProviderError as exc:
+        print(f"无法装配抽取引擎：{exc}", file=sys.stderr)
+        return 1
+
+    try:
+        result = run_extraction(
+            config, run_dir, provider, resume=not args.no_resume, limit=args.limit, log=log
+        )
+    except ExtractionError as exc:
+        print(f"抽取失败：{exc}", file=sys.stderr)
+        return 1
+
+    print(f"抽取引擎：{provider.name}")
+    print(f"已完成分块：{len(result.done)}")
+    print(f"本次跳过：{len(result.skipped)}")
+    print(f"失败分块：{len(result.failed)}")
+    print(f"报告：{run_dir / 'reports' / 'extraction_summary.md'}")
+    return 0 if result.ok else 1
+
+
+def _cmd_resolve(args: argparse.Namespace, log) -> int:
+    from .resolve import ResolutionError, resolve
+
+    try:
+        config = config_module.load_config(args.config)
+    except config_module.ConfigError as exc:
+        print(f"配置校验失败：{exc}", file=sys.stderr)
+        return 1
+
+    run_dir = Path(config.project.output_root) / args.run_id
+    if not run_dir.is_dir():
+        print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
+        return 1
+
+    try:
+        result = resolve(run_dir)
+    except ResolutionError as exc:
+        print(f"实体归一失败：{exc}", file=sys.stderr)
+        return 1
+
+    print(f"实体总数：{len(result.entities)}")
+    print(f"合并判定：{len(result.decisions)}")
+    print(f"待人工复核：{len(result.review_queue)}")
+    print(f"排除泛称：{len(result.excluded_role_nouns)}")
+    print(f"报告：{run_dir / 'reports' / 'entity_resolution.md'}")
+    log.info("resolve 完成：%d 个实体", len(result.entities))
+    return 0
+
+
+def _cmd_timeline(args: argparse.Namespace, log) -> int:
+    from .timeline import TimelineError, build
+
+    try:
+        config = config_module.load_config(args.config)
+    except config_module.ConfigError as exc:
+        print(f"配置校验失败：{exc}", file=sys.stderr)
+        return 1
+
+    run_dir = Path(config.project.output_root) / args.run_id
+    if not run_dir.is_dir():
+        print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
+        return 1
+
+    start_chapter = args.start_chapter
+    start_index = start_chapter - 1 if start_chapter else None
+
+    try:
+        result = build(run_dir, start_chapter=start_index)
+    except TimelineError as exc:
+        print(f"构建时间线失败：{exc}", file=sys.stderr)
+        return 1
+
+    stats = result["plan_stats"]
+    print(f"事件数：{len(result['timeline'])}")
+    print(f"知识边界实体数：{len(result['knowledge'])}")
+    print(f"冲突数：{len(result['contradictions'])}")
+    print(
+        "从开头开始时需屏蔽的未来内容："
+        f"{len(result['leakage']['start_at_beginning'])} 条"
+    )
+    print(f"世界书规划条目：{stats['total_entries']}（常驻 {stats['always_on_entries']}）")
+    print(f"报告：{run_dir / 'reports' / 'timeline_report.md'}")
+    log.info("timeline 完成：%d 个事件，%d 个规划条目", len(result["timeline"]), stats["total_entries"])
+    return 0
+
+
+def _cmd_export(args: argparse.Namespace, log) -> int:
+    from .export import ExportError, export
+
+    try:
+        config = config_module.load_config(args.config)
+    except config_module.ConfigError as exc:
+        print(f"配置校验失败：{exc}", file=sys.stderr)
+        return 1
+
+    run_dir = Path(config.project.output_root) / args.run_id
+    if not run_dir.is_dir():
+        print(f"找不到 run 目录：{run_dir}", file=sys.stderr)
+        return 1
+
+    try:
+        result = export(run_dir, config)
+    except ExportError as exc:
+        print(f"导出失败：{exc}", file=sys.stderr)
+        return 1
+
+    card = result["card"]
+    stats = result["stats"]
+    print(f"角色卡：{run_dir / 'exports' / 'world_simulator_v2.json'}")
+    print(f"内嵌世界书条目：{len(card.data.character_book.entries)}")
+    print(f"常驻条目：{stats['always_on_entries']}（约 {stats['always_on_tokens']} token，粗估）")
+    print(f"开场白：1 个主开场 + {len(card.data.alternate_greetings)} 个备用开场")
+    print(f"按起始点屏蔽：{len(result['blocked_begin'])} 个条目")
+    print(f"审计报告：{run_dir / 'reports' / 'audit.md'}")
+    log.info("export 完成：%d 个条目", len(card.data.character_book.entries))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -205,6 +366,14 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_doctor(args, log)
     if args.command == "ingest":
         return _cmd_ingest(args, log)
+    if args.command == "extract":
+        return _cmd_extract(args, log)
+    if args.command == "resolve":
+        return _cmd_resolve(args, log)
+    if args.command == "timeline":
+        return _cmd_timeline(args, log)
+    if args.command == "export":
+        return _cmd_export(args, log)
 
     parser.print_help()
     return 0
