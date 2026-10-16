@@ -273,7 +273,11 @@ caseSensitive: entry.extensions?.case_sensitive ?? null
 
 **结论**：本项目**不做任何 Tavo 专属假设**。策略是输出 ST 1.19 已验证过的格式，在 Tavo 里实际导入并观察（Phase 6），观察结果单独成文。
 
-> ⚠️ 另需实测确认：ST 1.19 的内嵌 `character_book` **不会自动生效** —— `importEmbeddedWorldInfo()` 要用户确认后才把书转存并挂到角色上。Tavo 是否自动生效未知。
+> ⚠️ 实测补充（2026-10）：Tavo 接受了 `.json` 单文件导入，且卡内世界书**能被识别并显示**。
+> 但**没有记录**它是「自动挂载」还是「需用户确认」—— ST 1.19 的
+> `importEmbeddedWorldInfo()` 是后者。这个区别尚未分辨，见 §9 第 2 条。
+>
+> 另外，**「能被识别显示」不等于「运行时条目真的注入上下文」**。后者完全未验证。
 
 ---
 
@@ -294,14 +298,22 @@ caseSensitive: entry.extensions?.case_sensitive ?? null
 1. **`insertion_order` / `order` 的方向语义冲突。**
    V2 规范称"值越小越靠前"；ST 独立世界书文档称"值越大越靠近上下文末尾"；而 `convertCharacterBook` 是**原样拷贝、不取反**。
    两处说法方向相反，指向同一字段。**Phase 0 不预设方向** —— 条目顺序先用 ST 模板默认值（`order: 100` 起），Phase 6 实测后定论。
-2. **内嵌 `character_book` 在 Tavo 中是否自动生效** —— 未知。
-3. **Tavo 是否接受 `.json` 直接导入**（ST 1.19 的角色目录扫描只认 `.png`，导入需走 UI 或 `/api/characters/import`）—— 未知。
+2. **内嵌 `character_book` 在 Tavo 中是「自动挂载」还是「需用户确认」** —— **未知**。
+   已实测的是：导入后世界书能被识别并显示；**没能分辨**是哪一种路径。
+3. ~~Tavo 是否接受 `.json` 直接导入~~ —— **已实测：接受**（2026-10，导入
+   `world_simulator_v2.json` 成功，卡与世界书均正常显示）。Tavo 版本号未记录。
 4. **ST 1.19.0 是否为生产镜像的确切版本。** 部署用 `:latest`；本文以 1.19.0 为准，但未从运行中的 Pod 里读取实际版本号。
 5. **`scan_depth` / `token_budget` / `recursive_scanning` 在 `character_book` 顶层的实际生效情况。** 已确认它们在结构上存在，但未核对运行时的取值路径。
 6. **`extensions` 的具体键名约定**（ST 回写时用 snake_case 如 `display_index`、`exclude_recursion`）—— 已观察到，但未逐项核对全部键。
-7. **本文所有字段表未经过一次真实的「导出 → 导入」往返验证。** 源码级核对不等于实测。
+7. **字段表只经过一次「导出 → 导入」的**结构**验证，没经过行为验证。**
+   2026-10 实测确认：`.json` 可导入、卡可显示、内嵌世界书可显示。
+   **但字段的运行时语义一条都没验证** —— `position` 的实际插入位置、`constant` 是否每轮注入、
+   `probability` 的实际效果、`insertion_order` 的方向、`scan_depth` / `token_budget` 是否被读取，
+   全部仍属**源码级推断**。
+8. **条目「显示」与条目「注入」是两件事。** 客户端把世界书列出来 ≠ 触发时真的把内容送进提示词。
+   本项目**没有**任何手段从外部确认注入行为，只能靠客户端 UI 的上下文查看功能人工核对。
 
-第 7 条是本文最大的局限，也是 Phase 6 存在的原因。
+第 7、8 条是本文最大的局限，也是 Tavo 手工清单存在的全部理由。
 
 ---
 
