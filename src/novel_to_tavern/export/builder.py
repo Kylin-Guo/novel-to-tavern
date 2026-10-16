@@ -165,16 +165,38 @@ def build_core_rules_entry(*, strict_start: str = "") -> PlannedEntry:
     )
 
 
-def _character_roster(entities: list[CanonicalEntity], limit: int = 12) -> str:
-    characters = sorted(
-        (e for e in entities if e.kind == "character"), key=lambda e: -e.evidence_count
-    )[:limit]
-    return "、".join(e.canonical_name for e in characters)
+def _visible_by(
+    entities: list[CanonicalEntity], kind: str, *, upto_chapter: int | None, limit: int
+) -> str:
+    """按类别列出名字，可限定「到第几章为止已出场」。
+
+    `upto_chapter` 是**严格起始点卡的剧透闸门**：起点之后才出场的角色，
+    连名字都不该出现在开场白或 scenario 里 —— 名字本身就是信息
+    （「这个人后面才登场」这件事，读者一旦看到名单就知道了）。
+    出场章节未知的一律**排除**：宁可少列一个，不要在严格档里赌。
+    """
+    pool = [e for e in entities if e.kind == kind]
+    if upto_chapter is not None:
+        pool = [
+            e
+            for e in pool
+            if e.first_appearance_chapter is not None
+            and e.first_appearance_chapter <= upto_chapter
+        ]
+    pool.sort(key=lambda e: -e.evidence_count)
+    return "、".join(e.canonical_name for e in pool[:limit])
 
 
-def _places(entities: list[CanonicalEntity], limit: int = 8) -> str:
-    places = sorted((e for e in entities if e.kind == "place"), key=lambda e: -e.evidence_count)[:limit]
-    return "、".join(e.canonical_name for e in places)
+def _character_roster(
+    entities: list[CanonicalEntity], *, upto_chapter: int | None = None, limit: int = 12
+) -> str:
+    return _visible_by(entities, "character", upto_chapter=upto_chapter, limit=limit)
+
+
+def _places(
+    entities: list[CanonicalEntity], *, upto_chapter: int | None = None, limit: int = 8
+) -> str:
+    return _visible_by(entities, "place", upto_chapter=upto_chapter, limit=limit)
 
 
 def build_greetings(
@@ -300,10 +322,12 @@ def _build_strict_greetings(
 ) -> Greetings:
     """严格起始点卡的单一开场。
 
-    这里**不复述该章节之后**的任何剧情：场景描述只用到起始点为止的章节摘要。
+    这里**不复述该章节之后**的任何剧情：场景描述只用到起始点为止的章节摘要，
+    人物/地点名单同样按起始点过滤 —— 摘要会漏掉「只出现在后期的人名」，
+    而那正是最容易漏掉的一类剧透。
     """
-    roster = _character_roster(entities)
-    places = _places(entities)
+    roster = _character_roster(entities, upto_chapter=strict_chapter_index)
+    places = _places(entities, upto_chapter=strict_chapter_index)
 
     if strict_chapter_index is None:
         visible = digests

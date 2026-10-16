@@ -19,17 +19,29 @@ MAX_QUOTE_SPAN_LINES = 8
 #: 引文长度上限，防止把整章塞进 evidence。
 MAX_QUOTE_CHARS = 400
 
+#: 引文长度**下限**（非空白字符数）。太短的引文（「剑」「他说」）在长篇里
+#: 必然多处命中，定位到哪一处都说得通，等于没有来源。
+#: 实测本次真实 run 的 5,746 条引文最短 5 字，所以这个下限不改动任何既有产物。
+MIN_QUOTE_CHARS = 4
 
 
 class LocatedQuote(BaseModel):
     start_line: int
     end_line: int
+    #: 命中处的**原文行拼接**（不是模型给的原话）。保留原文是因为它保证逐字可查；
+    #: 模型原话另存于 `SourceRef.quote_exact`。
     matched_text: str
+    #: 这段引文在搜索窗口里出现了几次。>1 表示定位不唯一。
+    match_count: int = 1
 
 
 class QuoteCheck(NamedTuple):
     located: LocatedQuote | None
     reason: str
+    #: 引文在原文里出现多次 —— 找到了，但**不唯一**。
+    #: 「找到了」与「找对了地方」是两件事，指标上必须分开。
+    ambiguous: bool = False
+    match_count: int = 0
 
 
 def normalize_for_match(text: str) -> str:
@@ -57,6 +69,12 @@ def locate_quote(
     needle = normalize_for_match(quote)
     if not needle:
         return QuoteCheck(None, "引文去空白后为空")
+    if len(needle) < MIN_QUOTE_CHARS:
+        return QuoteCheck(
+            None,
+            f"引文过短（{len(needle)} 个非空白字符 < {MIN_QUOTE_CHARS}）："
+            "短串在长篇里必然多处命中，定位到哪一处都说得通，不能作为来源",
+        )
 
     start = window[0] if window else 0
     end = window[1] if window else len(lines)
@@ -71,9 +89,18 @@ def locate_quote(
                 chars.append(ch)
                 line_of.append(line_no)
 
-    position = "".join(chars).find(needle)
+    haystack = "".join(chars)
+    position = haystack.find(needle)
     if position == -1:
         return QuoteCheck(None, "引文在原文中找不到（可能是转述或臆造）")
+
+    # 找**全部**命中位置。只取第一处会让「同一句话在书里出现两次」静默地
+    # 落到靠前的那一处 —— 而那处往往不是这条事实的出处。
+    match_count = 1
+    cursor = haystack.find(needle, position + 1)
+    while cursor != -1:
+        match_count += 1
+        cursor = haystack.find(needle, cursor + 1)
 
     first_line = line_of[position]
     last_line = line_of[position + len(needle) - 1]
@@ -84,13 +111,24 @@ def locate_quote(
             "（这更像是概括而非引用）",
         )
 
+    ambiguous = match_count > 1
+    reason = ""
+    if ambiguous:
+        reason = (
+            f"引文在原文中出现 {match_count} 次，已取下最靠前的一处（第 "
+            f"{first_line + 1} 行）—— 定位不唯一，需人工确认是哪一处"
+        )
+
     return QuoteCheck(
         LocatedQuote(
             start_line=first_line,
             end_line=last_line + 1,
             matched_text="".join(lines[first_line : last_line + 1]).strip(),
+            match_count=match_count,
         ),
-        "",
+        reason,
+        ambiguous,
+        match_count,
     )
 
 
@@ -105,14 +143,26 @@ class EvidenceStats(BaseModel):
     total: int = 0
     located: int = 0
     unlocated: int = 0
+    #: 找到了但**不唯一**的条数。它与 `located` 是包含关系：
+    #: `located` 回答「能不能找到」，`ambiguous` 回答「是不是只有一处」。
+    ambiguous: int = 0
 
     @property
     def coverage(self) -> float:
         return self.located / self.total if self.total else 1.0
 
-    def add(self, ok: bool) -> None:
+    @property
+    def unique_rate(self) -> float:
+        """定位**唯一**的比例。分母是已定位的条数 —— 找不到的另有 `coverage` 管。"""
+        if not self.located:
+            return 0.0
+        return (self.located - self.ambiguous) / self.located
+
+    def add(self, ok: bool, *, ambiguous: bool = False) -> None:
         self.total += 1
         if ok:
             self.located += 1
+            if ambiguous:
+                self.ambiguous += 1
         else:
             self.unlocated += 1

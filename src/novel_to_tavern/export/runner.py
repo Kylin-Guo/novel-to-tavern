@@ -316,6 +316,12 @@ def export(
                 "引文在原文里逐字定位成功的比例。**这是来源定位指标，"
                 "不是事实正确率** —— 引文存在不等于主张被正确解读或归属。"
             ),
+            "unique_quote_rate_meaning": (
+                "已定位的引文中**只有一处命中**的比例。与上一个指标是两回事："
+                "上一个回答「能不能找到」，这个回答「是不是只有一处」。"
+                "只取首次匹配而不报歧义，会让「同一句话在书里出现两次」静默地"
+                "落到靠前的那一处。"
+            ),
             "semantic_support": _semantic_metrics(run_path),
         },
         "note": "不包含任何 API 凭据。token 为粗估，非具体分词器计数。",
@@ -611,17 +617,23 @@ def _evidence_stats(run_dir: Path) -> dict[str, int | float]:
     名字要说清楚它是什么：这是 `quote_location_success_rate`
     —— 引文能不能在原文里逐字找到，**不是**事实正确率。
     """
-    total = located = 0
+    total = located = ambiguous = 0
     for path in sorted((run_dir / "extraction").glob("*.json")):
         if path.name.startswith("_"):
             continue
         data = json.loads(path.read_text(encoding="utf-8"))
         total += int(data.get("evidence_total", 0) or 0)
         located += int(data.get("evidence_located", 0) or 0)
+        ambiguous += int(data.get("evidence_ambiguous", 0) or 0)
     return {
         "quotes_total": total,
         "quotes_located": located,
+        "quotes_ambiguous": ambiguous,
         "quote_location_success_rate": round(located / total, 6) if total else 0.0,
+        # 只取首次匹配会掩盖「同一句话在书里出现两次」。这个指标把那一类单列出来。
+        "unique_quote_rate": (
+            round((located - ambiguous) / located, 6) if located else 0.0
+        ),
     }
 
 
@@ -781,6 +793,11 @@ def _render_audit(
         f"| 引文逐字定位率 | {evidence['quotes_located']} / {evidence['quotes_total']} = "
         f"{evidence['quote_location_success_rate']:.2%} | 引文**逐字存在于原文**，行号是程序算的 "
         "| 事实被**正确解读/归属**，也没有说明抽取有没有漏 |",
+        f"| 唯一定位率 | {evidence['quotes_located'] - evidence['quotes_ambiguous']} / "
+        f"{evidence['quotes_located']} = {evidence['unique_quote_rate']:.2%} "
+        f"（多处命中 {evidence['quotes_ambiguous']} 条） "
+        "| 引文在原文里**只有一处**命中，所以「来源」是确定的 | "
+        "找得到但有多处时，取的是最靠前的那一处，未必是这条事实的出处 |",
         f"| 语义支持校验 | {semantic_cell} | 引文**支持**该主张 | "
         "见 `semantic_report.md`；未执行时这一列是空的 |",
         "",

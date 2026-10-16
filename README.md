@@ -57,7 +57,7 @@ cd novel-to-tavern
 python3 -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
 
-.venv/bin/python -m pytest      # 480 项离线测试，不联网、不花 API 额度
+.venv/bin/python -m pytest      # 494 项离线测试，不联网、不花 API 额度
 .venv/bin/n2t --help
 ```
 
@@ -179,7 +179,7 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 
 | 等级 | 内容 | 状态 |
 |---|---|---|
-| ① 单元 / 集成测试 | 480 项离线测试 | ✅ **已跑通**（`python -m pytest`） |
+| ① 单元 / 集成测试 | 494 项离线测试 | ✅ **已跑通**（`python -m pytest`） |
 | ② 结构与一致性校验 | V2 结构 + 内嵌/独立世界书一致 + 密钥扫描 | ✅ **已跑通**（导出时强制） |
 | ③ JSON 可解析 | 卡能被 JSON 解析器读入 | ✅ 已验证 |
 | ④ 卡导入客户端 | 导入 Tavo | ✅ **已实测通过**（单文件，含内嵌世界书） |
@@ -225,7 +225,7 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 │   ├── config.py      配置模型（未知键直接报错）
 │   ├── env.py  secrets.py  logging_setup.py   .env 读取 · 密钥脱敏 · 日志
 │   └── paths.py       runs/<run_id>/ 隔离，拒绝覆盖
-├── tests/             480 项离线单元测试
+├── tests/             494 项离线单元测试
 ├── docs/              架构 · 数据模型 · 格式依据 · 实施计划 · 运行报告
 ├── exports/           生成的产物（含一张可直接导入的示例卡）
 ├── examples/fixtures/ 最小合法卡与世界书 fixture（自创内容）

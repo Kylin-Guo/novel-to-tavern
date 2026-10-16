@@ -248,6 +248,68 @@ def test_strict_greetings_offer_only_one_start(world):
         assert _marker(later) not in greetings.description
 
 
+def test_strict_greetings_do_not_name_characters_that_appear_later(world):
+    """摘要过滤拦不住人名 —— 名单本身就是剧透。
+
+    这一条是补上的：早先只断言章节摘要标记不泄漏，于是
+    「人物3 / 人物4」这类后期角色照样出现在 scenario 的「已出场人物」里，
+    测试全绿。名字会随卡送进客户端，所以它和正文一样是剧透面。
+    """
+    entities, _, _, _, digests = world
+    greetings = build_greetings(
+        book_title="测试书",
+        digests=digests,
+        entities=entities,
+        timeline=[],
+        strict_label="第2章 标题1",
+        strict_chapter_index=1,
+    )
+    rendered = "\n".join(
+        [greetings.first_mes, greetings.scenario, greetings.description, greetings.mes_example]
+    )
+    for later in range(2, TOTAL_CHAPTERS):
+        assert f"人物{later}" not in rendered, (
+            f"从第 2 章严格开始时，第 {later + 1} 章才出场的「人物{later}」仍出现在开场材料里"
+        )
+    # 起点及之前的人物必须在，否则就是过滤过头
+    assert "人物0" in rendered and "人物1" in rendered
+
+
+def test_strict_greetings_exclude_entities_with_unknown_first_appearance(world):
+    """出场章节未知的实体在严格档里一律不列 —— 不赌。"""
+    from novel_to_tavern.resolve.entities import CanonicalEntity
+
+    entities, _, _, _, digests = world
+    entities = [
+        *entities,
+        CanonicalEntity(
+            id="eX",
+            kind="character",
+            canonical_name="无从判断何时出场的人",
+            appearance_chapters=[],
+            first_appearance_chapter=None,
+            evidence_count=99,  # 证据最多，若不过滤必然排在第一位
+        ),
+    ]
+    greetings = build_greetings(
+        book_title="测试书",
+        digests=digests,
+        entities=entities,
+        timeline=[],
+        strict_label="第2章 标题1",
+        strict_chapter_index=1,
+    )
+    assert "无从判断何时出场的人" not in greetings.scenario
+
+
+def test_default_greetings_still_list_everyone(world):
+    """严格档的过滤不能顺手把默认档也改了。"""
+    entities, _, _, _, digests = world
+    greetings = build_greetings(book_title="测试书", digests=digests, entities=entities, timeline=[])
+    assert "人物0" in greetings.scenario
+    assert f"人物{TOTAL_CHAPTERS - 1}" in greetings.scenario
+
+
 def test_default_greetings_still_offer_two_starts(world):
     entities, _, _, _, digests = world
     greetings = build_greetings(book_title="测试书", digests=digests, entities=entities, timeline=[])

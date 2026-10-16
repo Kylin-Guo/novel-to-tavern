@@ -83,6 +83,7 @@ def test_no_runtime_or_source_material_is_tracked(tracked):
 #: 允许入库的正文文本，**全部为自创**。加一个都要先在这里写清楚它为什么安全。
 SELF_AUTHORED_PROSE = {
     "tests/fixtures/sample_novel.txt": "测试纪事",
+    "tests/fixtures/repeat_novel.txt": "重复纪事",
     "examples/gold/灰港纪事.txt": "灰港纪事",
 }
 

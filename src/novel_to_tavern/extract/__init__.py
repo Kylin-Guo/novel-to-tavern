@@ -5,7 +5,14 @@
 
 from __future__ import annotations
 
-from .evidence import MAX_QUOTE_CHARS, EvidenceStats, locate_quote, normalize_for_match
+from .evidence import (
+    MAX_QUOTE_CHARS,
+    MIN_QUOTE_CHARS,
+    EvidenceStats,
+    QuoteCheck,
+    locate_quote,
+    normalize_for_match,
+)
 from .prompts import PROMPT_VERSION, SYSTEM_PROMPT, build_user_prompt
 from .runner import (
     EXTRACTION_DIR,
@@ -36,6 +43,8 @@ __all__ = [
     "EXTRACTION_DIR",
     "INDEX_NAME",
     "MAX_QUOTE_CHARS",
+    "MIN_QUOTE_CHARS",
+    "QuoteCheck",
     "PROMPT_VERSION",
     "SYSTEM_PROMPT",
     "ChunkExtraction",

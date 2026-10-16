@@ -48,7 +48,14 @@ class SourceRef(BaseModel):
     chapter_id: str
     start_line: int
     end_line: int
+    #: 命中处的**原文片段**（由代码从原文切出，保证逐字可查）。
     quote: str
+    #: 模型给出的**原话**。与 `quote` 分开存：`quote` 是原文（可能含整行），
+    #: 这里是模型实际写的那一串，用来核对「模型引的是不是它说的那句」。
+    quote_exact: str = ""
+    #: 这段引文在原文里出现了多次 → 定位不唯一，取的是最靠前的一处。
+    ambiguous: bool = False
+    match_count: int = 1
 
 
 class _Raw(BaseModel):
@@ -184,6 +191,8 @@ class ChunkExtraction(BaseModel):
     relations: list[RelationRecord] = Field(default_factory=list)
     evidence_total: int = 0
     evidence_located: int = 0
+    #: 已定位但**不唯一**的条数（同一引文在原文里出现多次）。
+    evidence_ambiguous: int = 0
     problems: list[str] = Field(default_factory=list)
 
     @property

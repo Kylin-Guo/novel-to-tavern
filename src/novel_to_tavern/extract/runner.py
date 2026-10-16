@@ -23,7 +23,7 @@ from .. import config as config_module, secrets
 from ..ingest.manifest import Manifest
 from ..ingest.source import read_source
 from ..llm.provider import MissingResponseError, Provider, ProviderError
-from .evidence import locate_quote
+from .evidence import QuoteCheck, locate_quote
 from .prompts import PROMPT_VERSION, SYSTEM_PROMPT, build_user_prompt
 from .schema import (
     CANON,
@@ -330,14 +330,17 @@ class ExtractionRunner:
         window = (chunk.start_line, chunk.end_line)
         located_total = 0
         located_ok = 0
+        ambiguous_total = 0
 
-        def resolve(quote: str) -> list[SourceRef]:
-            nonlocal located_total, located_ok
+        def resolve(quote: str) -> tuple[list[SourceRef], QuoteCheck]:
+            nonlocal located_total, located_ok, ambiguous_total
             located_total += 1
             check = locate_quote(lines, quote, window=window)
             if check.located is None:
-                return []
+                return [], check
             located_ok += 1
+            if check.ambiguous:
+                ambiguous_total += 1
             return [
                 SourceRef(
                     source_id=chunk.source_id,
@@ -345,8 +348,11 @@ class ExtractionRunner:
                     start_line=check.located.start_line,
                     end_line=check.located.end_line,
                     quote=check.located.matched_text,
+                    quote_exact=quote,
+                    ambiguous=check.ambiguous,
+                    match_count=check.match_count,
                 )
-            ]
+            ], check
 
         common = {
             "chunk_id": chunk_id,
@@ -358,11 +364,15 @@ class ExtractionRunner:
 
         mentions: list[MentionRecord] = []
         for i, item in enumerate(raw.mentions):
-            refs = resolve(item.quote)
+            refs, check = resolve(item.quote)
             status = "accepted" if refs or not item.quote else "needs_review"
             note = item.note
             if not refs and item.quote:
                 problems.append(f"mention「{item.name}」的引文无法在原文定位")
+            if check.ambiguous:
+                status = "needs_review"
+                note = _append_note(note, check.reason)
+                problems.append(f"mention「{item.name}」的引文定位不唯一")
             if not _declared(item, "kind"):
                 # 模型没说这是什么 —— 不能替它认成人物。
                 status = "needs_review"
@@ -383,9 +393,16 @@ class ExtractionRunner:
 
         facts: list[FactRecord] = []
         for i, item in enumerate(raw.facts):
-            refs = resolve(item.quote)
+            refs, check = resolve(item.quote)
             status = "accepted"
             note = ""
+            if check.ambiguous:
+                # 找到了但不止一处 —— 「来源」这件事还没落实，不能算已核查。
+                status = "needs_review"
+                note = _append_note(note, check.reason)
+                problems.append(
+                    f"fact「{item.subject}.{item.predicate}」的引文定位不唯一"
+                )
             if not _declared(item, "fact_type"):
                 # 少写一个字段是常见的，静默补成 canon_fact 是本项目最不能犯的错。
                 status = "needs_review"
@@ -416,8 +433,11 @@ class ExtractionRunner:
 
         events: list[EventRecord] = []
         for i, item in enumerate(raw.events):
-            refs = resolve(item.quote)
+            refs, check = resolve(item.quote)
             status = "accepted" if refs else "needs_review"
+            if check.ambiguous:
+                status = "needs_review"
+                problems.append(f"event「{item.title}」的引文定位不唯一")
             if not _declared(item, "fact_type"):
                 status = "needs_review"
                 problems.append(
@@ -442,8 +462,13 @@ class ExtractionRunner:
 
         relations: list[RelationRecord] = []
         for i, item in enumerate(raw.relations):
-            refs = resolve(item.quote)
+            refs, check = resolve(item.quote)
             status = "accepted" if refs else "needs_review"
+            if check.ambiguous:
+                status = "needs_review"
+                problems.append(
+                    f"relation「{item.from_entity}→{item.to_entity}」的引文定位不唯一"
+                )
             if not refs:
                 problems.append(
                     f"relation「{item.from_entity}→{item.to_entity}」的引文无法在原文定位"
@@ -474,6 +499,7 @@ class ExtractionRunner:
             relations=relations,
             evidence_total=located_total,
             evidence_located=located_ok,
+            evidence_ambiguous=ambiguous_total,
             problems=problems,
         )
 
@@ -599,6 +625,7 @@ def _write_report(runner: ExtractionRunner, index: dict) -> None:
         "relations": 0,
         "evidence_total": 0,
         "evidence_located": 0,
+        "evidence_ambiguous": 0,
         "needs_review": 0,
     }
     per_source: dict[str, dict[str, int]] = {}
@@ -625,10 +652,16 @@ def _write_report(runner: ExtractionRunner, index: dict) -> None:
             )
         totals["evidence_total"] += data["evidence_total"]
         totals["evidence_located"] += data["evidence_located"]
+        totals["evidence_ambiguous"] += data.get("evidence_ambiguous", 0)
 
     coverage = (
         totals["evidence_located"] / totals["evidence_total"]
         if totals["evidence_total"]
+        else 1.0
+    )
+    unique = (
+        (totals["evidence_located"] - totals["evidence_ambiguous"]) / totals["evidence_located"]
+        if totals["evidence_located"]
         else 1.0
     )
 
@@ -660,8 +693,12 @@ def _write_report(runner: ExtractionRunner, index: dict) -> None:
         f"- 成功定位：{totals['evidence_located']}",
         f"- 定位失败：{totals['evidence_total'] - totals['evidence_located']}",
         f"- 覆盖率：**{coverage:.2%}**",
+        f"- 其中**多处命中**（找到但不唯一）：{totals['evidence_ambiguous']}",
+        f"- 唯一定位率：**{unique:.2%}**（= (成功定位 − 多处命中) / 成功定位）",
         "",
         "> 定位失败的条目一律标为 `needs_review`，不会作为原著事实使用。",
+        "> 「覆盖率」回答「能不能找到」，「唯一定位率」回答「是不是只有一处」——",
+        "> 两者都过，才谈得上这条事实的来源落实了。",
         "",
         "## 逐来源",
         "",

@@ -281,6 +281,90 @@ def test_real_shape_responses_are_unaffected_by_the_new_defaults():
     assert raw.events[0].fact_type == "canon_fact"
 
 
+# --- 定位不唯一：找到了，但不止一处 ------------------------------------------
+
+
+REPEAT = Path(__file__).resolve().parent / "fixtures" / "repeat_novel.txt"
+
+
+def _setup_repeat(tmp_path: Path) -> tuple[config_module.Config, Path]:
+    """用「同一句话在同一章里出现两次」的夹具起一个 run。"""
+    base = config_module.Config()
+    cfg = base.model_copy(
+        update={
+            "project": base.project.model_copy(
+                update={"source_path": str(REPEAT), "output_root": str(tmp_path / "runs")}
+            ),
+            "input": base.input.model_copy(
+                update={"chunk_target_chars": 100000, "chunk_max_chars": 200000}
+            ),
+            "pipeline": base.pipeline.model_copy(update={"cache_dir": str(tmp_path / "cache")}),
+        }
+    )
+    run_id = "20261016T000000Z_dddddd"
+    ingest(cfg, run_id=run_id, resume=False)
+    return cfg, tmp_path / "runs" / run_id
+
+
+def test_ambiguous_quote_downgrades_the_record(tmp_path):
+    """「他把剑放下了。」在同一章里出现两次 —— 取靠前那处是在猜。"""
+    cfg, run_dir = _setup_repeat(tmp_path)
+    payload = _payload(
+        facts=[
+            {"subject": "甲", "predicate": "action", "value": "放下了剑",
+             "fact_type": "canon_fact", "quote": "他把剑放下了。"}
+        ]
+    )
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(payload))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    extraction = runner.process_chunk(chunk_id)
+    fact = extraction.facts[0]
+
+    assert fact.review_status == "needs_review"
+    assert "出现 2 次" in fact.review_note
+    assert fact.source_refs[0].ambiguous is True
+    assert fact.source_refs[0].match_count == 2
+    assert extraction.evidence_ambiguous == 1
+    assert any("定位不唯一" in p for p in extraction.problems)
+
+
+def test_source_ref_keeps_both_the_source_text_and_the_model_quote(tmp_path):
+    """`quote` 是原文片段，`quote_exact` 是模型原话 —— 两者分开存。"""
+    cfg, run_dir = _setup(tmp_path)
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(GOOD))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    ref = runner.process_chunk(chunk_id).facts[0].source_refs[0]
+
+    assert ref.quote_exact == "沿着河堤往南走"
+    assert "沿着河堤往南走" in ref.quote
+    assert ref.ambiguous is False
+
+
+def test_unique_quotes_are_not_downgraded(tmp_path):
+    """新判定不能顺手把正常路径也改了。"""
+    cfg, run_dir = _setup(tmp_path)
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(GOOD))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    extraction = runner.process_chunk(chunk_id)
+
+    assert extraction.evidence_ambiguous == 0
+    assert extraction.facts[0].review_status == "accepted"
+
+
+def test_report_states_the_unique_location_rate(tmp_path):
+    cfg, run_dir = _setup(tmp_path)
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(GOOD))
+    for chunk in runner.manifest.chunks:
+        runner.process_chunk(chunk.chunk_id)
+    from novel_to_tavern.extract.runner import _write_report
+
+    _write_report(runner, {"done": [c.chunk_id for c in runner.manifest.chunks], "skipped": [], "failed": []})
+    text = (run_dir / "reports" / "extraction_summary.md").read_text(encoding="utf-8")
+    assert "唯一定位率" in text
+    assert "多处命中" in text
+    assert "能不能找到" in text
+
+
 def test_defaults_are_unknown_when_field_is_absent():
     from novel_to_tavern.extract.schema import UNKNOWN, RawChunkExtraction
 
