@@ -11,19 +11,13 @@ import platform
 import sys
 from pathlib import Path
 
-from . import __version__, config as config_module, env as env_module
+from . import TARGET_CLIENT, __version__, config as config_module, env as env_module
 from .logging_setup import get_logger, setup_logging
 from .paths import RunDirError, resolve_run_dir
 
 PROG = "n2t"
 
 #: 格式验证所锚定的目标客户端版本（见 docs/FORMAT_COMPATIBILITY.md）。
-#: 状态必须逐项写清楚：格式按 ST 1.19 源码核对，Tavo 只实测到「导入 + 显示」。
-#: 早先这里写「Tavo（待实测）」，而 README 的验证等级表写「已实测通过」——
-#: 同一件事两处相反。现在两处都写同一句话。见 REVIEW_RECHECK P2-09。
-TARGET_CLIENT = "SillyTavern 1.19.0（源码核对）/ Tavo（导入已实测，运行时未验证）"
-
-
 def _chapter_number(text: str) -> int:
     """章节号：从 1 开始的正整数。
 

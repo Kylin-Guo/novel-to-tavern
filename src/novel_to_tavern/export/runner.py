@@ -14,7 +14,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .. import __version__, config as config_module
+from .. import TARGET_CLIENT, __version__, config as config_module
 from ..extract.schema import EventRecord, FactRecord, RelationRecord, SourceRef
 from ..resolve.entities import CanonicalEntity
 from ..tavern import (
@@ -821,7 +821,7 @@ def _render_audit(
         f"- run_id：`{run_dir.name}`",
         f"- 生成时间：{datetime.now(timezone.utc).isoformat(timespec='seconds')}",
         f"- 角色卡名称：{book_title}",
-        f"- 目标格式：`chara_card_v2` / `2.0`（SillyTavern 1.19.0 源码核对，Tavo 未实测）",
+        f"- 目标格式：`chara_card_v2` / `2.0`（{TARGET_CLIENT}）",
         "",
         "## 产物",
         "",
@@ -849,7 +849,8 @@ def _render_audit(
         f"| 语义支持校验 | {semantic_cell} | 引文**支持**该主张 | "
         "见 `semantic_report.md`；未执行时这一列是空的 |",
         "",
-        f"- 待人工复核（引文定位失败）：{review_failures} 条 —— 这**不是**「已人工审校」",
+        f"- `facts.json` 里 `needs_review` 的事实：{review_failures} 条"
+        "（引文定位失败**或**多处命中）—— 这**不是**「已人工审校」",
         "",
         "> 「引文 100% 定位」只证明引文在原文里存在。归属错误、漏掉否定、"
         "把角色信念当成客观事实，都不会被这一层发现。",
