@@ -1,0 +1,377 @@
+"""导出流水线（Phase 5）。
+
+产出：主角色卡（内嵌 character_book）、独立世界书、两个分别对应起始点、
+按起始章节过滤的世界书、时间线、导出清单与审计报告。
+
+导出前一律经过严格校验与"内嵌/独立条目语义一致"比对；
+任何一项不通过就不写文件，避免产出"看起来成功"的卡。
+"""
+
+from __future__ import annotations
+
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+from .. import __version__, config as config_module
+from ..extract.schema import SourceRef
+from ..resolve.entities import CanonicalEntity
+from ..tavern import (
+    CardV2,
+    WorldbookFile,
+    dumps,
+    validate_card,
+    validate_no_secrets,
+    validate_parity,
+    validate_worldbook,
+)
+from ..timeline.build import TimelineEvent
+from ..timeline.worldbible import PlannedEntry, summarize_plan
+from .builder import (
+    ChapterDigest,
+    Greetings,
+    build_core_rules_entry,
+    build_exports,
+    build_greetings,
+    build_plot_entry,
+)
+
+CARD_NAME = "world_simulator_v2.json"
+WORLDBOOK_NAME = "worldbook_standalone.json"
+WORLDBOOK_BEGINNING = "worldbook_start_beginning.json"
+WORLDBOOK_AFTER_END = "worldbook_start_after_ending.json"
+TIMELINE_NAME = "timeline.json"
+MANIFEST_NAME = "export_manifest.json"
+AUDIT_NAME = "audit.md"
+
+
+class ExportError(RuntimeError):
+    """导出阶段的致命错误。运行到这一步说明上游数据有问题，不能产出半成品。"""
+
+
+def _read_json(path: Path):
+    if not path.is_file():
+        raise ExportError(f"缺少上游产物：{path}，请先跑 timeline。")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
+def _collect_digests(run_dir: Path) -> list[ChapterDigest]:
+    """从抽取结果里取每章摘要，用来生成剧情主线与开场白。"""
+    directory = run_dir / "extraction"
+    by_chapter: dict[int, ChapterDigest] = {}
+    for path in sorted(directory.glob("*.json")):
+        if path.name.startswith("_"):
+            continue
+        data = json.loads(path.read_text(encoding="utf-8"))
+        index = data.get("chapter_index")
+        if index is None or index in by_chapter:
+            continue
+        by_chapter[index] = ChapterDigest(
+            chapter_index=index,
+            label=f"第{index + 1}章",
+            summary=data.get("summary", ""),
+            title=data.get("chapter_title", ""),
+        )
+    return [by_chapter[k] for k in sorted(by_chapter)]
+
+
+def _assemble_entries(
+    plan: list[PlannedEntry], digests: list[ChapterDigest]
+) -> list[PlannedEntry]:
+    """核心规则 + 规划条目 + 剧情主线。顺序决定插入次序。"""
+    always_on = [e for e in plan if e.always_on]
+    triggered = [e for e in plan if not e.always_on]
+
+    entries: list[PlannedEntry] = [build_core_rules_entry(digests)]
+    for entry in always_on:
+        if entry.entry_id != "wb_core_rules":
+            entries.append(entry)
+
+    plot = build_plot_entry(digests)
+    if plot is not None:
+        entries.append(plot)
+    entries.extend(triggered)
+    return entries
+
+
+def export(run_dir: str | Path, config: config_module.Config) -> dict:
+    run_path = Path(run_dir)
+    exports_dir = run_path / "exports"
+    reports_dir = run_path / "reports"
+
+    book_title = config.project.name
+    manifest = _read_json(run_path / "manifest.json")
+    if manifest.get("sources"):
+        book_title = Path(manifest["sources"][0]["filename"]).stem.split("：")[0] or book_title
+
+    plan = [
+        PlannedEntry.model_validate(item)
+        for item in _read_json(run_path / "worldbook" / "plan.json")
+    ]
+    entities = [
+        CanonicalEntity.model_validate(item)
+        for item in _read_json(run_path / "canonical" / "entities.json")
+    ]
+    timeline = [
+        TimelineEvent.model_validate(item)
+        for item in _read_json(run_path / "canonical" / "timeline.json")
+    ]
+    digests = _collect_digests(run_path)
+    if not digests:
+        raise ExportError("抽取结果里没有章节摘要，无法生成剧情主线与开场白。")
+
+    entries = _assemble_entries(plan, digests)
+
+    try:
+        greetings: Greetings = build_greetings(
+            book_title=book_title, digests=digests, entities=entities, timeline=timeline
+        )
+    except ValueError as exc:
+        raise ExportError(str(exc)) from exc
+
+    card, worldbook = build_exports(
+        book_title=book_title,
+        entries=entries,
+        greetings=greetings,
+        tags=["世界模拟器", "小说改编", "novel-to-tavern"],
+        version=__version__,
+    )
+
+    # --- 校验：不通过就不写文件 ---
+    card_report = validate_card(
+        card, strict=True, max_always_on=config.worldbook.max_always_on_entries
+    )
+    book_report = validate_worldbook(worldbook, strict=True)
+    parity_report = validate_parity(card, worldbook)
+    problems = [*card_report.errors, *book_report.errors, *parity_report.errors]
+    if problems:
+        raise ExportError("导出前校验未通过：\n  - " + "\n  - ".join(problems))
+
+    card_text = dumps(card)
+    book_text = dumps(worldbook, exclude_none=False)
+    secret_report = validate_no_secrets(card_text + book_text)
+    if not secret_report.ok:
+        raise ExportError("导出内容中检出疑似密钥，已中止。")
+
+    # --- 按起始点过滤的独立世界书 ---
+    from ..timeline.worldbible import filter_for_start_chapter
+
+    available_begin, blocked_begin = filter_for_start_chapter(entries, 0)
+    begin_card, begin_book = build_exports(
+        book_title=f"{book_title}（从开头开始）",
+        entries=available_begin,
+        greetings=greetings,
+        tags=["世界模拟器", "从故事开头开始"],
+        version=__version__,
+    )
+    after_card, after_book = build_exports(
+        book_title=f"{book_title}（从结局之后开始）",
+        entries=entries,
+        greetings=greetings,
+        tags=["世界模拟器", "从结局之后开始"],
+        version=__version__,
+    )
+
+    # --- 落盘 ---
+    _write_text(exports_dir / CARD_NAME, card_text + "\n")
+    _write_text(exports_dir / WORLDBOOK_NAME, book_text + "\n")
+    _write_text(
+        exports_dir / WORLDBOOK_BEGINNING,
+        dumps(begin_book, exclude_none=False) + "\n",
+    )
+    _write_text(
+        exports_dir / WORLDBOOK_AFTER_END,
+        dumps(after_book, exclude_none=False) + "\n",
+    )
+    _write_text(
+        exports_dir / TIMELINE_NAME,
+        json.dumps([e.model_dump(mode="json") for e in timeline], ensure_ascii=False, indent=2) + "\n",
+    )
+
+    stats = summarize_plan(entries)
+    export_manifest = {
+        "schema_version": 1,
+        "project_id": config.project.name,
+        "run_id": run_path.name,
+        "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "generator_version": __version__,
+        "sources": [
+            {"source_id": s["source_id"], "sha256": s["sha256"], "filename": s["filename"]}
+            for s in manifest.get("sources", [])
+        ],
+        "config_fingerprint": manifest.get("config_fingerprint", ""),
+        "character_card_spec": "chara_card_v2",
+        "prompt_versions": _prompt_versions(run_path),
+        "entry_counts": {
+            "main_card_entries": len(card.data.character_book.entries),
+            "standalone_entries": len(worldbook.entries),
+            "blocked_for_beginning": len(blocked_begin),
+        },
+        "token_estimate": stats,
+        "outputs": [
+            CARD_NAME,
+            WORLDBOOK_NAME,
+            WORLDBOOK_BEGINNING,
+            WORLDBOOK_AFTER_END,
+            TIMELINE_NAME,
+        ],
+        "validation": {
+            "card_errors": card_report.errors,
+            "worldbook_errors": book_report.errors,
+            "parity_errors": parity_report.errors,
+            "card_warnings": card_report.warnings,
+        },
+        "note": "不包含任何 API 凭据。token 为粗估，非具体分词器计数。",
+    }
+    _write_text(
+        exports_dir / MANIFEST_NAME,
+        json.dumps(export_manifest, ensure_ascii=False, indent=2) + "\n",
+    )
+
+    audit = _render_audit(
+        run_path,
+        book_title=book_title,
+        card=card,
+        worldbook=worldbook,
+        begin_card=begin_card,
+        after_card=after_card,
+        entries=entries,
+        blocked_begin=blocked_begin,
+        card_report=card_report,
+        book_report=book_report,
+        parity_report=parity_report,
+        stats=stats,
+        digests=digests,
+        timeline=timeline,
+        entities=entities,
+    )
+    _write_text(reports_dir / AUDIT_NAME, audit)
+
+    return {
+        "card": card,
+        "worldbook": worldbook,
+        "entries": entries,
+        "blocked_begin": blocked_begin,
+        "stats": stats,
+        "manifest": export_manifest,
+        "greetings": greetings,
+    }
+
+
+def _prompt_versions(run_dir: Path) -> dict[str, str]:
+    versions: dict[str, str] = {}
+    for path in sorted((run_dir / "extraction").glob("*.json")):
+        if path.name.startswith("_"):
+            continue
+        data = json.loads(path.read_text(encoding="utf-8"))
+        version = data.get("prompt_version")
+        provider = data.get("provider")
+        if version:
+            versions[f"extract:{provider}"] = version
+    return versions
+
+
+def _render_audit(
+    run_dir: Path,
+    *,
+    book_title: str,
+    card: CardV2,
+    worldbook: WorldbookFile,
+    begin_card: CardV2,
+    after_card: CardV2,
+    entries: list[PlannedEntry],
+    blocked_begin: list[PlannedEntry],
+    card_report,
+    book_report,
+    parity_report,
+    stats: dict,
+    digests: list[ChapterDigest],
+    timeline: list[TimelineEvent],
+    entities: list[CanonicalEntity],
+) -> str:
+    from ..timeline.worldbible import estimate_tokens
+
+    refs: list[SourceRef] = [r for e in entries for r in e.source_refs]
+    with_refs = sum(1 for e in entries if e.source_refs)
+    characters = [e for e in entities if e.kind == "character"]
+
+    lines = [
+        "# 导出审计报告",
+        "",
+        f"- run_id：`{run_dir.name}`",
+        f"- 生成时间：{datetime.now(timezone.utc).isoformat(timespec='seconds')}",
+        f"- 角色卡名称：{book_title}",
+        f"- 目标格式：`chara_card_v2` / `2.0`（SillyTavern 1.19.0 源码核对，Tavo 未实测）",
+        "",
+        "## 产物",
+        "",
+        "| 文件 | 内容 | 条目数 |",
+        "|---|---|---|",
+        f"| exports/{CARD_NAME} | 主角色卡（内嵌 character_book） | {len(card.data.character_book.entries)} |",
+        f"| exports/{WORLDBOOK_NAME} | 独立世界书（含全部条目） | {len(worldbook.entries)} |",
+        f"| exports/{WORLDBOOK_BEGINNING} | 独立世界书（**已屏蔽起始点之后的内容**） | {len(begin_card.data.character_book.entries)} |",
+        f"| exports/{WORLDBOOK_AFTER_END} | 独立世界书（从结局之后开始，全部内容） | {len(after_card.data.character_book.entries)} |",
+        f"| exports/{TIMELINE_NAME} | 时间线 | {len(timeline)} 个事件 |",
+        f"| exports/{MANIFEST_NAME} | 导出清单 | — |",
+        "",
+        "## 来源覆盖",
+        "",
+        f"- 章节摘要：{len(digests)} 章",
+        f"- 世界书条目：{len(entries)}",
+        f"- 带来源引用的条目：{with_refs} / {len(entries)}",
+        f"- 条目携带的引文总数：{len(refs)}",
+        f"- 实体：{len(entities)}（其中人物 {len(characters)}）",
+        f"- 时间线事件：{len(timeline)}",
+        "",
+        "## 校验结果",
+        "",
+        f"- 角色卡结构校验：{'通过' if card_report.ok else '**未通过**'}",
+        f"- 独立世界书校验：{'通过' if book_report.ok else '**未通过**'}",
+        f"- 内嵌/独立条目一致性：{'通过' if parity_report.ok else '**未通过**'}",
+        f"- 密钥扫描：通过",
+        f"- 警告 {len(card_report.warnings)} 条：",
+    ]
+    for warning in card_report.warnings[:20]:
+        lines.append(f"  - {warning}")
+
+    lines += [
+        "",
+        "## Token 预算（粗估）",
+        "",
+        f"- 常驻条目：{stats['always_on_entries']} 个，约 {stats['always_on_tokens']} token",
+        f"- 触发条目：{stats['triggered_entries']} 个",
+        f"- 全部条目合计：约 {stats['total_tokens']} token",
+        f"- 按起始点从开头开始时屏蔽：{len(blocked_begin)} 个条目",
+        "",
+        "> 估算方式：CJK 约 1 字 1 token，其余约 4 字符 1 token。**不是**任何具体分词器的真实计数。",
+        "",
+        "## 用户可选的两个起点",
+        "",
+        f"1. **从故事开头开始** —— 第 1 章之前，"
+        f"屏蔽了 {len(blocked_begin)} 个起始点之后的条目。",
+        f"2. **从故事最终结局之后开始** —— 第 {len(digests)} 章之后，全部内容可用。",
+        "",
+        "两个起点都能选：卡片的开场白会先让用户挑一个，"
+        "并额外提供两条 alternate_greetings 直接进入对应场景。",
+        "",
+        "## 已知限制",
+        "",
+        "1. **尚未在 Tavo 实测**。格式依据为 SillyTavern 1.19.0 源码，"
+        "但没有任何一次真实导入记录。导入步骤见 docs/TAVO_IMPORT_CHECKLIST.md。",
+        "2. 事件没有绝对时间：原文未明确给出时 `occurred_at` 一律为空，不予推算。",
+        "3. 知识边界由「事件参与者」推断，标注为 `present_at_event`，"
+        "不等于原著明文授权。",
+        "4. 角色卡含全书剧情（「剧情主线」条目），**剧透防护靠核心规则的时间纪律**，"
+        "不是靠条目隔离。若要严格无剧透，请改用对应的过滤版独立世界书。",
+        "5. 事实来自自动抽取，`needs_review` 的条目已被排除在条目正文之外，"
+        "但仍建议人工抽查主要角色条目。",
+        "",
+        "> 本报告不含小说原文。",
+        "",
+    ]
+    return "\n".join(lines)
