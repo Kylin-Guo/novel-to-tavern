@@ -25,8 +25,11 @@ from .worldbible import (
     MIN_ENTITY_CHAPTERS,
     MIN_ENTITY_FACTS,
     PlannedEntry,
+    entity_coverage,
     filter_for_start_chapter,
     entities_skipped_from_worldbook,
+    index_overflow,
+    is_forced,
     plan_character_index,
     plan_entity_entries,
     plan_world_overview,
@@ -63,6 +66,7 @@ def build(
     start_chapter: int | None = None,
     always_on_world_overview: bool = True,
     always_on_character_index: bool = True,
+    force_include: frozenset[str] | set[str] = frozenset(),
 ) -> dict:
     run_path = Path(run_dir)
     canonical = run_path / "canonical"
@@ -110,9 +114,22 @@ def build(
         if index_entry:
             entries.append(index_entry)
     entries.extend(
-        plan_entity_entries(entities, usable_facts, excluded_fact_ids=excluded)
+        plan_entity_entries(
+            entities,
+            usable_facts,
+            excluded_fact_ids=excluded,
+            force_include=force_include,
+        )
     )
-    skipped_entities = entities_skipped_from_worldbook(entities, usable_facts)
+    skipped_entities = entities_skipped_from_worldbook(
+        entities, usable_facts, force_include=force_include
+    )
+    coverage = entity_coverage(
+        entities,
+        usable_facts,
+        excluded_fact_ids=excluded,
+        force_include=force_include,
+    )
     # 章节事件条目已移除：它们与「剧情主线」内容重复，且触发词取的是该章在场人物，
     # 主要人物出场上百章 → 一句话会同时命中上百条（实测 117 条 ≈ 6 万 token）。
 
@@ -144,6 +161,7 @@ def build(
         entries=available,
         blocked=blocked,
         skipped_entities=skipped_entities,
+        coverage=coverage,
         plan_stats=plan_stats,
         start_chapter=start_chapter,
         total_chapters=total_chapters,
@@ -159,6 +177,7 @@ def build(
         "entries": available,
         "blocked_entries": blocked,
         "skipped_entities": skipped_entities,
+        "coverage": coverage,
         "plan_stats": plan_stats,
         "total_chapters": total_chapters,
     }
@@ -174,6 +193,7 @@ def _render_report(
     entries: list[PlannedEntry],
     blocked: list[PlannedEntry],
     skipped_entities: list[tuple[CanonicalEntity, str]],
+    coverage: dict,
     plan_stats: dict,
     start_chapter: int | None,
     total_chapters: int,
@@ -306,6 +326,38 @@ def _render_report(
             f"{sum(e.estimated_tokens for e in group)} |"
         )
 
+    if coverage:
+        lines += [
+            "",
+            "## 实体覆盖",
+            "",
+            "| 项 | 数量 |",
+            "|---|---|",
+            f"| 实体总数 | {coverage['entities_total']} |",
+            f"| 其中人物 | {coverage['characters_total']} |",
+            f"| 生成独立条目 | {coverage['entities_with_entry']}（人物 {coverage['characters_with_entry']}） |",
+            f"| 未生成条目 | {coverage['entities_skipped']} |",
+            "",
+            "按类别："
+            + "、".join(f"{k} {v}" for k, v in coverage["by_kind"].items()),
+            "",
+        ]
+        if coverage.get("forced"):
+            lines.append(
+                f"- **用户强制保留**（跳过门槛）：{ '、'.join(coverage['forced']) }"
+            )
+        if coverage.get("index_overflow"):
+            overflow = coverage["index_overflow"]
+            lines += [
+                "",
+                f"### 只出现在人物索引之外的人（{len(overflow)} 位）",
+                "",
+                "人物索引条目上限 60 人，以下是排在后面、**没有**独立条目的：",
+                "",
+                "> " + "、".join(overflow),
+                "",
+                "想让他们有资料，用 `--include-character 名字` 强制生成。",
+            ]
     if skipped_entities:
         lines += [
             "",

@@ -164,6 +164,19 @@ def _facts_by_entity(
     return result
 
 
+def is_forced(entity: CanonicalEntity, force_include: frozenset[str] | set[str]) -> bool:
+    """用户点名要保留的实体。按主名或任一别名匹配（大小写与空白不敏感）。
+
+    存在的理由：门槛（`MIN_ENTITY_FACTS` / `MIN_ENTITY_CHAPTERS`）是**统计**判断，
+    它不知道用户想扮演谁。想扮演一个被门槛刷掉的配角时，用户需要一条强制通道，
+    而不是去改门槛 —— 改门槛会连带所有实体。
+    """
+    if not force_include:
+        return False
+    wanted = {name.strip() for name in force_include if name and name.strip()}
+    return bool(wanted & {entity.canonical_name, *entity.aliases})
+
+
 def entry_qualification(entity: CanonicalEntity, own_facts: list[FactRecord]) -> tuple[bool, str]:
     """该实体是否值得单开一个世界书条目，以及不符合时的原因。"""
     if len(own_facts) >= MIN_ENTITY_FACTS:
@@ -184,6 +197,7 @@ def entities_skipped_from_worldbook(
     facts: list[FactRecord],
     *,
     start_chapter: int | None = None,
+    force_include: frozenset[str] | set[str] = frozenset(),
 ) -> list[tuple[CanonicalEntity, str]]:
     """不该单开世界书条目的实体及原因。
 
@@ -203,6 +217,8 @@ def entities_skipped_from_worldbook(
 
     result: list[tuple[CanonicalEntity, str]] = []
     for entity in entities:
+        if is_forced(entity, force_include):
+            continue  # 用户点名保留，不算「被跳过」
         own = by_entity.get(entity.id, [])
         ok, reason = entry_qualification(entity, own)
         if not ok:
@@ -214,6 +230,81 @@ def entities_skipped_from_worldbook(
                 )
             result.append((entity, reason))
     return result
+
+
+def index_overflow(
+    entities: list[CanonicalEntity], *, start_chapter: int | None = None
+) -> list[str]:
+    """人物索引装不下、只在正文里出现的那些人。
+
+    索引条目正文里只写了一句「另有 N 人」。**名单必须留在报告里** ——
+    否则「用户想扮演的那位为什么在世界书里找不到」就没有答案。
+    """
+    characters = [e for e in entities if e.kind == "character"]
+    if start_chapter is not None:
+        characters = [
+            e
+            for e in characters
+            if e.first_appearance_chapter is not None
+            and e.first_appearance_chapter <= start_chapter
+        ]
+    characters.sort(key=lambda e: (-e.evidence_count, e.canonical_name))
+    return [e.canonical_name for e in characters[MAX_INDEX_ENTRIES:]]
+
+
+def entity_coverage(
+    entities: list[CanonicalEntity],
+    facts: list[FactRecord],
+    *,
+    start_chapter: int | None = None,
+    excluded_fact_ids: frozenset[str] | set[str] = frozenset(),
+    force_include: frozenset[str] | set[str] = frozenset(),
+) -> dict:
+    """实体覆盖统计：有多少实体、其中多少拿到独立条目、多少被跳过、为什么。
+
+    报告里此前只有「被跳过的」这一侧，没有分母 —— 于是看不出「153 个人物里
+    只有 176 个实体出条目」这种规模感。覆盖表补上分母与分类。
+    """
+    usable = [
+        f
+        for f in facts_upto_chapter(facts, start_chapter)
+        if f.fact_id not in excluded_fact_ids
+    ]
+    by_entity = _facts_by_entity(entities, usable)
+
+    by_kind: dict[str, int] = defaultdict(int)
+    with_entry: list[str] = []
+    skipped: list[tuple[CanonicalEntity, str]] = []
+    forced: list[str] = []
+
+    for entity in entities:
+        by_kind[entity.kind] += 1
+        own = by_entity.get(entity.id, [])
+        qualifies, reason = entry_qualification(entity, own)
+        if is_forced(entity, force_include):
+            qualifies, reason = True, ""
+            forced.append(entity.canonical_name)
+        if qualifies:
+            with_entry.append(entity.canonical_name)
+        else:
+            skipped.append((entity, reason))
+
+    characters = [e for e in entities if e.kind == "character"]
+    return {
+        "entities_total": len(entities),
+        "entities_with_entry": len(with_entry),
+        "entities_skipped": len(skipped),
+        "by_kind": dict(sorted(by_kind.items(), key=lambda kv: -kv[1])),
+        "characters_total": len(characters),
+        "characters_with_entry": sum(
+            1 for name in with_entry if name in {e.canonical_name for e in characters}
+        ),
+        "index_overflow": index_overflow(entities, start_chapter=start_chapter),
+        "forced": sorted(forced),
+        "skipped": [
+            (e.canonical_name, e.kind, reason) for e, reason in skipped
+        ],
+    }
 
 
 #: 概括一个实体时优先用哪些谓词 —— 越靠前越像「它是什么」，越靠后越像「它做了什么」。
@@ -327,6 +418,7 @@ def plan_entity_entries(
     *,
     start_chapter: int | None = None,
     excluded_fact_ids: frozenset[str] | set[str] = frozenset(),
+    force_include: frozenset[str] | set[str] = frozenset(),
 ) -> list[PlannedEntry]:
     """为**有已校验事实**的实体规划世界书条目。
 
@@ -351,7 +443,7 @@ def plan_entity_entries(
     for entity in sorted(entities, key=lambda e: (-e.evidence_count, e.canonical_name)):
         own_facts = by_entity.get(entity.id, [])
         qualifies, _reason = entry_qualification(entity, own_facts)
-        if not qualifies:
+        if not qualifies and not is_forced(entity, force_include):
             continue
 
         runtime = _render_facts(

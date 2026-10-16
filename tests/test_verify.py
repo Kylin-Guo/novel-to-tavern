@@ -277,7 +277,7 @@ def test_timeline_marks_the_layer_as_not_executed_when_absent(tmp_path):
     text = _render_report(
         tmp_path, timeline=[], knowledge={}, contradictions=[], leakage_reports={
             "start_at_beginning": [], "start_at_end": []
-        }, entries=[], blocked=[], skipped_entities=[], plan_stats={
+        }, entries=[], blocked=[], skipped_entities=[], coverage={}, plan_stats={
             "total_entries": 0, "always_on_entries": 0, "triggered_entries": 0,
             "always_on_tokens": 0, "total_tokens": 0,
         }, start_chapter=None, total_chapters=1, verdicts=None,

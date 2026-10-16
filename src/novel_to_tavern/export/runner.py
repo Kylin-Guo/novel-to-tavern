@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -90,6 +91,31 @@ def _read_json(path: Path):
 def _write_text(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
+
+
+def _describe_outputs(names: list[str], exports_dir: Path) -> list[dict]:
+    """产物清单：文件名 + sha256 + 字节数 + 是否真的落盘。
+
+    早先只记文件名。那意味着拿到一份 `export_manifest.json` 无法回答
+    「我手上这张卡是不是这次生成的」—— 而这正是清单存在的理由。
+    """
+    described: list[dict] = []
+    for name in names:
+        path = exports_dir / name
+        if path.is_file():
+            data = path.read_bytes()
+            described.append(
+                {
+                    "name": name,
+                    "sha256": hashlib.sha256(data).hexdigest(),
+                    "bytes": len(data),
+                    "exists": True,
+                }
+            )
+        else:
+            # 没写出来的文件也要出现在清单里 —— 静默省略会让人以为它不存在过。
+            described.append({"name": name, "sha256": "", "bytes": 0, "exists": False})
+    return described
 
 
 def _collect_digests(run_dir: Path) -> list[ChapterDigest]:
@@ -301,13 +327,12 @@ def export(
             "blocked_for_beginning": len(blocked_begin),
         },
         "token_estimate": stats,
-        "outputs": [
-            CARD_NAME,
-            WORLDBOOK_NAME,
-            WORLDBOOK_BEGINNING,
-            WORLDBOOK_AFTER_END,
-            TIMELINE_NAME,
-        ],
+        # 只列文件名等于没法核对「你手上这份是不是这次生成的」。
+        # 逐个记 sha256 与字节数，且如实标注文件到底有没有落盘。
+        "outputs": _describe_outputs(
+            [CARD_NAME, WORLDBOOK_NAME, WORLDBOOK_BEGINNING, WORLDBOOK_AFTER_END, TIMELINE_NAME],
+            exports_dir,
+        ),
         "validation": {
             "card_errors": card_report.errors,
             "worldbook_errors": book_report.errors,
@@ -348,10 +373,13 @@ def export(
             "entries_truncated": strict_state.entries_truncated,
             "files": strict_result["files"],
         }
-        export_manifest["outputs"].extend(strict_result["files"])
+        export_manifest["outputs"].extend(
+            _describe_outputs(strict_result["files"], exports_dir)
+        )
     else:
         export_manifest["strict_start_point"] = {
             "enabled": False,
+            "guarantee": "无结构性保证 —— 全书剧情在可触发条目内，靠核心规则的时间纪律约束",
             "note": "未指定 --start-chapter。主卡为「尽力而为」档，见 README 的剧透防护说明。",
         }
     _write_text(

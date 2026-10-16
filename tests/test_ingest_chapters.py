@@ -114,3 +114,21 @@ def test_headings_inside_body_are_not_matched_mid_line():
     text = ["第1章 甲\n", "他说「这是第3章里的话」。\n", "第2章 乙\n", "正文\n"]
     headings = find_headings(text)
     assert [h.line_index for h in headings] == [0, 2]
+
+
+def test_manual_strategy_is_recorded_as_manual_not_regex():
+    """用户给定规则与工具自己猜的规则必须分得开 —— 报告里要看得出用的是哪种。"""
+    lines = ["第1章 起风\n", "内容\n", "第2章 落雪\n", "内容\n"]
+
+    auto = build_chapter_index(lines, source_id="s", strategy="auto")
+    manual = build_chapter_index(lines, source_id="s", strategy="manual")
+    explicit_regex = build_chapter_index(lines, source_id="s", strategy="regex")
+
+    assert auto.detection.strategy == "regex"  # auto 找到标题时走的就是正则这条路
+    assert manual.detection.strategy == "manual"
+    assert explicit_regex.detection.strategy == "regex"
+
+
+def test_manual_strategy_that_finds_nothing_raises_instead_of_downgrading():
+    with pytest.raises(ValueError, match="不足以切分"):
+        build_chapter_index(["没有标题的一行\n"], source_id="s", strategy="manual")

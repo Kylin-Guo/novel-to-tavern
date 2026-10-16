@@ -44,6 +44,10 @@ SUMMARY_NAME = "extraction_summary.md"
 #: 解析失败时最多再问几次。
 MAX_PARSE_ATTEMPTS = 2
 
+#: 隔离文件里保留多少字符。失败记录不需要无上限地写盘；
+#: 缓存不受此限（缓存要逐字完整才能复用）。
+MAX_QUARANTINE_CHARS = 20_000
+
 
 class ExtractionError(RuntimeError):
     """抽取阶段的致命错误。"""
@@ -330,11 +334,32 @@ class ExtractionRunner:
         return extraction
 
     def _quarantine(self, chunk_id: str, text: str, reason: str) -> None:
+        """把导致解析失败的原始响应留档。
+
+        留档的用处是「事后能看出模型当时答了什么」，所以**截断**不影响用途，
+        但整段写盘会把一个失败记录变成一份无上限的原始文本堆。
+        超过 `MAX_QUARANTINE_CHARS` 的只留头尾，并写明原始长度 ——
+        长度本身就是判断「模型是不是跑飞了」的第一手信息。
+
+        注意与**缓存**的区别：缓存是给下一次复用的，必须逐字完整，
+        否则重新解析会得到不同的结果，所以缓存不截断。
+        """
         if not self.config.pipeline.quarantine_invalid_responses:
             return
         target = self.error_dir / f"{chunk_id}.txt"
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(f"# reason: {reason}\n# chunk: {chunk_id}\n\n{text}\n", encoding="utf-8")
+        body = text
+        if len(text) > MAX_QUARANTINE_CHARS:
+            head = text[: MAX_QUARANTINE_CHARS // 2]
+            tail = text[-MAX_QUARANTINE_CHARS // 2 :]
+            body = (
+                f"{head}\n\n…（此处省略 {len(text) - MAX_QUARANTINE_CHARS} 字符）…\n\n{tail}"
+            )
+        target.write_text(
+            f"# reason: {reason}\n# chunk: {chunk_id}\n"
+            f"# 原始响应长度: {len(text)} 字符\n\n{body}\n",
+            encoding="utf-8",
+        )
 
     def _to_records(
         self,

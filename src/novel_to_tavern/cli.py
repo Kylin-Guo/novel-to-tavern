@@ -104,6 +104,14 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="N",
         help="起始章节（1 起）。指定后会按 valid_from_chapter 屏蔽该章节之后的内容",
     )
+    timeline_parser.add_argument(
+        "--include-character",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help="强制为这个实体生成独立条目，即使它没过「事实数/章节数」门槛。"
+        "可重复。按主名或别名匹配 —— 想扮演一个被门槛刷掉的配角时用这个。",
+    )
 
     verify_parser = sub.add_parser(
         "verify", help="语义支持校验：引文支不支持这条主张（Phase 6）"
@@ -126,7 +134,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--start-chapter",
         type=_chapter_number,
         metavar="N",
-        help="额外产出一套严格起始点产物（1 起的章节号）："
+        help="（世界书计划在 timeline 阶段生成；要强制保留某个配角，"
+        "用 n2t timeline --include-character 重跑计划再导出）"
+        "额外产出一套严格起始点产物（1 起的章节号）："
         "第 N 章之后的内容不写入任何条目，做到结构性无剧透。"
         "不指定则只产出默认的「尽力而为」档。",
     )
@@ -354,6 +364,7 @@ def _cmd_timeline(args: argparse.Namespace, log) -> int:
             start_chapter=start_index,
             always_on_world_overview=config.worldbook.always_on_world_overview,
             always_on_character_index=config.worldbook.always_on_character_index,
+            force_include=frozenset(args.include_character or ()),
         )
     except TimelineError as exc:
         print(f"构建时间线失败：{exc}", file=sys.stderr)
@@ -368,6 +379,21 @@ def _cmd_timeline(args: argparse.Namespace, log) -> int:
         f"{len(result['leakage']['start_at_beginning'])} 条"
     )
     print(f"世界书规划条目：{stats['total_entries']}（常驻 {stats['always_on_entries']}）")
+    coverage = result.get("coverage") or {}
+    if coverage:
+        print(
+            f"实体覆盖：{coverage['entities_total']} 个实体，"
+            f"{coverage['entities_with_entry']} 个有独立条目，"
+            f"{coverage['entities_skipped']} 个被跳过（名单见报告）"
+        )
+        if args.include_character:
+            matched = set(coverage.get("forced") or ())
+            missed = [n for n in args.include_character if n not in matched]
+            if missed:
+                print(
+                    f"警告：--include-character 里的 {missed} 没有匹配到任何实体（检查名字写法）",
+                    file=sys.stderr,
+                )
     print(f"报告：{run_dir / 'reports' / 'timeline_report.md'}")
     log.info("timeline 完成：%d 个事件，%d 个规划条目", len(result["timeline"]), stats["total_entries"])
     return 0

@@ -64,7 +64,9 @@ class ChapterRecord(BaseModel):
 
 
 class DetectionInfo(BaseModel):
-    strategy: Literal["regex", "fallback"]
+    #: `manual` 与 `regex` 必须分得开：前者是用户给定规则、匹配失败会报错，
+    #: 后者是工具自己猜的规则。早先两者都写成 `regex`，报告里看不出用的是哪种。
+    strategy: Literal["regex", "manual", "fallback"]
     pattern: str
     headings_found: int
     headings_merged: int
@@ -321,6 +323,8 @@ def build_chapter_index(
             lines, merged, dropped, duplicate_map, source_id=source_id
         )
         index.detection.pattern = pattern
+        # 如实记录用的是哪条路：manual 是用户给的规则，regex 是工具自己找的。
+        index.detection.strategy = "manual" if strategy == "manual" else "regex"
         return index
 
     if strategy in ("regex", "manual"):

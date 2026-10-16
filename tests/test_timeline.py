@@ -553,3 +553,112 @@ def test_missing_upstream_artifact_raises(tmp_path):
     (tmp_path / "run").mkdir()
     with pytest.raises(TimelineError, match="缺少上游产物"):
         build(tmp_path / "run")
+
+
+# --- 覆盖统计与强制保留 ------------------------------------------------------
+
+
+def test_coverage_reports_the_denominator_not_just_the_skipped():
+    """报告此前只有「被跳过的那一侧」，没有分母 —— 看不出规模。"""
+    from novel_to_tavern.timeline import entity_coverage
+
+    entities = [
+        _entity("e1", "有两条事实的人", evidence=9),
+        _entity("e2", "只有一条事实的人", evidence=3),
+        _entity("e3", "某地", kind="place", evidence=2),
+    ]
+    facts = [
+        _fact("f1", "有两条事实的人", "state", "甲"),
+        _fact("f2", "有两条事实的人", "background", "乙"),
+        _fact("f3", "只有一条事实的人", "state", "丙"),
+    ]
+    cov = entity_coverage(entities, facts)
+
+    assert cov["entities_total"] == 3
+    assert cov["entities_with_entry"] == 1
+    assert cov["entities_skipped"] == 2
+    assert cov["characters_total"] == 2
+    assert cov["characters_with_entry"] == 1
+    assert cov["by_kind"]["character"] == 2
+    assert {name for name, _kind, _reason in cov["skipped"]} == {"只有一条事实的人", "某地"}
+
+
+def test_all_skipped_entities_carry_a_reason():
+    from novel_to_tavern.timeline import entity_coverage
+
+    entities = [_entity("e1", "甲", evidence=1)]
+    cov = entity_coverage(entities, [])
+    assert cov["skipped"], "这个实体应当被跳过"
+    assert all(reason for _n, _k, reason in cov["skipped"])
+
+
+def test_force_include_generates_an_entry_for_an_otherwise_skipped_entity():
+    """门槛是统计判断，它不知道用户想扮演谁。"""
+    entities = [_entity("e1", "被门槛刷掉的人", evidence=1)]
+    facts = [_fact("f1", "被门槛刷掉的人", "state", "只有一条事实")]
+
+    assert plan_entity_entries(entities, facts) == []
+    forced = plan_entity_entries(entities, facts, force_include=frozenset({"被门槛刷掉的人"}))
+    assert len(forced) == 1
+    assert "只有一条事实" in forced[0].content_runtime
+
+
+def test_force_include_matches_an_alias_too():
+    entities = [_entity("e1", "凌霜", aliases=("霜姐",), evidence=1)]
+    facts = [_fact("f1", "凌霜", "state", "只有一条事实")]
+    forced = plan_entity_entries(entities, facts, force_include=frozenset({"霜姐"}))
+    assert len(forced) == 1
+
+
+def test_forced_entities_are_not_listed_as_skipped():
+    """用户点名保留的，不该同时出现在「被跳过」名单里。"""
+    entities = [_entity("e1", "甲", evidence=1)]
+    facts = [_fact("f1", "甲", "state", "一条")]
+    assert entities_skipped_from_worldbook(entities, facts)
+    assert entities_skipped_from_worldbook(entities, facts, force_include=frozenset({"甲"})) == []
+
+
+def test_force_include_does_not_change_any_other_entity():
+    entities = [
+        _entity("e1", "甲", evidence=1),
+        _entity("e2", "乙", evidence=1),
+    ]
+    facts = [_fact("f1", "甲", "state", "一条"), _fact("f2", "乙", "state", "一条")]
+    forced = plan_entity_entries(entities, facts, force_include=frozenset({"甲"}))
+    assert [e.title for e in forced] == ["甲"]
+
+
+def test_index_overflow_lists_the_people_the_index_cannot_hold():
+    """索引正文只写「另有 N 人」—— 名单必须留在报告里。"""
+    from novel_to_tavern.timeline import index_overflow
+    from novel_to_tavern.timeline.worldbible import MAX_INDEX_ENTRIES
+
+    entities = [
+        _entity(f"e{i}", f"人物{i:03d}", evidence=100 - i) for i in range(MAX_INDEX_ENTRIES + 5)
+    ]
+    overflow = index_overflow(entities)
+    assert len(overflow) == 5
+    # 按证据数排序，排在最后的 5 位
+    assert set(overflow) == {f"人物{i:03d}" for i in range(MAX_INDEX_ENTRIES, MAX_INDEX_ENTRIES + 5)}
+
+
+def test_index_overflow_respects_the_start_chapter():
+    from novel_to_tavern.timeline import index_overflow
+
+    entities = [
+        _entity(f"e{i}", f"人物{i}", evidence=10, chapters=(i,))
+        for i in range(3)
+    ]
+    for entity, chapter in zip(entities, range(3)):
+        entity.first_appearance_chapter = chapter
+    assert index_overflow(entities, start_chapter=0) == []
+
+
+def test_is_forced_ignores_blank_names():
+    from novel_to_tavern.timeline import is_forced
+
+    entity = _entity("e1", "甲")
+    assert not is_forced(entity, frozenset())
+    assert not is_forced(entity, frozenset({""}))
+    assert not is_forced(entity, frozenset({"  "}))
+    assert is_forced(entity, frozenset({" 甲 "}))

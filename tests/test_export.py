@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -527,8 +528,37 @@ def test_strict_manifest_states_the_guarantee(tmp_path):
     assert block["enabled"] is True
     assert block["facts_excluded"] == 8
     assert "结构性" in block["guarantee"]
+    listed = {entry["name"]: entry for entry in manifest["outputs"]}
     for name in block["files"]:
-        assert name in manifest["outputs"]
+        assert name in listed
+        assert listed[name]["exists"] is True
+        assert len(listed[name]["sha256"]) == 64
+
+
+def test_every_output_is_hashed_and_really_exists(tmp_path):
+    """只记文件名的话，清单回答不了「我手上这张卡是不是这次生成的」。"""
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    manifest = json.loads((run / "exports" / "export_manifest.json").read_text(encoding="utf-8"))
+
+    imports = run / "exports"
+    for entry in manifest["outputs"]:
+        assert set(entry) == {"name", "sha256", "bytes", "exists"}
+        path = imports / entry["name"]
+        assert path.is_file() is entry["exists"]
+        if entry["exists"]:
+            data = path.read_bytes()
+            assert entry["bytes"] == len(data)
+            assert entry["sha256"] == hashlib.sha256(data).hexdigest()
+
+
+def test_default_start_point_declares_no_structural_guarantee(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    manifest = json.loads((run / "exports" / "export_manifest.json").read_text(encoding="utf-8"))
+    block = manifest["strict_start_point"]
+    assert block["enabled"] is False
+    assert "无结构性保证" in block["guarantee"]
 
 
 def test_default_export_declares_strict_disabled(tmp_path):

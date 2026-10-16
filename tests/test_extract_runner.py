@@ -599,3 +599,34 @@ def test_schema_version_is_part_of_the_cache_key():
     finally:
         runner_module.SCHEMA_VERSION = original
     assert before != after
+
+
+def test_quarantine_caps_the_stored_text_but_records_the_real_length(tmp_path):
+    """失败记录不需要无上限地写盘 —— 但长度本身是判断「模型跑飞了吗」的第一手信息。"""
+    from novel_to_tavern.extract.runner import MAX_QUARANTINE_CHARS
+
+    cfg, run_dir = _setup(tmp_path)
+    huge = "x" * (MAX_QUARANTINE_CHARS * 3)
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(text=huge))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    with pytest.raises(ExtractionError):
+        runner.process_chunk(chunk_id)
+
+    path = run_dir / EXTRACTION_DIR / "_errors" / f"{chunk_id}.txt"
+    text = path.read_text(encoding="utf-8")
+    assert f"原始响应长度: {len(huge)} 字符" in text
+    assert "此处省略" in text
+    assert len(text) < len(huge)
+    # 头尾都要留，否则看不出模型是从哪儿开始跑飞的
+    assert text.count("x") >= MAX_QUARANTINE_CHARS
+
+
+def test_short_quarantine_text_is_stored_whole(tmp_path):
+    cfg, run_dir = _setup(tmp_path)
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(text="这不是 JSON"))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    with pytest.raises(ExtractionError):
+        runner.process_chunk(chunk_id)
+    text = (run_dir / EXTRACTION_DIR / "_errors" / f"{chunk_id}.txt").read_text(encoding="utf-8")
+    assert "这不是 JSON" in text
+    assert "此处省略" not in text
