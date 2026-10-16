@@ -1,9 +1,9 @@
 # 本阶段实施计划
 
-当前阶段：**Phase 4 — 世界观、时间线与知识边界**
+当前阶段：**Phase 5 — 世界书与角色卡导出**
 状态：已实施，待验收
 更新日期：2026-10-16
-上游依据：`docs/IMPLEMENTATION_PLAN.md` Phase 4
+上游依据：`docs/IMPLEMENTATION_PLAN.md` Phase 5
 
 > 每个阶段完成后更新本文；已完成的阶段摘要见 §7 历史。
 
@@ -125,6 +125,61 @@
 非参与者不获得知识、needs_review 不进知识、两个起始点的泄漏量、
 冲突报告、每个实体都有条目、别名全部可触发、
 按起始章节屏蔽但源条目不删除、报告声明 token 为粗估。
+
+---
+
+## Phase 5 — 世界书与角色卡导出
+
+### 目标
+
+把世界书规划装配成可导入 Tavo 的产物，并保证「完整剧情在卡内」与
+「用户自选起始点」两件事同时成立。
+
+### 用户可选的两个起点（本次目标的核心要求）
+
+`first_mes` 先让用户选起点（回复 1 或 2），并额外给出两条 `alternate_greetings`
+直接进入对应场景：
+
+1. **从故事的开头开始**（第 1 章之前）；
+2. **从故事的最终结尾之后开始**（末章之后）。
+
+另外允许用户直接说"从第 N 章开始"。起点信息写进开场白，模型才知道"现在是哪一刻"。
+
+### 完整剧情在卡内
+
+`剧情主线（逐章）` 条目包含全书每一章的走向，作**触发**条目
+（键：剧情/主线/前情/结局/回忆…），并在核心规则里说明按章标注的用法。
+常驻条目塞的是极简「剧情阶段骨架」，控制在十几行。
+
+### 常驻条目恰好 3 个
+
+核心规则（含骨架）、世界概况、人物索引 —— 与 `config.worldbook.max_always_on_entries`
+一致，超限会被 validator 报出来。常驻条目 `position="before_char"`，其余 `"after_char"`。
+
+### 导出即校验，不过就不写文件
+
+`validate_card(strict)` + `validate_worldbook(strict)` + `validate_parity` +
+密钥扫描，任一有 error 就抛 `ExportError`，**不产出半成品**。
+
+### 产物
+
+| 文件 | 说明 |
+|---|---|
+| `exports/world_simulator_v2.json` | 主卡，内嵌 character_book，含全部条目 |
+| `exports/worldbook_standalone.json` | 独立世界书（全部条目） |
+| `exports/worldbook_start_beginning.json` | 已屏蔽起始点之后内容的版本 |
+| `exports/worldbook_start_after_ending.json` | 从结局之后开始的版本 |
+| `exports/timeline.json` | 时间线 |
+| `exports/export_manifest.json` | 导出清单（输入 hash、prompt 版本、校验结果） |
+| `reports/audit.md` | 审计报告 |
+
+### 测试
+
+开场白含两个起点且互不混淆、可从任意章节开始、剧情条目覆盖每一章、
+常驻恰好 3 个且位置正确、别名可触发、条目都有可读标题、
+导出物结构校验与内嵌/独立一致性、起始点过滤使条目变少、
+导出清单无凭据、审计报告声明 Tavo 未实测且 token 为粗估、
+上游缺失或无章节摘要时拒绝导出。
 
 ---
 
