@@ -88,6 +88,9 @@ class WorldbookConfig(_Base):
     always_on_world_overview: bool = True
     always_on_character_index: bool = True
     max_always_on_entries: int = Field(default=3, ge=0)
+    #: 常驻条目的**粗估** token 上限。常驻内容每轮都在上下文里，
+    #: 是唯一确定能省额度的地方。超了只报警告，不阻断导出 —— 粗估不足以做硬门禁。
+    max_always_on_tokens: int = Field(default=2500, gt=0)
     target_runtime_budget_tokens: int = Field(default=5000, gt=0)
     enable_recursive_scan: bool = False
     allow_mvu: Literal[False] = False

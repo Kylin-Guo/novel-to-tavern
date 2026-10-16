@@ -49,6 +49,7 @@ worldbook:
   always_on_world_overview: true
   always_on_character_index: true
   max_always_on_entries: 3
+  max_always_on_tokens: 2500 # 常驻条目粗估上限；超了只报警告，不阻断导出
   target_runtime_budget_tokens: 5000 # planning estimate; not a guaranteed client token count
   enable_recursive_scan: false
   allow_mvu: false

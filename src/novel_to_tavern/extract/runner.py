@@ -82,13 +82,48 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+#: 输出 schema 的版本。改了 `schema.py` 里任何会影响解析结果的字段就要 +1 ——
+#: 否则旧缓存会被当成新 schema 的结果继续用。
+SCHEMA_VERSION = 1
+
+
+def prompt_template_hash() -> str:
+    """提示词模板自身的 hash。
+
+    用 `PROMPT_VERSION` 一个字串容易漏：改了提示词却忘了改版本号，
+    缓存就会命中旧结果，修复看起来「没生效」。本项目真踩过这个坑。
+    """
+    payload = json.dumps(
+        {
+            "system": SYSTEM_PROMPT,
+            # 用占位值渲染一次 —— 只要模板本身变了，hash 就变。
+            "user": build_user_prompt(
+                book_title="{book_title}",
+                chapter_label="{chapter_label}",
+                chapter_title="{chapter_title}",
+                text="{text}",
+            ),
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
 def cache_key(*, model: str, provider: str, chunk_sha: str, temperature: float) -> str:
-    """缓存键必须包含模型、提示词版本、输入 hash 与关键生成参数。"""
+    """缓存键必须包含**全部语义相关输入**。
+
+    漏掉任何一项都会造成「改了东西但结果没变」这种最难查的故障：
+    模型、引擎、提示词版本、提示词模板 hash、输出 schema 版本、
+    输入 chunk 的 hash、以及 temperature。
+    """
     payload = json.dumps(
         {
             "provider": provider,
             "model": model,
             "prompt_version": PROMPT_VERSION,
+            "prompt_template_sha256": prompt_template_hash(),
+            "schema_version": SCHEMA_VERSION,
             "chunk_sha256": chunk_sha,
             "temperature": temperature,
         },

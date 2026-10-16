@@ -554,3 +554,88 @@ def test_audit_states_the_metric_boundary(tmp_path):
     assert "说明什么" in audit and "不**说明什么" in audit
     assert "引文逐字定位率" in audit
     assert "不是**已人工审校**" in audit or "**不是**「已人工审校」" in audit
+
+
+# --- 触发与预算报告 --------------------------------------------------------
+
+
+def test_export_writes_a_trigger_budget_report(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    report = (run / "reports" / "worldbook_budget.md").read_text(encoding="utf-8")
+    assert "触发与上下文预算体检" in report
+    assert "常驻预算" in report
+    assert "最坏情况" in report
+    assert "粗估" in report
+
+
+def test_budget_report_probes_the_protagonist_and_idle_chat(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    report = (run / "reports" / "worldbook_budget.md").read_text(encoding="utf-8")
+    assert "探测句" in report
+    assert "甲是谁？" in report
+
+
+def test_budget_report_flags_always_on_over_budget(tmp_path):
+    """常驻内容每轮都在上下文里，超预算必须显式报出来。"""
+    run = _prepare_run(tmp_path)
+    config = config_module.Config()
+    config = config.model_copy(
+        update={"worldbook": config.worldbook.model_copy(update={"max_always_on_tokens": 1})}
+    )
+    export(run, config)
+    report = (run / "reports" / "worldbook_budget.md").read_text(encoding="utf-8")
+    assert "超出上限" in report
+
+
+# --- 运行溯源 --------------------------------------------------------------
+
+
+def test_manifest_records_provenance(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    manifest = json.loads((run / "exports" / "export_manifest.json").read_text(encoding="utf-8"))
+    prov = manifest["provenance"]
+    assert prov["extraction"]["providers"] == {"stub": 6}
+    assert prov["extraction"]["prompt_versions"] == {"extract-v1": 6}
+    assert prov["extraction"]["prompt_template_sha256"]
+    assert "file" not in prov["extraction"]["providers"]
+    assert prov["verification"]["executed"] is False
+    assert prov["package_version"]
+
+
+def test_provenance_notes_when_results_come_from_precomputed_files(tmp_path):
+    run = _prepare_run(tmp_path)
+    for path in (run / "extraction").glob("*.json"):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        data["provider"] = "file"
+        path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    export(run, config_module.Config())
+    prov = json.loads((run / "exports" / "export_manifest.json").read_text(encoding="utf-8"))[
+        "provenance"
+    ]
+    assert "预生成响应" in prov["extraction"]["provider_note"]
+
+
+def test_manifest_lists_the_cache_invalidation_keys(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    manifest = json.loads((run / "exports" / "export_manifest.json").read_text(encoding="utf-8"))
+    keys = manifest["provenance"]["cache_invalidation_keys"]
+    assert "提示词模板 hash" in keys
+    assert "输出 schema 版本" in keys
+
+
+def test_provenance_records_no_credentials(tmp_path):
+    """注释里出现「authorization」这个词没关系，关键是没有真正的凭据形状。"""
+    from novel_to_tavern.tavern import validate_no_secrets
+
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    text = (run / "exports" / "export_manifest.json").read_text(encoding="utf-8")
+    assert validate_no_secrets(text).ok
+    lowered = text.lower()
+    assert "sk-" not in lowered
+    assert "bearer " not in lowered
+    assert "api_key_env" not in lowered

@@ -26,6 +26,7 @@ from ..tavern import (
     validate_worldbook,
 )
 from ..timeline.build import TimelineEvent
+from ..tavern.triggers import audit_triggers
 from ..timeline.worldbible import PlannedEntry, summarize_plan
 from .builder import (
     ChapterDigest,
@@ -44,6 +45,7 @@ WORLDBOOK_AFTER_END = "worldbook_start_after_ending.json"
 TIMELINE_NAME = "timeline.json"
 MANIFEST_NAME = "export_manifest.json"
 AUDIT_NAME = "audit.md"
+BUDGET_NAME = "worldbook_budget.md"
 
 #: 严格起始点卡与它的世界书、状态快照。`{n}` 是 1 基章节号。
 STRICT_CARD_TMPL = "card_start_chapter_{n}.json"
@@ -282,7 +284,7 @@ def export(
         ],
         "config_fingerprint": manifest.get("config_fingerprint", ""),
         "character_card_spec": "chara_card_v2",
-        "prompt_versions": _prompt_versions(run_path),
+        "provenance": _provenance(run_path),
         "entry_counts": {
             "main_card_entries": len(card.data.character_book.entries),
             "standalone_entries": len(worldbook.entries),
@@ -359,6 +361,19 @@ def export(
         strict_result=strict_result,
     )
     _write_text(reports_dir / AUDIT_NAME, audit)
+
+    budget = audit_triggers(
+        entries,
+        probes=_trigger_probes(entities, digests),
+    )
+    _write_text(
+        reports_dir / BUDGET_NAME,
+        render_budget_report(
+            budget,
+            run_dir=run_path,
+            max_always_on_tokens=config.worldbook.max_always_on_tokens,
+        ),
+    )
 
     return {
         "card": card,
@@ -481,6 +496,108 @@ def _export_strict(
     }
 
 
+def _trigger_probes(
+    entities: list[CanonicalEntity], digests: list[ChapterDigest]
+) -> list[str]:
+    """探测句：一句提到主角、一句提到配角、一句与故事无关的闲聊。
+
+    这三句就能看出「一句话会不会拉起一大片」和「常驻预算有多大」。
+    """
+    characters = sorted(
+        (e for e in entities if e.kind == "character"), key=lambda e: -e.evidence_count
+    )
+    probes = []
+    if characters:
+        probes.append(f"{characters[0].canonical_name}是谁？")
+    if len(characters) > 1:
+        probes.append(f"{characters[1].canonical_name}现在在哪？")
+    if digests:
+        probes.append("今天天气不错，我们随便聊聊吧。")
+    return probes
+
+
+def render_budget_report(
+    budget, *, run_dir: Path, max_always_on_tokens: int
+) -> str:
+    lines = [
+        "# 世界书触发与上下文预算体检",
+        "",
+        f"- run_id：`{run_dir.name}`",
+        f"- 条目总数：{budget.entry_total}（常驻 {budget.always_on_entries}，触发 {budget.triggered_entries}）",
+        f"- 全部条目粗估：{budget.total_tokens} token",
+        f"- **常驻预算**：{budget.always_on_tokens} token"
+        f"（配置上限 {max_always_on_tokens}）"
+        f"{' —— **超出上限**' if budget.always_on_tokens > max_always_on_tokens else ''}",
+        "",
+        "> 常驻条目与消息内容无关，**每一轮**都在上下文里。"
+        "优化常驻预算是唯一确定有效的省额度手段。",
+        "",
+        "## 按类别的开销",
+        "",
+        "| 类别 | 条目数 | 正文字符 | 粗估 token |",
+        "|---|---|---|---|",
+    ]
+    for category, count in sorted(budget.by_category.items(), key=lambda kv: -budget.tokens_by_category.get(kv[0], 0)):
+        lines.append(
+            f"| {category} | {count} | {budget.chars_by_category.get(category, 0)} "
+            f"| {budget.tokens_by_category.get(category, 0)} |"
+        )
+
+    lines += [
+        "",
+        "## 最坏情况",
+        "",
+        f"- 最「贵」的一条：**{budget.worst_entry_title}**（`{budget.worst_entry_id}`）",
+        f"- 把它的全部触发词同时写进一句话，会拉起 {budget.worst_case_entries} 个条目 ≈ "
+        f"**{budget.worst_case_tokens} token**",
+        "",
+        "> 这是构造出来的上界，真实对白很少这么巧 —— 但设计触发词时该看这个数字。",
+        "",
+        "## 触发词风险",
+        "",
+    ]
+    if budget.key_risks:
+        lines += ["| 触发词 | 关联条目数 | 问题 |", "|---|---|---|"]
+        for risk in budget.key_risks[:25]:
+            lines.append(f"| `{risk.key}` | {risk.entry_count} | {risk.reason} |")
+    else:
+        lines.append("没有发现过短的键，也没有发现被大量条目共用的键。")
+
+    if budget.single_key_entries:
+        lines += [
+            "",
+            f"## 只有单个触发词的条目（{len(budget.single_key_entries)} 个）",
+            "",
+            "单个键意味着：**任何**含这个词的句子都会命中，包括否定、引用和转述。",
+            "",
+            "、".join(budget.single_key_entries[:40])
+            + ("…" if len(budget.single_key_entries) > 40 else ""),
+        ]
+
+    if budget.probes:
+        lines += ["", "## 探测句", ""]
+        for probe in budget.probes:
+            lines.append(f"### 「{probe.message}」")
+            lines.append("")
+            triggered = [m for m in probe.matched if not m.always_on]
+            lines.append(
+                f"- 命中触发条目 **{len(triggered)}** 个，常驻 {len(probe.matched) - len(triggered)} 个"
+                f"，粗估 **{probe.total_tokens} token**"
+            )
+            for item in triggered[:10]:
+                lines.append(f"  - {item.title}（命中键：{'、'.join(item.matched_keys)}）")
+            if len(triggered) > 10:
+                lines.append(f"  - …另有 {len(triggered) - 10} 个")
+            lines.append("")
+
+    lines += ["", "## 口径", ""]
+    for note in budget.notes:
+        lines.append(f"- {note}")
+
+    lines += ["", "> 本报告不含小说原文。", ""]
+    return "\n".join(lines)
+
+
 def _evidence_stats(run_dir: Path) -> dict[str, int | float]:
     """从抽取结果汇总**证据定位**指标。
 
@@ -527,17 +644,67 @@ def _semantic_metrics(run_dir: Path) -> dict[str, object]:
     }
 
 
-def _prompt_versions(run_dir: Path) -> dict[str, str]:
-    versions: dict[str, str] = {}
+def _provenance(run_dir: Path) -> dict:
+    """运行溯源：这份产物到底是**怎么**来的。
+
+    目的是让「同样输入 + 同样配置 + 同样预生成响应」能复现出同样的内部数据，
+    并且在结果不对时能立刻判断是哪一环变了。
+
+    **绝不记录密钥或 Authorization 头。**
+    """
+    from ..extract.prompts import PROMPT_VERSION as EXTRACT_PROMPT_VERSION
+    from ..extract.runner import SCHEMA_VERSION, prompt_template_hash
+    from ..verify.prompts import PROMPT_VERSION as VERIFY_PROMPT_VERSION
+
+    providers: dict[str, int] = {}
+    models: dict[str, int] = {}
+    prompt_versions: dict[str, int] = {}
     for path in sorted((run_dir / "extraction").glob("*.json")):
         if path.name.startswith("_"):
             continue
         data = json.loads(path.read_text(encoding="utf-8"))
-        version = data.get("prompt_version")
-        provider = data.get("provider")
-        if version:
-            versions[f"extract:{provider}"] = version
-    return versions
+        provider = data.get("provider") or "unknown"
+        providers[provider] = providers.get(provider, 0) + 1
+        model = data.get("model") or "(未记录)"
+        models[model] = models.get(model, 0) + 1
+        version = data.get("prompt_version") or "(未记录)"
+        prompt_versions[version] = prompt_versions.get(version, 0) + 1
+
+    from ..verify import load_verdicts
+
+    verdicts = load_verdicts(run_dir)
+
+    return {
+        "package_version": __version__,
+        "extraction": {
+            "providers": providers,
+            "models": models,
+            "prompt_versions": prompt_versions,
+            "prompt_version_expected": EXTRACT_PROMPT_VERSION,
+            "prompt_template_sha256": prompt_template_hash(),
+            "output_schema_version": SCHEMA_VERSION,
+            "provider_note": (
+                "`file` 表示结果来自预生成响应，**不是**实时 API 调用"
+                if "file" in providers
+                else "结果来自实时 API 调用"
+            ),
+        },
+        "verification": (
+            {
+                "executed": True,
+                "verifier": verdicts.verifier,
+                "prompt_version": verdicts.prompt_version,
+                "prompt_version_expected": VERIFY_PROMPT_VERSION,
+            }
+            if verdicts is not None
+            else {"executed": False, "note": "未跑 n2t verify"}
+        ),
+        "cache_invalidation_keys": [
+            "模型", "引擎", "提示词版本", "提示词模板 hash",
+            "输出 schema 版本", "输入 chunk 的 sha256", "temperature",
+        ],
+        "note": "不记录任何凭据、密钥或 Authorization 头。",
+    }
 
 
 def _render_audit(

@@ -295,3 +295,37 @@ def test_report_does_not_leak_source_text(tmp_path):
     run_extraction(cfg, run_dir, StubProvider(GOOD))
     report = (run_dir / "reports" / "extraction_summary.md").read_text(encoding="utf-8")
     assert "北风从山口压下来" not in report
+
+
+def test_prompt_template_hash_is_part_of_the_cache_key():
+    """改提示词但忘了改版本号时，缓存必须仍然失效 —— 本项目真踩过这个坑。"""
+    import json as _json
+
+    from novel_to_tavern.extract import runner as runner_module
+
+    base = dict(model="m", provider="p", chunk_sha="abc", temperature=0.1)
+    before = runner_module.cache_key(**base)
+
+    original = runner_module.SYSTEM_PROMPT
+    try:
+        runner_module.SYSTEM_PROMPT = original + "\n补充一句。"
+        after = runner_module.cache_key(**base)
+    finally:
+        runner_module.SYSTEM_PROMPT = original
+
+    assert before != after, "提示词模板变了，缓存键却没变"
+    assert _json.dumps(base)  # 参数本身没被改动
+
+
+def test_schema_version_is_part_of_the_cache_key():
+    from novel_to_tavern.extract import runner as runner_module
+
+    base = dict(model="m", provider="p", chunk_sha="abc", temperature=0.1)
+    before = runner_module.cache_key(**base)
+    original = runner_module.SCHEMA_VERSION
+    try:
+        runner_module.SCHEMA_VERSION = original + 1
+        after = runner_module.cache_key(**base)
+    finally:
+        runner_module.SCHEMA_VERSION = original
+    assert before != after
