@@ -1,0 +1,117 @@
+{
+  "_comment": "手标期望。每一条都是**可核对**的断言，不是印象。测试跑完会输出精确率/召回率，写进 README。",
+  "entities_expected_in_worldbook": [
+    "凌霜",
+    "阿澜",
+    "韩铮",
+    "老周",
+    "灰港",
+    "雾灯塔",
+    "黑帆商会",
+    "铜徽记"
+  ],
+  "entities_expected_absent": [
+    "巡夜人",
+    "码头",
+    "酒馆",
+    "一号栈桥",
+    "巡夜人哨所",
+    "灰呢外套"
+  ],
+  "aliases_expected": {
+    "凌霜": [
+      "霜姐"
+    ]
+  },
+  "facts_must_appear": [
+    [
+      "凌霜",
+      "灰港的巡夜人"
+    ],
+    [
+      "阿澜",
+      "是黑帆商会的人"
+    ],
+    [
+      "韩铮",
+      "巡夜人哨所的管事"
+    ],
+    [
+      "铜徽记",
+      "背面刻着一行小字"
+    ],
+    [
+      "灰港",
+      "雾到三月才散"
+    ]
+  ],
+  "facts_must_not_appear": [
+    {
+      "value": "凌霜其实是黑帆商会的旧部",
+      "reason": "引文在原文里不存在（故意编的），定位必然失败，因此不得进入 canon 正文"
+    }
+  ],
+  "contradictions_expected": [
+    [
+      "雾灯塔",
+      "height"
+    ]
+  ],
+  "knowledge_expected": [
+    {
+      "entity": "凌霜",
+      "status": "knows",
+      "reason": "identity 事实的主语就是她自己"
+    },
+    {
+      "entity": "阿澜",
+      "status": "believes",
+      "reason": "抽取标注为 character_belief"
+    },
+    {
+      "entity": "阿澜",
+      "status": "knows",
+      "reason": "identity 事实的主语就是她自己"
+    },
+    {
+      "entity": "黑帆商会",
+      "status": "heard_rumor",
+      "reason": "抽取标注为 rumor"
+    }
+  ],
+  "knowledge_candidates_expected": [
+    {
+      "entity": "凌霜",
+      "item_type": "event",
+      "reason": "她是雾灯塔发现尸体的参与者，但在场不等于知晓"
+    }
+  ],
+  "secrets": [
+    {
+      "value": "阿澜是黑帆商会的人",
+      "revealed_at_chapter": 3,
+      "note": "第 4 章才对读者揭示；严格起始点在第 1–3 章时应屏蔽"
+    }
+  ],
+  "start_point_leak_probes": {
+    "start_chapter_index": 2,
+    "markers_that_must_be_absent": [
+      "确实是黑帆商会的人",
+      "背面刻着一行小字：阿澜",
+      "没有把阿澜交给韩铮"
+    ],
+    "markers_that_must_be_present": [
+      "灰港的巡夜人",
+      "三年前就散了"
+    ]
+  },
+  "known_limitations": [
+    {
+      "name": "同名不同人",
+      "detail": "码头的老周与灯塔的老周在原文明说是两个人，但归一阶段按字面同名聚类，两者会被合并成一个「老周」。这是**已知限制**，本测试锁定当前行为，修好之后这条断言会失败并提醒更新期望。",
+      "expected_current_behaviour": {
+        "merged_into_one_entity": "老周"
+      }
+    }
+  ]
+}

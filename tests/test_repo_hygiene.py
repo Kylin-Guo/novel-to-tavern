@@ -80,13 +80,30 @@ def test_no_runtime_or_source_material_is_tracked(tracked):
     assert offenders == [], f"这些路径不该入库（含原文/运行产物）：{offenders[:10]}"
 
 
+#: 允许入库的正文文本，**全部为自创**。加一个都要先在这里写清楚它为什么安全。
+SELF_AUTHORED_PROSE = {
+    "tests/fixtures/sample_novel.txt": "测试纪事",
+    "examples/gold/灰港纪事.txt": "灰港纪事",
+}
+
+
 def test_no_novel_text_files_are_tracked(tracked):
-    """除了自创的测试夹具，不应有其它正文文本。"""
-    allowed = {"tests/fixtures/sample_novel.txt"}
+    """除了自创的正文，不应有其它正文文本。"""
     novels = [p for p in tracked if p.endswith((".txt", ".md")) and "天之炽" in p]
     assert novels == [], f"疑似原文入库：{novels}"
     txts = {p for p in tracked if p.endswith(".txt")}
-    assert txts <= allowed, f"出现未预期的 .txt：{sorted(txts - allowed)}"
+    assert txts <= set(SELF_AUTHORED_PROSE), f"出现未预期的 .txt：{sorted(txts - set(SELF_AUTHORED_PROSE))}"
+
+
+def test_tracked_prose_is_self_authored_and_tiny():
+    """入库的正文必须自创且短小 —— 原文切片通常不会只有这么点。"""
+    for rel, marker in SELF_AUTHORED_PROSE.items():
+        path = REPO_ROOT / rel
+        if not path.is_file():
+            pytest.skip(f"{rel} 不在本机")
+        text = path.read_text(encoding="utf-8")
+        assert marker in text, f"{rel} 里找不到自创标记 {marker!r}"
+        assert len(text) < 20_000, f"{rel} 太大了，疑似真实原文"
 
 
 def test_derivative_artifacts_live_only_under_exports(tracked):

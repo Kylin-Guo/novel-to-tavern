@@ -10,6 +10,8 @@
 
 from __future__ import annotations
 
+import re
+
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -118,13 +120,29 @@ class ContradictionFinding(BaseModel):
 #: 原文里常见的相对时间词，用于填 `relative_time` 而不推算绝对时间。
 _RELATIVE_MARKERS = ("次日", "翌日", "第二天", "当晚", "当夜", "次日清晨", "几年后", "多年后", "数月后")
 
+#: 更通用的相对时间：数量词 + 时间单位 + 方位词。
+#: 光靠固定词表会漏掉「三天后」「两个时辰之后」这类写法 ——
+#: 真实语料里它们和「次日」一样常见。
+_RELATIVE_PATTERN = re.compile(
+    r"([一二三四五六七八九十百千两0-9]+)\s*"
+    r"(个)?\s*"
+    r"(天|日|夜|年|月|周|星期|时辰|小时|刻钟|盏茶)"
+    r"(之后|以后|后|之前|以前|前)"
+)
+
 
 def extract_relative_time(*texts: str) -> str | None:
-    """从摘录里识别相对时间表述。**不把相对时间换算成绝对日期。**"""
+    """从摘录里识别相对时间表述。**不把相对时间换算成绝对日期。**
+
+    只把原文里的说法原样抠出来，不做任何换算 —— 「三天后」不是日期。
+    """
     for text in texts:
         for marker in _RELATIVE_MARKERS:
             if marker in text:
                 return marker
+        match = _RELATIVE_PATTERN.search(text or "")
+        if match:
+            return match.group(0).replace(" ", "")
     return None
 
 

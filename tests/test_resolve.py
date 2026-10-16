@@ -7,7 +7,12 @@ from pathlib import Path
 
 import pytest
 
-from novel_to_tavern.extract.schema import ChunkExtraction, MentionRecord, SourceRef
+from novel_to_tavern.extract.schema import (
+    ChunkExtraction,
+    FactRecord,
+    MentionRecord,
+    SourceRef,
+)
 from novel_to_tavern.resolve import (
     CanonicalEntity,
     ResolutionError,
@@ -18,7 +23,7 @@ from novel_to_tavern.resolve import (
     propose_merges,
     resolve,
 )
-from novel_to_tavern.resolve.entities import alias_links
+from novel_to_tavern.resolve.entities import alias_links, declared_aliases
 
 REF = SourceRef(source_id="s", chapter_id="c1", start_line=1, end_line=2, quote="证据")
 
@@ -325,3 +330,68 @@ def test_invalid_json_in_extraction_is_not_swallowed(tmp_path):
     (run_dir / "extraction" / "bad.json").write_text("{not json", encoding="utf-8")
     with pytest.raises(json.JSONDecodeError):
         load_extractions(run_dir)
+
+
+# --- 只以别名形式出现的称号 ------------------------------------------------
+
+
+def test_alias_that_never_appears_alone_is_still_linked():
+    """抽取器说「凌霜」又名「霜姐」，而「霜姐」从没被单独提及 —— 也必须落到实体上。
+
+    否则「霜姐是谁？」永远不会触发凌霜的条目，质量门禁 D 的
+    「别名/称号可触发」就是空话。
+    """
+    mentions = [
+        _mention("m1", "凌霜", aliases=["霜姐"], chunk="ch1_p000"),
+        _mention("m2", "凌霜", aliases=["霜姐"], chunk="ch5_p000"),
+    ]
+    clusters, _ = cluster_mentions(mentions)
+    declared = declared_aliases(clusters, mentions)
+    assert declared == {"凌霜": ["霜姐"]}
+
+
+def test_alias_declared_only_once_is_not_linked():
+    mentions = [_mention("m1", "凌霜", aliases=["霜姐"], chunk="ch1_p000")]
+    clusters, _ = cluster_mentions(mentions)
+    assert declared_aliases(clusters, mentions) == {}
+
+
+def test_alias_that_is_itself_a_known_mention_is_left_to_alias_links():
+    """两侧都是已知聚类时交给 alias_links —— 那条路径会做类别兼容检查。"""
+    mentions = [
+        _mention("m1", "凌霜", aliases=["霜姐"], chunk="ch1_p000"),
+        _mention("m2", "霜姐", chunk="ch1_p000"),
+        _mention("m3", "凌霜", aliases=["霜姐"], chunk="ch5_p000"),
+    ]
+    clusters, _ = cluster_mentions(mentions)
+    assert declared_aliases(clusters, mentions) == {}
+
+
+def test_declared_alias_reaches_the_entity_and_its_trigger_keys(tmp_path):
+    from novel_to_tavern.timeline.worldbible import plan_entity_entries
+
+    run_dir = _write_run(
+        tmp_path,
+        [
+            _extraction(0, [_mention("m1", "凌霜", aliases=["霜姐"], chunk="ch0_p000")]),
+            _extraction(1, [_mention("m2", "凌霜", aliases=["霜姐"], chunk="ch1_p000")]),
+        ],
+    )
+    result = resolve(run_dir)
+    entity = next(e for e in result.entities if e.canonical_name == "凌霜")
+    assert "霜姐" in entity.aliases
+
+    facts = [
+        FactRecord(
+            fact_id="f1", chunk_id="ch0_p000", source_id="s", chapter_id="c0", chapter_index=0,
+            subject="凌霜", predicate="identity", value="巡夜人", fact_type="canon_fact",
+            source_refs=[REF],
+        ),
+        FactRecord(
+            fact_id="f2", chunk_id="ch1_p000", source_id="s", chapter_id="c1", chapter_index=1,
+            subject="凌霜", predicate="state", value="受伤", fact_type="canon_fact",
+            source_refs=[REF],
+        ),
+    ]
+    entries = plan_entity_entries([entity], facts)
+    assert entries and "霜姐" in entries[0].keys

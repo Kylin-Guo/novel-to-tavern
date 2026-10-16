@@ -12,6 +12,7 @@ from .entities import (
     ResolutionResult,
     ROLE_NOUNS,
     alias_links,
+    declared_aliases,
     cluster_mentions,
     is_role_noun,
     normalize_name,
@@ -29,6 +30,7 @@ from .runner import (
 )
 
 __all__ = [
+    "declared_aliases",
     "CANONICAL_DIR",
     "DECISIONS_NAME",
     "ENTITIES_NAME",

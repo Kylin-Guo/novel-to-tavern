@@ -1,0 +1,603 @@
+{
+  "_comment": "本文是**手写的**抽取结果，扮演 `llm.provider = file` 的预生成响应。每个 quote 必须逐字出现在 灰港纪事.txt 里 —— 定位失败会直接让测试失败。它测的是**管线**（证据定位 / canon 资格 / 归一 / 时间线 / 导出），不是模型本身的抽取质量。",
+  "chapters": [
+    {
+      "chapter_index": 0,
+      "summary": "巡夜人凌霜在雾灯塔下发现一具胸口别着黑帆商会铜徽记的尸体；她记得黑帆商会三年前就散了。",
+      "mentions": [
+        {
+          "name": "凌霜",
+          "aliases": [
+            "霜姐"
+          ],
+          "kind": "character",
+          "quote": "凌霜是灰港的巡夜人，二十三岁，值夜班的第七年。"
+        },
+        {
+          "name": "灰港",
+          "kind": "place",
+          "quote": "灰港的雾季从十月开始，一直持续到次年三月。"
+        },
+        {
+          "name": "雾灯塔",
+          "kind": "place",
+          "quote": "她习惯在子时沿港口区走一圈，从一号栈桥走到雾灯塔。"
+        },
+        {
+          "name": "黑帆商会",
+          "kind": "faction",
+          "quote": "胸口别着一枚铜制徽记——黑帆商会的徽记。"
+        },
+        {
+          "name": "铜徽记",
+          "kind": "item",
+          "quote": "胸口别着一枚铜制徽记——黑帆商会的徽记。"
+        },
+        {
+          "name": "巡夜人",
+          "kind": "faction",
+          "quote": "凌霜是灰港的巡夜人，二十三岁，值夜班的第七年。"
+        }
+      ],
+      "facts": [
+        {
+          "subject": "凌霜",
+          "predicate": "identity",
+          "value": "灰港的巡夜人，二十三岁，值夜班的第七年",
+          "quote": "凌霜是灰港的巡夜人，二十三岁，值夜班的第七年。"
+        },
+        {
+          "subject": "灰港",
+          "predicate": "background",
+          "value": "雾季从十月开始，一直持续到次年三月",
+          "quote": "灰港的雾季从十月开始，一直持续到次年三月。"
+        },
+        {
+          "subject": "凌霜",
+          "predicate": "habit",
+          "value": "子时沿港口区走一圈，从一号栈桥走到雾灯塔",
+          "quote": "她习惯在子时沿港口区走一圈，从一号栈桥走到雾灯塔。"
+        },
+        {
+          "subject": "黑帆商会",
+          "predicate": "state",
+          "value": "三年前就散了",
+          "quote": "黑帆商会三年前就散了。"
+        },
+        {
+          "subject": "铜徽记",
+          "predicate": "appearance",
+          "value": "铜制，别在死者胸口，是黑帆商会的徽记",
+          "quote": "胸口别着一枚铜制徽记——黑帆商会的徽记。"
+        },
+        {
+          "subject": "雾灯塔",
+          "predicate": "state",
+          "value": "塔下发现一具中年男人尸体，穿灰呢外套",
+          "quote": "死者是个中年男人，穿灰呢外套，胸口别着一枚铜制徽记——黑帆商会的徽记。"
+        }
+      ],
+      "events": [
+        {
+          "title": "雾灯塔下发现尸体",
+          "summary": "凌霜在雾灯塔下发现一具中年男人的尸体，胸口别着黑帆商会的铜徽记。",
+          "participants": [
+            "凌霜"
+          ],
+          "location": "雾灯塔下",
+          "quote": "那天夜里，她在雾灯塔下发现了一具尸体。"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "chapter_index": 1,
+      "summary": "凌霜把徽记带回哨所。韩铮称徽记是仿的，并让她去查码头的老周；老周却好好的，说自己从没失踪过。",
+      "mentions": [
+        {
+          "name": "韩铮",
+          "kind": "character",
+          "quote": "哨所的管事叫韩铮，四十上下，说话很慢。"
+        },
+        {
+          "name": "凌霜",
+          "aliases": [
+            "霜姐"
+          ],
+          "kind": "character",
+          "quote": "凌霜把徽记带回巡夜人哨所。"
+        },
+        {
+          "name": "老周",
+          "kind": "character",
+          "quote": "码头上的老周前两天报过一次失踪，你去看看是不是他。"
+        },
+        {
+          "name": "巡夜人哨所",
+          "kind": "place",
+          "quote": "凌霜把徽记带回巡夜人哨所。"
+        },
+        {
+          "name": "码头",
+          "kind": "place",
+          "quote": "凌霜去了。码头的老周好好地站在栈桥上卸货，说自己从没失踪过。"
+        }
+      ],
+      "facts": [
+        {
+          "subject": "韩铮",
+          "predicate": "identity",
+          "value": "巡夜人哨所的管事，四十上下，说话很慢",
+          "quote": "哨所的管事叫韩铮，四十上下，说话很慢。"
+        },
+        {
+          "subject": "韩铮",
+          "predicate": "claim",
+          "value": "徽记多半是仿的",
+          "quote": "黑帆商会三年前就散了，这枚徽记多半是仿的。"
+        },
+        {
+          "subject": "老周",
+          "predicate": "state",
+          "value": "好好地站在栈桥上卸货，说自己从没失踪过",
+          "quote": "凌霜去了。码头的老周好好地站在栈桥上卸货，说自己从没失踪过。"
+        }
+      ],
+      "events": [
+        {
+          "title": "凌霜向韩铮报告徽记",
+          "summary": "凌霜把铜徽记带回巡夜人哨所给韩铮看，韩铮说徽记多半是仿的。",
+          "participants": [
+            "凌霜",
+            "韩铮"
+          ],
+          "location": "巡夜人哨所",
+          "quote": "凌霜把徽记带回巡夜人哨所。哨所的管事叫韩铮，四十上下，说话很慢。"
+        }
+      ],
+      "relations": [
+        {
+          "from_entity": "凌霜",
+          "to_entity": "韩铮",
+          "relation": "下属",
+          "quote": "凌霜把徽记带回巡夜人哨所。哨所的管事叫韩铮，四十上下，说话很慢。"
+        }
+      ]
+    },
+    {
+      "chapter_index": 2,
+      "summary": "凌霜的搭档阿澜（她叫她霜姐）打听灯塔的进展，随口说那是走错路的醉汉；酒馆里还流传黑帆商会鬼魂的说法。",
+      "mentions": [
+        {
+          "name": "阿澜",
+          "kind": "character",
+          "quote": "凌霜有个搭档，叫阿澜。阿澜十九岁，去年才调来灰港。她管凌霜叫霜姐。"
+        },
+        {
+          "name": "凌霜",
+          "aliases": [
+            "霜姐"
+          ],
+          "kind": "character",
+          "quote": "她管凌霜叫霜姐。"
+        },
+        {
+          "name": "黑帆商会",
+          "kind": "faction",
+          "quote": "港口区的酒馆里有人说，黑帆商会的鬼魂还留在雾灯塔上。"
+        },
+        {
+          "name": "酒馆",
+          "kind": "place",
+          "quote": "港口区的酒馆里有人说，黑帆商会的鬼魂还留在雾灯塔上。"
+        }
+      ],
+      "facts": [
+        {
+          "subject": "阿澜",
+          "predicate": "identity",
+          "value": "凌霜的搭档，十九岁，去年才调来灰港",
+          "quote": "凌霜有个搭档，叫阿澜。阿澜十九岁，去年才调来灰港。她管凌霜叫霜姐。"
+        },
+        {
+          "subject": "阿澜",
+          "predicate": "personality",
+          "value": "擦刀时听到线索会停一瞬",
+          "quote": "凌霜没说话。她注意到阿澜擦刀的手停了一瞬。"
+        },
+        {
+          "subject": "黑帆商会",
+          "predicate": "rumor",
+          "value": "鬼魂还留在雾灯塔上",
+          "fact_type": "rumor",
+          "quote": "港口区的酒馆里有人说，黑帆商会的鬼魂还留在雾灯塔上。"
+        },
+        {
+          "subject": "阿澜",
+          "predicate": "belief",
+          "value": "死者是个走错路的醉汉",
+          "fact_type": "character_belief",
+          "quote": "阿澜笑了一下，说：那就是个走错路的醉汉呗。"
+        },
+        {
+          "subject": "凌霜",
+          "predicate": "secret",
+          "value": "凌霜其实是黑帆商会的旧部",
+          "quote": "凌霜其实是黑帆商会的旧部，这件事没有任何人知道。"
+        }
+      ],
+      "events": [],
+      "relations": [
+        {
+          "from_entity": "凌霜",
+          "to_entity": "阿澜",
+          "relation": "搭档",
+          "quote": "凌霜有个搭档，叫阿澜。"
+        }
+      ]
+    },
+    {
+      "chapter_index": 3,
+      "summary": "修灯的老周认出徽记是真的、背面刻着编号；凌霜翻过来看到「阿澜」两个字，明白阿澜是黑帆商会的人，且没有告诉任何人。",
+      "mentions": [
+        {
+          "name": "老周",
+          "kind": "character",
+          "quote": "灯塔的老周是个修灯的匠人，跟码头的老周不是一个人。"
+        },
+        {
+          "name": "凌霜",
+          "aliases": [
+            "霜姐"
+          ],
+          "kind": "character",
+          "quote": "凌霜把徽记翻过来。背面刻着一行小字：阿澜。"
+        },
+        {
+          "name": "阿澜",
+          "kind": "character",
+          "quote": "她终于明白了：阿澜是黑帆商会的人。三年前商会被查封的时候，阿澜才十六岁。"
+        },
+        {
+          "name": "黑帆商会",
+          "kind": "faction",
+          "quote": "这是黑帆商会的真徽记，编号刻在背面。"
+        },
+        {
+          "name": "铜徽记",
+          "kind": "item",
+          "quote": "这是黑帆商会的真徽记，编号刻在背面。"
+        },
+        {
+          "name": "雾灯塔",
+          "kind": "place",
+          "quote": "凌霜把铜徽记送去给灯塔的老周看"
+        }
+      ],
+      "facts": [
+        {
+          "subject": "老周",
+          "predicate": "identity",
+          "value": "灯塔的修灯匠人，跟码头的老周不是一个人",
+          "quote": "灯塔的老周是个修灯的匠人，跟码头的老周不是一个人。"
+        },
+        {
+          "subject": "铜徽记",
+          "predicate": "state",
+          "value": "是黑帆商会的真徽记，编号刻在背面",
+          "quote": "这是黑帆商会的真徽记，编号刻在背面。"
+        },
+        {
+          "subject": "铜徽记",
+          "predicate": "inscription",
+          "value": "背面刻着一行小字：阿澜",
+          "quote": "凌霜把徽记翻过来。背面刻着一行小字：阿澜。"
+        },
+        {
+          "subject": "阿澜",
+          "predicate": "identity",
+          "value": "是黑帆商会的人；三年前商会被查封时她才十六岁",
+          "quote": "她终于明白了：阿澜是黑帆商会的人。三年前商会被查封的时候，阿澜才十六岁。"
+        },
+        {
+          "subject": "凌霜",
+          "predicate": "action",
+          "value": "发现真相后没有告诉任何人",
+          "quote": "这件事凌霜没有告诉任何人。"
+        }
+      ],
+      "events": [
+        {
+          "title": "老周认出真徽记",
+          "summary": "灯塔的老周认出这不是仿品而是黑帆商会的真徽记，背面刻着编号。",
+          "participants": [
+            "凌霜",
+            "老周"
+          ],
+          "location": "灯塔",
+          "quote": "灯塔的老周翻来覆去看了很久，说：这不是仿的。这是黑帆商会的真徽记，编号刻在背面。"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "chapter_index": 4,
+      "summary": "雾季过半，韩铮当面点破凌霜在查阿澜，并说自己也在查；此后凌霜不再向韩铮透露行踪，两人七年的共事有了隔阂。",
+      "mentions": [
+        {
+          "name": "韩铮",
+          "kind": "character",
+          "quote": "韩铮说：你撒谎的样子很难看。我知道你在查她，我也在查。"
+        },
+        {
+          "name": "凌霜",
+          "aliases": [
+            "霜姐"
+          ],
+          "kind": "character",
+          "quote": "那天之后，凌霜不再把自己的行踪告诉韩铮。"
+        },
+        {
+          "name": "阿澜",
+          "kind": "character",
+          "quote": "韩铮把凌霜叫去，问她：你最近是不是在查阿澜？"
+        },
+        {
+          "name": "码头",
+          "kind": "place",
+          "quote": "雾季过了一半。"
+        }
+      ],
+      "facts": [
+        {
+          "subject": "韩铮",
+          "predicate": "action",
+          "value": "当面点破凌霜在查阿澜，并说自己也在查",
+          "quote": "韩铮说：你撒谎的样子很难看。我知道你在查她，我也在查。"
+        },
+        {
+          "subject": "韩铮",
+          "predicate": "state",
+          "value": "说「我说的话，你不必全信」",
+          "quote": "韩铮说：我说的话，你不必全信。"
+        },
+        {
+          "subject": "凌霜",
+          "predicate": "relationship",
+          "value": "此后不再把自己的行踪告诉韩铮，两人共事七年第一次有了隔阂",
+          "quote": "那天之后，凌霜不再把自己的行踪告诉韩铮。两个人共事七年，第一次有了隔阂。"
+        }
+      ],
+      "events": [],
+      "relations": [
+        {
+          "from_entity": "凌霜",
+          "to_entity": "韩铮",
+          "relation": "有隔阂",
+          "quote": "两个人共事七年，第一次有了隔阂。"
+        }
+      ]
+    },
+    {
+      "chapter_index": 5,
+      "summary": "三天后凌霜在雾灯塔上被穿灰呢外套的人从背后砍伤，躺了九天；她醒来后用灯塔高度试出阿澜在撒谎。",
+      "mentions": [
+        {
+          "name": "凌霜",
+          "aliases": [
+            "霜姐"
+          ],
+          "kind": "character",
+          "quote": "三天后，凌霜在雾灯塔上被人从背后砍了一刀。"
+        },
+        {
+          "name": "阿澜",
+          "kind": "character",
+          "quote": "醒来的时候，阿澜坐在床边，眼睛是红的。"
+        },
+        {
+          "name": "雾灯塔",
+          "kind": "place",
+          "quote": "三天后，凌霜在雾灯塔上被人从背后砍了一刀。"
+        },
+        {
+          "name": "灰呢外套",
+          "kind": "item",
+          "quote": "她昏过去之前，看见对方穿的是一件灰呢外套。"
+        }
+      ],
+      "facts": [
+        {
+          "subject": "凌霜",
+          "predicate": "state",
+          "value": "在雾灯塔上被人从背后砍了一刀，伤口从左肩斜到右腰，躺了九天",
+          "quote": "三天后，凌霜在雾灯塔上被人从背后砍了一刀。伤口从左肩斜到右腰，很深。"
+        },
+        {
+          "subject": "灰呢外套",
+          "predicate": "appearance",
+          "value": "袭击者穿的是一件灰呢外套",
+          "quote": "她昏过去之前，看见对方穿的是一件灰呢外套。"
+        },
+        {
+          "subject": "雾灯塔",
+          "predicate": "height",
+          "value": "三十米",
+          "quote": "凌霜说：是三十米。你从来没上去过。"
+        },
+        {
+          "subject": "雾灯塔",
+          "predicate": "height",
+          "value": "四十米",
+          "quote": "阿澜说：四十米。"
+        },
+        {
+          "subject": "阿澜",
+          "predicate": "claim",
+          "value": "雾灯塔有四十米高",
+          "fact_type": "character_belief",
+          "quote": "阿澜说：四十米。"
+        }
+      ],
+      "events": [
+        {
+          "title": "凌霜在雾灯塔上被袭击",
+          "summary": "三天后凌霜在雾灯塔上被人从背后砍伤，昏迷九天。",
+          "participants": [
+            "凌霜"
+          ],
+          "location": "雾灯塔",
+          "quote": "三天后，凌霜在雾灯塔上被人从背后砍了一刀。"
+        },
+        {
+          "title": "凌霜用灯塔高度试出阿澜撒谎",
+          "summary": "凌霜问阿澜雾灯塔多高，阿澜答四十米，凌霜指出是三十米、阿澜从没上去过。",
+          "participants": [
+            "凌霜",
+            "阿澜"
+          ],
+          "location": "哨所",
+          "quote": "凌霜说：是三十米。你从来没上去过。"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "chapter_index": 6,
+      "summary": "阿澜承认自己是黑帆商会留下来看货的人，货在雾灯塔底下；她承认死者是她叫来的，但否认杀了人。",
+      "mentions": [
+        {
+          "name": "阿澜",
+          "kind": "character",
+          "quote": "她确实是黑帆商会的人。"
+        },
+        {
+          "name": "凌霜",
+          "aliases": [
+            "霜姐"
+          ],
+          "kind": "character",
+          "quote": "凌霜看着阿澜的眼睛，觉得她这句话是真的。"
+        },
+        {
+          "name": "黑帆商会",
+          "kind": "faction",
+          "quote": "她确实是黑帆商会的人。"
+        },
+        {
+          "name": "雾灯塔",
+          "kind": "place",
+          "quote": "三年前商会散的时候，她是被留下的那一个——留下看货。货在雾灯塔底下。"
+        }
+      ],
+      "facts": [
+        {
+          "subject": "阿澜",
+          "predicate": "identity",
+          "value": "确实是黑帆商会的人；三年前商会散时被留下看货",
+          "quote": "她确实是黑帆商会的人。"
+        },
+        {
+          "subject": "阿澜",
+          "predicate": "action",
+          "value": "货在雾灯塔底下，死者是她叫来的",
+          "quote": "三年前商会散的时候，她是被留下的那一个——留下看货。货在雾灯塔底下。"
+        },
+        {
+          "subject": "阿澜",
+          "predicate": "claim",
+          "value": "否认杀了死者",
+          "quote": "阿澜说：不是。"
+        },
+        {
+          "subject": "凌霜",
+          "predicate": "judgment",
+          "value": "相信阿澜关于没杀人的说法",
+          "quote": "凌霜看着阿澜的眼睛，觉得她这句话是真的。"
+        }
+      ],
+      "events": [
+        {
+          "title": "阿澜供认身份",
+          "summary": "阿澜承认自己是黑帆商会留下看货的人，承认叫来死者，但否认杀人。",
+          "participants": [
+            "凌霜",
+            "阿澜"
+          ],
+          "location": "哨所",
+          "quote": "阿澜说：他是我叫来的。他想要那批货，我不想给。"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "chapter_index": 7,
+      "summary": "雾散之前，凌霜没有把阿澜交给韩铮，而是给了她一条船放她走。",
+      "mentions": [
+        {
+          "name": "凌霜",
+          "aliases": [
+            "霜姐"
+          ],
+          "kind": "character",
+          "quote": "凌霜没有把阿澜交给韩铮。"
+        },
+        {
+          "name": "阿澜",
+          "kind": "character",
+          "quote": "她给了阿澜一条船，让她在天亮前离开。"
+        },
+        {
+          "name": "韩铮",
+          "kind": "character",
+          "quote": "凌霜没有把阿澜交给韩铮。"
+        },
+        {
+          "name": "一号栈桥",
+          "kind": "place",
+          "quote": "凌霜站在栈桥上，看着那点灯火一点点消失。"
+        }
+      ],
+      "facts": [
+        {
+          "subject": "凌霜",
+          "predicate": "action",
+          "value": "没有把阿澜交给韩铮，给了她一条船放她走",
+          "quote": "凌霜没有把阿澜交给韩铮。她给了阿澜一条船，让她在天亮前离开。"
+        },
+        {
+          "subject": "凌霜",
+          "predicate": "state",
+          "value": "不确定自己会不会后悔，但不想让别人替阿澜决定",
+          "quote": "凌霜说：我不知道。但我不想让别人替你决定。"
+        },
+        {
+          "subject": "灰港",
+          "predicate": "background",
+          "value": "雾到三月才散",
+          "quote": "灰港的雾到三月才散。"
+        }
+      ],
+      "events": [
+        {
+          "title": "凌霜放走阿澜",
+          "summary": "凌霜没有把阿澜交给韩铮，给她一条船在天亮前离开灰港。",
+          "participants": [
+            "凌霜",
+            "阿澜"
+          ],
+          "location": "栈桥",
+          "quote": "凌霜没有把阿澜交给韩铮。她给了阿澜一条船，让她在天亮前离开。"
+        }
+      ],
+      "relations": [
+        {
+          "from_entity": "凌霜",
+          "to_entity": "阿澜",
+          "relation": "放走",
+          "quote": "凌霜没有把阿澜交给韩铮。"
+        }
+      ]
+    }
+  ]
+}

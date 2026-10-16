@@ -106,7 +106,7 @@ def test_relative_time_is_recorded_without_conversion():
 
 @pytest.mark.parametrize(
     ("text", "expected"),
-    [("第二天清晨", "第二天"), ("三年之后", None), ("当晚", "当晚"), ("没有时间词", None)],
+    [("第二天清晨", "第二天"), ("三年之后", "三年之后"), ("当晚", "当晚"), ("没有时间词", None)],
 )
 def test_relative_markers(text, expected):
     assert extract_relative_time(text) == expected

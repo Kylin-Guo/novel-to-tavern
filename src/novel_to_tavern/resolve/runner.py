@@ -27,6 +27,7 @@ from .entities import (
     ResolutionResult,
     alias_evidence,
     alias_links,
+    declared_aliases,
     cluster_mentions,
     normalize_name,
     propose_merges,
@@ -97,6 +98,7 @@ def _build_entity(
     facts: list[FactRecord],
     events: list[EventRecord],
     relations: list[RelationRecord],
+    extra_aliases: list[str] | None = None,
 ) -> CanonicalEntity:
     by_key = {c.key: c for c in clusters}
     group = [by_key[k] for k in group_keys if k in by_key]
@@ -122,7 +124,9 @@ def _build_entity(
 
     # canonical 取出现次数最多的写法，次数相同取更长的（通常更完整）
     canonical = max(name_counts, key=lambda n: (name_counts[n], len(n)))
-    aliases = sorted(n for n in name_counts if n != canonical)
+    aliases = sorted(
+        {n for n in name_counts if n != canonical} | set(extra_aliases or []) - {canonical}
+    )
     kind = kinds.most_common(1)[0][0]
 
     def key_of(text: str) -> str:
@@ -172,6 +176,8 @@ def resolve(run_dir: str | Path) -> ResolutionResult:
 
     clusters, excluded = cluster_mentions(mentions)
     links, alias_review = alias_links(clusters, mentions)
+    # 只以别名形式出现的称号也要落到实体上，否则永远不会成为触发词
+    declared = declared_aliases(clusters, mentions)
 
     union = _UnionFind([c.key for c in clusters])
     merged_pairs: list[tuple[str, str]] = []
@@ -199,6 +205,9 @@ def resolve(run_dir: str | Path) -> ResolutionResult:
             facts=facts,
             events=events,
             relations=relations,
+            extra_aliases=sorted(
+                {alias for key in group_keys for alias in declared.get(key, [])}
+            ),
         )
         entities.append(entity)
         for key in group_keys:

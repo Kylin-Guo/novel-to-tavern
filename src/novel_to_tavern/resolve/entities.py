@@ -197,6 +197,42 @@ def alias_evidence(clusters: list[NameCluster], mentions: list[MentionRecord]) -
     return evidence
 
 
+def declared_aliases(
+    clusters: list[NameCluster], mentions: list[MentionRecord]
+) -> dict[str, list[str]]:
+    """只作为「别名」出现过、自己从没被单独提及的名字。
+
+    `alias_links` 只能处理**两侧都是已知聚类**的情况 —— 它要比较类别是否兼容。
+    但现实里大量称号只以别名的形式出现：抽取器说「凌霜」又名「霜姐」，
+    而「霜姐」从来没有作为独立提及出现过。那些称号如果不落到实体上，
+    就永远不会成为触发词，「霜姐是谁？」这种问法会漏触发。
+
+    门槛与自动合并一致：同一个别名关系要被 **≥ `MIN_ALIAS_CHUNKS` 个独立分块**
+    断言过。类别无从比较，所以不做类别检查 —— 这是个小让步，换来的
+    是「别名可触发」这条质量门禁真的成立。
+    """
+    by_key = {c.key: c for c in clusters}
+    collected: dict[str, dict[str, set[str]]] = {}
+
+    for mention in mentions:
+        owner = normalize_name(mention.name)
+        if owner not in by_key:
+            continue
+        for alias in mention.aliases:
+            target = normalize_name(alias)
+            if not target or target == owner or target in by_key:
+                continue
+            collected.setdefault(owner, {}).setdefault(alias, set()).add(mention.chunk_id)
+
+    return {
+        owner: qualified
+        for owner, targets in collected.items()
+        if (qualified := sorted(
+            alias for alias, chunks in targets.items() if len(chunks) >= MIN_ALIAS_CHUNKS
+        ))
+    }
+
+
 def kinds_are_compatible(left: NameCluster, right: NameCluster) -> bool:
     """两侧类别是否兼容。人物与非人物一律不兼容。"""
     left_is_char = _CHARACTER in left.kinds
