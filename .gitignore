@@ -21,3 +21,6 @@ input/
 天之炽/
 *.novel.txt
 .DS_Store
+
+# 本地运行配置（含本机路径），不入库
+config/config.yaml

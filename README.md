@@ -47,7 +47,7 @@
 
 ## 当前状态
 
-**Phase 0 已完成（格式与仓库基线）**，Phase 1 起尚未开始。
+**Phase 0（格式与仓库基线）与 Phase 1（导入与章节索引）已完成**，Phase 2 起尚未开始。
 
 已具备：
 
@@ -58,10 +58,11 @@
 - **酒馆格式层**：Character Card V2 + 内嵌 `character_book`、独立世界书，
   字段依据 SillyTavern 1.19.0 源码逐项核对（见 `docs/FORMAT_COMPATIBILITY.md`）
 - 示例产物：`examples/fixtures/minimal_world_simulator_v2.json`（自创内容，可直接导入试）
+- **原文导入与章节索引**：`n2t ingest` 生成可续跑的 `runs/<run_id>/manifest.json`；
+  章节与分块经过强制无损校验（区段铺满原文、按块重构等于原文）
 
 尚未具备（后续阶段）：
 
-- 小说导入、章节索引、分块（Phase 1）
 - LLM 原子事实提取（Phase 2）
 - 实体归一、时间线、知识边界（Phase 3–4）
 - 从真实小说生成世界书与角色卡（Phase 5）
@@ -74,9 +75,10 @@
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
-.venv/bin/python -m pytest          # 108 项离线测试，不访问网络、不花 API 额度
+.venv/bin/python -m pytest          # 149 项离线测试，不访问网络、不花 API 额度
 .venv/bin/n2t --help
 .venv/bin/n2t config-check
+.venv/bin/n2t ingest                # 导入原文、建立章节索引与分块
 ```
 
 Python 3.10+。运行期依赖只有 `pydantic` 与 `PyYAML`；不引入数据库、向量库或 Web 框架。
