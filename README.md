@@ -174,7 +174,6 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 
 ## 已知限制
 
-- **尚未在 Tavo 实测。** 格式依据是 ST 源码核对，但没有真实导入记录。
 - 事件**没有绝对时间**：原文未明确给出时 `occurred_at` 恒为 `null`，不予推算。
 - 知识边界由「事件参与者」推断，标注为 `present_at_event`，不等于原著明文授权。
 - 角色卡含全书剧情，剧透防护靠核心规则的**时间纪律**，不是靠条目隔离。
