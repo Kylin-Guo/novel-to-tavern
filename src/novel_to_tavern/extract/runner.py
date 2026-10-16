@@ -133,6 +133,9 @@ class ExtractionRunner:
         self._sources: dict[str, list[str]] = {}
         self._chapter_meta = {c.chunk_id: c for c in self.manifest.chunks}
         self._chapter_by_id = {c.chapter_id: c for c in self.manifest.chapters}
+        # 多卷本的 ChapterRecord.index 是"来源内"序号，三卷都从 0 起，直接用会撞号。
+        self._global_order = self.manifest.global_chapter_order()
+        self._source_names = self.manifest.source_display_names()
 
     # --- 原文访问 ---------------------------------------------------------
 
@@ -185,7 +188,7 @@ class ExtractionRunner:
             s for s in self.manifest.sources if s.source_id == chunk.source_id
         )
         book_title = source_record.filename
-        chapter_label = f"第{chapter.number}{chapter.level}" if chapter.level != "段" else f"第{chapter.number}段"
+        chapter_label = self.chapter_label_of(chapter)
 
         user_prompt = build_user_prompt(
             book_title=book_title,
@@ -299,7 +302,8 @@ class ExtractionRunner:
             "chunk_id": chunk_id,
             "source_id": chunk.source_id,
             "chapter_id": chunk.chapter_id,
-            "chapter_index": chapter.index,
+            "chapter_index": self._global_order.get(chunk.chapter_id, chapter.index),
+            "chapter_label": self.chapter_label_of(chapter),
         }
 
         mentions: list[MentionRecord] = []
@@ -392,8 +396,9 @@ class ExtractionRunner:
             chunk_id=chunk_id,
             chapter_id=chunk.chapter_id,
             source_id=chunk.source_id,
-            chapter_index=chapter.index,
-            chapter_title=chapter.title.strip(),  # 只存标题本身，"第N章" 由展示层拼
+            chapter_index=self._global_order.get(chunk.chapter_id, chapter.index),
+            chapter_label=self.chapter_label_of(chapter),
+            chapter_title=chapter.title.strip(),  # 只存标题本身，卷名与"第N章" 由展示层拼
             summary=raw.summary,
             mentions=mentions,
             facts=facts,
@@ -403,6 +408,13 @@ class ExtractionRunner:
             evidence_located=located_ok,
             problems=problems,
         )
+
+    def chapter_label_of(self, chapter) -> str:
+        """章节的展示标签，多卷时带上卷名，避免"第1章"出现三次。"""
+        local = f"第{chapter.number}{chapter.level}" if chapter.level != "段" else f"第{chapter.number}段"
+        volume = self._source_names.get(chapter.source_id, "")
+        multi = len(self.manifest.sources) > 1
+        return f"{volume} {local} {chapter.title}".strip() if multi else f"{local} {chapter.title}".strip()
 
     def output_path(self, chunk_id: str) -> Path:
         return self.out_dir / f"{chunk_id}.json"

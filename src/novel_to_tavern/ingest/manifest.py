@@ -6,6 +6,7 @@ manifest 只存**位置与 hash**，不存原文 —— 原文可从 source path
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -55,6 +56,29 @@ class Manifest(BaseModel):
 
     def chunks_of(self, chapter_id: str) -> list[ChunkRecord]:
         return [c for c in self.chunks if c.chapter_id == chapter_id]
+
+    def global_chapter_order(self) -> dict[str, int]:
+        """章节的**全局**序号：按 manifest 里的来源顺序、来源内章节顺序编号。
+
+        `ChapterRecord.index` 是**来源内**序号，多卷本的每一卷都从 0 开始，
+        直接用它会撞号（三卷都从 ch0001 起）。跨卷做时间线、开场白、
+        起始点屏蔽都必须用这个全局序号。
+        """
+        order: dict[str, int] = {}
+        counter = 0
+        for source in self.sources:
+            for chapter in sorted(self.chapters_of(source.source_id), key=lambda c: c.index):
+                order[chapter.chapter_id] = counter
+                counter += 1
+        return order
+
+    def source_display_names(self) -> dict[str, str]:
+        """来源的短显示名：文件名主干里书名号之前的部分。"""
+        names: dict[str, str] = {}
+        for source in self.sources:
+            stem = Path(source.filename).stem
+            names[source.source_id] = stem.split("：")[0].split(":")[0] or stem
+        return names
 
     def region_coverage(self, source_id: str, total_lines: int) -> tuple[bool, list[str]]:
         """校验该来源的 region 是否无缝铺满 [0, total_lines)。"""
