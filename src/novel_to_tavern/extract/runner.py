@@ -110,6 +110,21 @@ def prompt_template_hash() -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
+def _declared(item, field: str) -> bool:
+    """模型**是否真的写了**这个字段。
+
+    Pydantic 会把缺失字段静默填成默认值，光看取值分不出「模型写了 unknown」
+    和「模型根本没写」。`model_fields_set` 分得出 —— 这两件事的处理方式不同：
+    前者是模型的判断，后者是模型的遗漏，后者必须进复核队列。
+    """
+    return field in item.model_fields_set
+
+
+def _append_note(note: str, extra: str) -> str:
+    """拼接复核理由，避免出现「；；」或开头的分号。"""
+    return f"{note}；{extra}" if note else extra
+
+
 def cache_key(*, model: str, provider: str, chunk_sha: str, temperature: float) -> str:
     """缓存键必须包含**全部语义相关输入**。
 
@@ -345,15 +360,21 @@ class ExtractionRunner:
         for i, item in enumerate(raw.mentions):
             refs = resolve(item.quote)
             status = "accepted" if refs or not item.quote else "needs_review"
+            note = item.note
             if not refs and item.quote:
                 problems.append(f"mention「{item.name}」的引文无法在原文定位")
+            if not _declared(item, "kind"):
+                # 模型没说这是什么 —— 不能替它认成人物。
+                status = "needs_review"
+                note = _append_note(note, "模型未给出 kind，按 unknown 处理")
+                problems.append(f"mention「{item.name}」未给出 kind，已按 unknown 处理")
             mentions.append(
                 MentionRecord(
                     mention_id=f"{chunk_id}_m{i:03d}",
                     name=item.name,
                     aliases=list(item.aliases),
                     kind=item.kind,
-                    note=item.note,
+                    note=note,
                     source_refs=refs,
                     review_status=status,
                     **common,
@@ -365,13 +386,20 @@ class ExtractionRunner:
             refs = resolve(item.quote)
             status = "accepted"
             note = ""
+            if not _declared(item, "fact_type"):
+                # 少写一个字段是常见的，静默补成 canon_fact 是本项目最不能犯的错。
+                status = "needs_review"
+                note = _append_note(note, "模型未给出 fact_type，按 unknown 处理（不得当作原著正史）")
+                problems.append(
+                    f"fact「{item.subject}.{item.predicate}」未给出 fact_type，已按 unknown 处理"
+                )
             if not refs:
                 # canon 必须可核查；定位失败就不能当原著事实。
                 status = "needs_review"
-                note = "引文无法在原文定位" if item.quote else "缺少引文"
+                note = _append_note(note, "引文无法在原文定位" if item.quote else "缺少引文")
                 problems.append(f"fact「{item.subject}.{item.predicate}」{note}")
                 if item.fact_type == CANON:
-                    note += "；声称 canon 但无证据，需人工复核"
+                    note = _append_note(note, "声称 canon 但无证据，需人工复核")
             facts.append(
                 FactRecord(
                     fact_id=f"{chunk_id}_f{i:03d}",
@@ -390,6 +418,11 @@ class ExtractionRunner:
         for i, item in enumerate(raw.events):
             refs = resolve(item.quote)
             status = "accepted" if refs else "needs_review"
+            if not _declared(item, "fact_type"):
+                status = "needs_review"
+                problems.append(
+                    f"event「{item.title}」未给出 fact_type，已按 unknown 处理"
+                )
             if not refs:
                 problems.append(f"event「{item.title}」的引文无法在原文定位")
             events.append(

@@ -269,7 +269,7 @@ run_id：`20261016T043701Z_aead30`
 ## 11. 复现命令
 
 ```bash
-.venv/bin/python -m pytest                      # 472 项离线测试（全部离线，不联网）
+.venv/bin/python -m pytest                      # 480 项离线测试（全部离线，不联网）
 .venv/bin/python -m pytest tests/test_gold_evaluation.py   # 黄金集：精确率/召回率
 
 .venv/bin/n2t ingest                            # ① 156 章 / 156 块

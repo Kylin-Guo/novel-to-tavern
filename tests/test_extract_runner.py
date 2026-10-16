@@ -151,6 +151,146 @@ def test_canon_fact_without_locatable_evidence_is_downgraded(tmp_path):
     assert "需人工复核" in bogus.review_note
 
 
+# --- 漏字段的默认值：宁可 unknown，不可 canon --------------------------------
+
+
+def _payload(*, facts=None, mentions=None, events=None):
+    return {
+        "summary": "少年在北风里沿河堤南行。",
+        "mentions": mentions
+        if mentions is not None
+        else [{"name": "少年", "kind": "character", "quote": "少年把斗篷的领子竖起来"}],
+        "facts": facts if facts is not None else [],
+        "events": events if events is not None else [],
+        "relations": [],
+    }
+
+
+def test_missing_fact_type_does_not_become_canon(tmp_path):
+    """模型少写一个字段是常见的；默认补成 canon_fact 是本项目最不能犯的错。"""
+    cfg, run_dir = _setup(tmp_path)
+    payload = _payload(
+        facts=[
+            {"subject": "少年", "predicate": "action", "value": "沿河堤往南走",
+             "quote": "沿着河堤往南走"}  # 没有 fact_type
+        ]
+    )
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(payload))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    fact = runner.process_chunk(chunk_id).facts[0]
+
+    assert fact.fact_type == "unknown"
+    assert fact.review_status == "needs_review"
+    assert "fact_type" in fact.review_note
+
+
+def test_missing_fact_type_keeps_the_fact_out_of_the_worldbook(tmp_path):
+    """复核状态必须真的影响产物，不能只写在记录里。"""
+    from novel_to_tavern.timeline.worldbible import _render_facts
+
+    cfg, run_dir = _setup(tmp_path)
+    payload = _payload(
+        facts=[
+            {"subject": "少年", "predicate": "action", "value": "沿河堤往南走",
+             "quote": "沿着河堤往南走"}
+        ]
+    )
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(payload))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    fact = runner.process_chunk(chunk_id).facts[0]
+
+    assert _render_facts([fact], with_sources=False) == ""
+
+
+def test_explicit_unknown_is_a_judgement_not_an_omission(tmp_path):
+    """模型**主动写了** unknown 与**忘了写**不是一回事：前者照原样收下，
+    后者要标成复核项 —— 否则复核队列会被模型自己的判断淹没。"""
+    cfg, run_dir = _setup(tmp_path)
+    payload = _payload(
+        facts=[
+            {"subject": "少年", "predicate": "action", "value": "沿河堤往南走",
+             "fact_type": "unknown", "quote": "沿着河堤往南走"}
+        ]
+    )
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(payload))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    fact = runner.process_chunk(chunk_id).facts[0]
+
+    assert fact.fact_type == "unknown"
+    assert fact.review_status == "accepted"
+    assert fact.review_note == ""
+
+
+def test_missing_kind_does_not_become_character(tmp_path):
+    cfg, run_dir = _setup(tmp_path)
+    payload = _payload(mentions=[{"name": "少年", "quote": "少年把斗篷的领子竖起来"}])
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(payload))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    mention = runner.process_chunk(chunk_id).mentions[0]
+
+    assert mention.kind == "unknown"
+    assert mention.review_status == "needs_review"
+    assert "kind" in mention.note
+
+
+def test_explicit_character_kind_still_works(tmp_path):
+    """新默认值不能顺手把正常路径也改了。"""
+    cfg, run_dir = _setup(tmp_path)
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(GOOD))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    extraction = runner.process_chunk(chunk_id)
+
+    assert extraction.mentions[0].kind == "character"
+    assert extraction.mentions[0].review_status == "accepted"
+    assert extraction.facts[0].fact_type == "canon_fact"
+    assert extraction.facts[0].review_status == "accepted"
+
+
+def test_missing_event_fact_type_is_flagged(tmp_path):
+    cfg, run_dir = _setup(tmp_path)
+    payload = _payload(
+        events=[
+            {"title": "少年离开镇子", "summary": "北风吹起时，少年沿河堤南行。",
+             "participants": ["少年"], "location": "河堤",
+             "quote": "少年把斗篷的领子竖起来"}
+        ]
+    )
+    runner = ExtractionRunner(cfg, run_dir, StubProvider(payload))
+    chunk_id = sorted(c.chunk_id for c in runner.manifest.chunks)[0]
+    extraction = runner.process_chunk(chunk_id)
+
+    assert extraction.events[0].fact_type == "unknown"
+    assert extraction.events[0].review_status == "needs_review"
+    assert any("fact_type" in p for p in extraction.problems)
+
+
+def test_real_shape_responses_are_unaffected_by_the_new_defaults():
+    """真实 run 的响应**总是**显式带 kind 与 fact_type。
+    这个测试把这条前提钉住：默认值改了，正常路径一条都不变。"""
+    from novel_to_tavern.extract.schema import RawChunkExtraction
+
+    raw = RawChunkExtraction.model_validate(
+        {
+            "mentions": [{"name": "甲", "kind": "character"}],
+            "facts": [{"subject": "甲", "predicate": "p", "value": "v", "fact_type": "canon_fact"}],
+            "events": [{"title": "t", "summary": "s", "fact_type": "canon_fact"}],
+        }
+    )
+    assert raw.mentions[0].kind == "character"
+    assert raw.facts[0].fact_type == "canon_fact"
+    assert raw.events[0].fact_type == "canon_fact"
+
+
+def test_defaults_are_unknown_when_field_is_absent():
+    from novel_to_tavern.extract.schema import UNKNOWN, RawChunkExtraction
+
+    raw = RawChunkExtraction.model_validate(
+        {"mentions": [{"name": "甲"}], "facts": [{"subject": "甲", "predicate": "p", "value": "v"}]}
+    )
+    assert raw.mentions[0].kind == UNKNOWN
+    assert raw.facts[0].fact_type == UNKNOWN
+
+
 def test_mention_without_evidence_is_flagged(tmp_path):
     cfg, run_dir = _setup(tmp_path)
     payload = {

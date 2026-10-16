@@ -16,6 +16,7 @@ from ..extract.schema import (
     ChunkExtraction,
     EventRecord,
     FactRecord,
+    UNKNOWN,
     MentionRecord,
     RelationRecord,
     SourceRef,
@@ -127,7 +128,10 @@ def _build_entity(
     aliases = sorted(
         {n for n in name_counts if n != canonical} | set(extra_aliases or []) - {canonical}
     )
-    kind = kinds.most_common(1)[0][0]
+    # 有明确类别时优先用明确类别：一个实体的 10 条提及里 9 条说了是人物、
+    # 1 条漏写了 kind，实体不该因为那一条变成 unknown（那样它就进不了人物索引）。
+    concrete_kinds = Counter({k: c for k, c in kinds.items() if k != UNKNOWN})
+    kind = (concrete_kinds or kinds).most_common(1)[0][0]
 
     def key_of(text: str) -> str:
         return normalize_name(text)

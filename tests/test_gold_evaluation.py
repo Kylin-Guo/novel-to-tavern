@@ -45,7 +45,11 @@ def evaluated(tmp_path_factory) -> dict:
     config = config_module.Config(
         project=config_module.ProjectConfig(
             source_path=str(NOVEL), output_root=str(work / "runs")
-        )
+        ),
+        # 缓存必须落在 tmp 里。默认的 `./cache` 是**仓库根**下的共享目录：
+        # 改了 extraction.json 之后，旧的预生成响应仍会按同一个键命中，
+        # 于是测试用新 fixture 的断言去验旧 fixture 的产物 —— 会以非常难懂的方式失败。
+        pipeline=config_module.PipelineConfig(cache_dir=str(work / "cache")),
     )
 
     run_dir, manifest = ingest(config, run_id="20260101T000000Z_a01d01", resume=False)

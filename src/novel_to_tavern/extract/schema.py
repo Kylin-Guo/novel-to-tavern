@@ -25,12 +25,22 @@ FactType = Literal[
     "unknown",
 ]
 
-EntityKind = Literal["character", "place", "faction", "item", "ability", "concept", "event"]
+EntityKind = Literal[
+    "character", "place", "faction", "item", "ability", "concept", "event",
+    #: 模型没给出类型时的落点。**不是**「其它」，是「还不知道」——
+    #: 它不能冒充人物，也不会被合并进人物聚类。
+    "unknown",
+]
 
 ReviewStatus = Literal["accepted", "needs_review", "rejected"]
 
 #: 只有这一类事实可以被无条件写进 canon 总纲。
 CANON = "canon_fact"
+
+#: 模型漏字段时的落点。默认取它而不是 `CANON`：
+#: 少写一个字段是常见的，而「默认当成原著正史」正好是本项目最不能犯的错 ——
+#: 错误的默认值在 JSON 完全合法的情况下不会报任何错。见 docs/REVIEW_RECHECK.md P1-03。
+UNKNOWN = "unknown"
 
 
 class SourceRef(BaseModel):
@@ -50,7 +60,8 @@ class _Raw(BaseModel):
 class RawMention(_Raw):
     name: str
     aliases: list[str] = Field(default_factory=list)
-    kind: EntityKind = "character"
+    #: 缺省 `unknown` 而不是 `character`：默认成人物等于替模型做了一个它没说过的判断。
+    kind: EntityKind = UNKNOWN
     quote: str = ""
     note: str = ""
 
@@ -59,7 +70,7 @@ class RawFact(_Raw):
     subject: str
     predicate: str
     value: str
-    fact_type: FactType = CANON
+    fact_type: FactType = UNKNOWN
     quote: str = ""
 
 
@@ -68,7 +79,7 @@ class RawEvent(_Raw):
     summary: str
     participants: list[str] = Field(default_factory=list)
     location: str | None = None
-    fact_type: FactType = CANON
+    fact_type: FactType = UNKNOWN
     quote: str = ""
 
 

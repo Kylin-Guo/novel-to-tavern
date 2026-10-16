@@ -18,7 +18,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from ..extract.schema import EntityKind, MentionRecord, SourceRef
+from ..extract.schema import UNKNOWN, EntityKind, MentionRecord, SourceRef
 
 #: 泛称/角色名词，不是专有实体，不该建成独立角色。
 ROLE_NOUNS = frozenset(
@@ -234,12 +234,22 @@ def declared_aliases(
 
 
 def kinds_are_compatible(left: NameCluster, right: NameCluster) -> bool:
-    """两侧类别是否兼容。人物与非人物一律不兼容。"""
-    left_is_char = _CHARACTER in left.kinds
-    right_is_char = _CHARACTER in right.kinds
+    """两侧类别是否兼容。人物与非人物一律不兼容。
+
+    `unknown` 在这里**当通配符**，不当第三种类别。理由：它是「模型没说」，
+    不是「模型说它不是人物」。若把它当成一个互斥取值，一个漏写 kind 的提及
+    就会与它本该合并的其它提及全部失去兼容性，实体被拆成一堆碎片 ——
+    那是把一个隐私性很好的默认值换成了更难查的故障。见 REVIEW_RECHECK P1-03。
+    """
+    left_kinds = set(left.kinds) - {UNKNOWN}
+    right_kinds = set(right.kinds) - {UNKNOWN}
+    if not left_kinds or not right_kinds:
+        return True
+    left_is_char = _CHARACTER in left_kinds
+    right_is_char = _CHARACTER in right_kinds
     if left_is_char != right_is_char:
         return False
-    return bool(set(left.kinds) & set(right.kinds))
+    return bool(left_kinds & right_kinds)
 
 
 def alias_links(
