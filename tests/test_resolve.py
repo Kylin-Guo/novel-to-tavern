@@ -133,22 +133,52 @@ def test_similar_names_are_not_merged_into_one_entity(tmp_path):
     assert result.review_queue
 
 
-def test_explicit_alias_is_merged():
+def test_single_chunk_alias_claim_goes_to_review_not_merge():
+    """抽取器只在一处顺口说"X 又名 Y"，不足以据此合并两个实体。"""
     mentions = [
-        _mention("m1", "西泽尔", aliases=["红龙"]),
-        _mention("m2", "红龙"),
+        _mention("m1", "西泽尔", aliases=["红龙"], chunk="ch1_p000"),
+        _mention("m2", "红龙", chunk="ch1_p000"),
     ]
     clusters, _ = cluster_mentions(mentions)
-    links = alias_links(clusters, mentions)
-    assert links == {"西泽尔": ["红龙"]}
+    accepted, review = alias_links(clusters, mentions)
+    assert accepted == {}
+    assert len(review) == 1
+    assert review[0].decision == "needs_review"
+    assert "独立断言" in review[0].match_signals[0]
+
+
+def test_alias_asserted_in_two_chunks_is_merged():
+    mentions = [
+        _mention("m1", "西泽尔", aliases=["红龙"], chunk="ch1_p000"),
+        _mention("m2", "红龙", chunk="ch1_p000"),
+        _mention("m3", "西泽尔", aliases=["红龙"], chunk="ch9_p000"),
+    ]
+    clusters, _ = cluster_mentions(mentions)
+    accepted, review = alias_links(clusters, mentions)
+    assert accepted == {"西泽尔": ["红龙"]}
+    assert review == []
+
+
+def test_character_merged_with_non_character_is_refused():
+    """把一个人和一个组织当成同一实体几乎一定是抽取错误。"""
+    mentions = [
+        _mention("m1", "佛朗哥", aliases=["枢机会"], kind="character", chunk="ch1_p000"),
+        _mention("m2", "枢机会", kind="faction", chunk="ch1_p000"),
+        _mention("m3", "佛朗哥", aliases=["枢机会"], kind="character", chunk="ch5_p000"),
+        _mention("m4", "枢机会", kind="faction", chunk="ch5_p000"),
+    ]
+    clusters, _ = cluster_mentions(mentions)
+    accepted, review = alias_links(clusters, mentions)
+    assert accepted == {}
+    assert review and "类别不兼容" in review[0].match_signals[0]
 
 
 def test_alias_merge_is_recorded_with_a_signal(tmp_path):
     run_dir = _write_run(
         tmp_path,
         [
-            _extraction(0, [_mention("m1", "西泽尔", aliases=["红龙"])]),
-            _extraction(1, [_mention("m2", "红龙")]),
+            _extraction(0, [_mention("m1", "西泽尔", aliases=["红龙"]), _mention("m2", "红龙")]),
+            _extraction(1, [_mention("m3", "西泽尔", aliases=["红龙"], chunk="ch2_p000")]),
         ],
     )
     result = resolve(run_dir)
@@ -157,6 +187,16 @@ def test_alias_merge_is_recorded_with_a_signal(tmp_path):
     assert "别名" in merged[0].match_signals[0]
     entity = next(e for e in result.entities if e.canonical_name == "西泽尔")
     assert "红龙" in entity.aliases
+
+
+def test_refused_alias_keeps_two_entities(tmp_path):
+    run_dir = _write_run(
+        tmp_path,
+        [_extraction(0, [_mention("m1", "秘银", aliases=["秘金"]), _mention("m2", "秘金")])],
+    )
+    result = resolve(run_dir)
+    assert {e.canonical_name for e in result.entities} == {"秘银", "秘金"}
+    assert any("独立断言" in d.match_signals[0] for d in result.review_queue)
 
 
 # --- 档案汇总 -------------------------------------------------------------

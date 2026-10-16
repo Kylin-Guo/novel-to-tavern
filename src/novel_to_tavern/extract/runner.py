@@ -393,7 +393,7 @@ class ExtractionRunner:
             chapter_id=chunk.chapter_id,
             source_id=chunk.source_id,
             chapter_index=chapter.index,
-            chapter_title=f"{chapter.number}{chapter.level} {chapter.title}".strip(),
+            chapter_title=chapter.title.strip(),  # 只存标题本身，"第N章" 由展示层拼
             summary=raw.summary,
             mentions=mentions,
             facts=facts,
