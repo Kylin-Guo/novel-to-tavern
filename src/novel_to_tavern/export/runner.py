@@ -49,6 +49,29 @@ class ExportError(RuntimeError):
     """导出阶段的致命错误。运行到这一步说明上游数据有问题，不能产出半成品。"""
 
 
+#: 卷次记号与分隔符，从公共前缀里剥掉。
+_VOLUME_MARKS = "ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩIVXivx0123456789 "
+
+def derive_book_title(filenames: list[str], *, fallback: str = "novel-to-tavern") -> str:
+    """从来源文件名推断书名。
+
+    多卷本的公共前缀才是书名：`天之炽Ⅰ：红龙的归来` + `天之炽Ⅱ：女武神1`
+    → `天之炽`。取不到就退回配置里的项目名，不硬猜。
+    """
+    stems = [Path(name).stem for name in filenames if name]
+    if not stems:
+        return fallback
+    prefix = stems[0]
+    for stem in stems[1:]:
+        limit = min(len(prefix), len(stem))
+        cut = 0
+        while cut < limit and prefix[cut] == stem[cut]:
+            cut += 1
+        prefix = prefix[:cut]
+    cleaned = prefix.rstrip(_VOLUME_MARKS).rstrip("：:·-—_ ")
+    return cleaned or fallback
+
+
 def _read_json(path: Path):
     if not path.is_file():
         raise ExportError(f"缺少上游产物：{path}，请先跑 timeline。")
@@ -104,10 +127,10 @@ def export(run_dir: str | Path, config: config_module.Config) -> dict:
     exports_dir = run_path / "exports"
     reports_dir = run_path / "reports"
 
-    book_title = config.project.name
     manifest = _read_json(run_path / "manifest.json")
-    if manifest.get("sources"):
-        book_title = Path(manifest["sources"][0]["filename"]).stem.split("：")[0] or book_title
+    book_title = derive_book_title(
+        [s["filename"] for s in manifest.get("sources", [])], fallback=config.project.name
+    )
 
     plan = [
         PlannedEntry.model_validate(item)

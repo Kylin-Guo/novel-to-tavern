@@ -170,13 +170,19 @@ def propose_merges(clusters: list[NameCluster]) -> list[MergeDecision]:
     return decisions
 
 
-def alias_links(clusters: list[NameCluster], mentions: list[MentionRecord]) -> dict[str, list[str]]:
-    """找出**有原文依据**的别名关系：某聚类里显式列出了另一个聚类的名字。
+#: 自动合并要求别名关系至少被这么多个**独立分块**断言过。
+#: 抽取器单次声称"X 又名 Y"不足以证明；重复出现才作为自动合并依据。
+MIN_ALIAS_CHUNKS = 2
 
-    返回 `{cluster_key: [被并入的 cluster_key, ...]}`。
-    """
+#: 兼容的实体类别。`character` 与其余类别互斥 —— 把一个人和一个组织/物品
+#: 当成同一实体几乎一定是抽取错误。
+_CHARACTER = "character"
+
+
+def alias_evidence(clusters: list[NameCluster], mentions: list[MentionRecord]) -> dict[str, dict[str, set[str]]]:
+    """收集别名关系的证据：`{owner: {alias: {断言过它的 chunk_id, ...}}}`。"""
     by_key = {c.key: c for c in clusters}
-    links: dict[str, list[str]] = {}
+    evidence: dict[str, dict[str, set[str]]] = {}
 
     for mention in mentions:
         owner = normalize_name(mention.name)
@@ -184,12 +190,77 @@ def alias_links(clusters: list[NameCluster], mentions: list[MentionRecord]) -> d
             continue
         for alias in mention.aliases:
             target = normalize_name(alias)
-            if target and target != owner and target in by_key:
-                links.setdefault(owner, [])
-                if target not in links[owner]:
-                    links[owner].append(target)
+            if not target or target == owner or target not in by_key:
+                continue
+            evidence.setdefault(owner, {}).setdefault(target, set()).add(mention.chunk_id)
 
-    return links
+    return evidence
+
+
+def kinds_are_compatible(left: NameCluster, right: NameCluster) -> bool:
+    """两侧类别是否兼容。人物与非人物一律不兼容。"""
+    left_is_char = _CHARACTER in left.kinds
+    right_is_char = _CHARACTER in right.kinds
+    if left_is_char != right_is_char:
+        return False
+    return bool(set(left.kinds) & set(right.kinds))
+
+
+def alias_links(
+    clusters: list[NameCluster], mentions: list[MentionRecord]
+) -> tuple[dict[str, list[str]], list[MergeDecision]]:
+    """把别名关系分成「可自动合并」与「需人工复核」两类。
+
+    只有同时满足两条才自动合并：
+    1. 两侧实体类别兼容（人物与非人物不合并）；
+    2. 该别名关系被 **≥ `MIN_ALIAS_CHUNKS` 个独立分块**断言过。
+
+    其余一律进复核队列。抽取器只在一处顺口提到的别名不足以据此合并实体。
+    """
+    by_key = {c.key: c for c in clusters}
+    evidence = alias_evidence(clusters, mentions)
+
+    accepted: dict[str, list[str]] = {}
+    review: list[MergeDecision] = []
+
+    for owner, targets in evidence.items():
+        for target, chunk_ids in targets.items():
+            left, right = by_key[owner], by_key[target]
+            if not kinds_are_compatible(left, right):
+                review.append(
+                    MergeDecision(
+                        candidate_names=[*left.names, *right.names],
+                        candidate_entity_ids=[owner, target],
+                        match_signals=[
+                            f"抽取器在 {len(chunk_ids)} 个分块里把 {right.names[0]!r} 记为 "
+                            f"{left.names[0]!r} 的别名，但类别不兼容"
+                            f"（{'/'.join(left.kinds)} vs {'/'.join(right.kinds)}）"
+                        ],
+                        confidence=0.2,
+                        decision="needs_review",
+                        evidence_refs=[*left.source_refs[:1], *right.source_refs[:1]],
+                    )
+                )
+                continue
+            if len(chunk_ids) < MIN_ALIAS_CHUNKS:
+                review.append(
+                    MergeDecision(
+                        candidate_names=[*left.names, *right.names],
+                        candidate_entity_ids=[owner, target],
+                        match_signals=[
+                            f"抽取器把 {right.names[0]!r} 记为 {left.names[0]!r} 的别名，"
+                            f"但只在 {len(chunk_ids)} 个分块里出现，"
+                            f"未达 {MIN_ALIAS_CHUNKS} 个独立断言的自动合并门槛"
+                        ],
+                        confidence=0.35,
+                        decision="needs_review",
+                        evidence_refs=[*left.source_refs[:1], *right.source_refs[:1]],
+                    )
+                )
+                continue
+            accepted.setdefault(owner, []).append(target)
+
+    return accepted, review
 
 
 class ResolutionResult(BaseModel):
@@ -198,3 +269,4 @@ class ResolutionResult(BaseModel):
     review_queue: list[MergeDecision]
     excluded_role_nouns: list[str]
     alias_merged: dict[str, list[str]]
+    alias_evidence: dict[str, dict[str, int]] = Field(default_factory=dict)

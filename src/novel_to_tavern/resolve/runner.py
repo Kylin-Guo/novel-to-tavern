@@ -25,6 +25,7 @@ from .entities import (
     MergeDecision,
     NameCluster,
     ResolutionResult,
+    alias_evidence,
     alias_links,
     cluster_mentions,
     normalize_name,
@@ -170,7 +171,7 @@ def resolve(run_dir: str | Path) -> ResolutionResult:
         raise ResolutionError("抽取结果里没有任何实体提及，无法做归一。")
 
     clusters, excluded = cluster_mentions(mentions)
-    links = alias_links(clusters, mentions)
+    links, alias_review = alias_links(clusters, mentions)
 
     union = _UnionFind([c.key for c in clusters])
     merged_pairs: list[tuple[str, str]] = []
@@ -214,6 +215,8 @@ def resolve(run_dir: str | Path) -> ResolutionResult:
         for d in decisions
         if len({entity_id_by_key.get(k) for k in d.candidate_entity_ids}) > 1
     ]
+    # 别名关系里不够格自动合并的，连同姓名近似的候选一起进复核队列
+    review_queue.extend(alias_review)
 
     # 显式别名合并也要留下可追溯记录
     alias_decisions: list[MergeDecision] = []
@@ -237,6 +240,10 @@ def resolve(run_dir: str | Path) -> ResolutionResult:
         review_queue=review_queue,
         excluded_role_nouns=sorted({m.name for m in excluded}),
         alias_merged={owner: targets for owner, targets in links.items()},
+        alias_evidence={
+            owner: {target: len(chunks) for target, chunks in targets.items()}
+            for owner, targets in alias_evidence(clusters, mentions).items()
+        },
     )
 
     _write_outputs(run_path, result, extractions, facts, events, relations)
@@ -309,6 +316,25 @@ def _write_outputs(
             f"{len(entity.appearance_chapters)} | {len(entity.fact_ids)} | "
             f"{len(entity.event_ids)} | {entity.evidence_count} |"
         )
+
+    if result.alias_evidence:
+        lines += [
+            "",
+            "## 别名关系证据（前 30 条，按断言它的分块数排序）",
+            "",
+            "> 断言数高但未自动合并的，多半是类别冲突或抽取器把称号与实物混为一谈；",
+            "> 这些**没有**被合并，需人工判断。",
+            "",
+            "| 主体 | 被记为别名 | 断言分块数 |",
+            "|---|---|---|",
+        ]
+        pairs = [
+            (owner, target, count)
+            for owner, targets in result.alias_evidence.items()
+            for target, count in targets.items()
+        ]
+        for owner, target, count in sorted(pairs, key=lambda x: -x[2])[:30]:
+            lines.append(f"| {owner} | {target} | {count} |")
 
     if result.review_queue:
         lines += [
