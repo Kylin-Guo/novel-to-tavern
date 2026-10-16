@@ -6,6 +6,7 @@
 [![tests](https://github.com/Kylin-Guo/novel-to-tavern/actions/workflows/tests.yml/badge.svg)](https://github.com/Kylin-Guo/novel-to-tavern/actions/workflows/tests.yml)
 ![python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![offline](https://img.shields.io/badge/tests-100%25%20offline-brightgreen)
+![license](https://img.shields.io/badge/license-MIT-blue)
 
 ---
 
@@ -192,4 +193,9 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 
 ## 许可
 
-_尚未选定；在选定之前默认保留所有权利。_
+本仓库的**代码与文档**采用 [MIT 许可证](LICENSE)。
+
+> **例外：`exports/` 下的角色卡不在 MIT 授权范围内。**
+> 那些文件是原著小说的衍生作品，其权利归原著权利人；本仓库对导出的卡片
+> 不授予任何许可，也不声称拥有再分发或公开发布的权利。
+> 见 [`exports/README.md`](exports/README.md)。
