@@ -28,3 +28,6 @@ config/config.yaml
 
 # 预生成的抽取响应（含原文引文），与原文同等对待，不入库
 precomputed/
+
+# 本地分发用的 nginx 配置（不进仓库）
+nginx-exports/
