@@ -137,9 +137,9 @@ def test_verification_writes_json_and_report(tmp_path):
 
 def test_provider_failure_becomes_insufficient_evidence(tmp_path):
     """调用失败不能当成通过 —— 那正好是「看起来成功」的假报告。"""
-    run = _prepare_run(tmp_path, [_fact("f1")])
+    run = _prepare_run(tmp_path, [_fact("f1"), _fact("f2")])
     report = run_verification(run, StubProvider({}, fail={"f1"}))
-    verdict = report.verdicts[0]
+    verdict = next(v for v in report.verdicts if v.fact_id == "f1")
     assert verdict.verdict == "insufficient_evidence"
     assert "校验调用失败" in verdict.reason
     assert "f1" in report.excluded_fact_ids
@@ -284,3 +284,30 @@ def test_timeline_marks_the_layer_as_not_executed_when_absent(tmp_path):
     )
     assert "未执行" in text
     assert "只**做了证据定位" not in text or "没有**做" in text or "**只**做了证据定位" in text
+
+
+# --- 安全闸：全面失败必须中止，不能静默清空世界书 ---------------------------
+
+
+def test_all_calls_failing_aborts_instead_of_writing_a_report(tmp_path):
+    """下游会按报告把事实排出条目正文 —— 全面失败的结论会静默清空世界书。"""
+    run = _prepare_run(tmp_path, [_fact("f1"), _fact("f2")])
+    with pytest.raises(VerificationError, match="一条都没调通"):
+        run_verification(run, StubProvider({}, fail={"f1", "f2"}))
+    assert not (run / "verification" / "semantic.json").exists()
+
+
+def test_partial_call_failure_still_writes_a_report(tmp_path):
+    """部分失败是可以接受的 —— 那几条记为 insufficient_evidence 并写明原因。"""
+    run = _prepare_run(tmp_path, [_fact("f1"), _fact("f2"), _fact("f3")])
+    report = run_verification(run, StubProvider({}, fail={"f1"}))
+    assert report.facts_checked == 3
+    assert report.excluded_fact_ids == ["f1"]
+    assert (run / "verification" / "semantic.json").is_file()
+
+
+def test_unparsable_responses_do_not_trip_the_abort_guard(tmp_path):
+    """解析失败与调用失败不是一回事：解析失败说明引擎通了，只是答得不对。"""
+    run = _prepare_run(tmp_path, [_fact("f1")])
+    report = run_verification(run, StubProvider({}, garbage={"f1"}))
+    assert report.verdicts[0].verdict == "insufficient_evidence"

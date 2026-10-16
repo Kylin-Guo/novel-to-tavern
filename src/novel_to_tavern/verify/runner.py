@@ -151,6 +151,17 @@ def run_verification(
 
     verdicts = [_verify_one(fact, provider, model_hint=provider.name) for fact in targets]
 
+    # **安全闸**：一条都调不通时直接失败，不要写出一份「全部有问题」的报告。
+    # 下游会根据这份报告把事实排出条目正文 —— 全面失败的校验结果
+    # 会把世界书清空，而且是静默的。宁可在这里报错。
+    call_failures = [v for v in verdicts if "校验调用失败" in v.reason]
+    if targets and len(call_failures) == len(targets):
+        first = call_failures[0].reason
+        raise VerificationError(
+            f"校验引擎 {provider.name!r} 一条都没调通，已中止而不是写出一份"
+            f"「全部有问题」的报告（那会把世界书清空）。首个错误：{first}"
+        )
+
     counts: dict[str, int] = {}
     for verdict in verdicts:
         counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1

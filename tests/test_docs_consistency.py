@@ -205,8 +205,9 @@ def test_readme_does_not_promise_spoiler_proof():
 def test_readme_separates_quote_location_from_correctness():
     text = _read(README)
     assert "来源定位" in text
-    assert "语义蕴含评估" in text
-    assert "没有" in text or "未做" in text
+    assert "它证明" in text and "它**不**证明" in text
+    assert "语义支持校验" in text or "语义校验" in text
+    assert "未执行" in text or "未做" in text
 
 
 def test_run_report_explains_what_the_metric_does_not_prove():
