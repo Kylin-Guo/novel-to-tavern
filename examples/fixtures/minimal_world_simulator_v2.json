@@ -25,8 +25,7 @@
       "name": "灰港纪事 · 世界书",
       "description": "世界运行规则 + 灰港设定，关键词触发。",
       "scan_depth": 4,
-      "token_budget": 900,
-      "recursive_scanning": true,
+      "recursive_scanning": false,
       "extensions": {},
       "entries": [
         {

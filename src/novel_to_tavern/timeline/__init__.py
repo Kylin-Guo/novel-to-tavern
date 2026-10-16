@@ -34,7 +34,6 @@ from .worldbible import (
     filter_for_start_chapter,
     plan_character_index,
     plan_entity_entries,
-    plan_event_entries,
     plan_world_overview,
     summarize_plan,
 )
@@ -62,7 +61,6 @@ __all__ = [
     "find_contradictions",
     "plan_character_index",
     "plan_entity_entries",
-    "plan_event_entries",
     "plan_world_overview",
     "relation_timeline",
     "summarize_plan",

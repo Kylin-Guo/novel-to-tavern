@@ -24,7 +24,6 @@ from .worldbible import (
     filter_for_start_chapter,
     plan_character_index,
     plan_entity_entries,
-    plan_event_entries,
     plan_world_overview,
     summarize_plan,
 )
@@ -90,7 +89,8 @@ def build(run_dir: str | Path, *, start_chapter: int | None = None) -> dict:
     if index_entry:
         entries.append(index_entry)
     entries.extend(plan_entity_entries(entities, facts))
-    entries.extend(plan_event_entries(timeline))
+    # 章节事件条目已移除：它们与「剧情主线」内容重复，且触发词取的是该章在场人物，
+    # 主要人物出场上百章 → 一句话会同时命中上百条（实测 117 条 ≈ 6 万 token）。
 
     available, blocked = filter_for_start_chapter(entries, start_chapter)
     plan_stats = summarize_plan(available)
