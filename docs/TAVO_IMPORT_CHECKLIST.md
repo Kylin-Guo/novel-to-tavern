@@ -10,9 +10,15 @@
 
 ## 0. 准备
 
-1. 取 `examples/fixtures/minimal_world_simulator_v2.json`（角色卡 + 内嵌世界书）和
-   `examples/fixtures/minimal_worldbook_standalone.json`（独立世界书）两个文件。
-2. 确认 Tavo 已装好并能正常聊天（随便选一张现有卡试一句）。
+**只需要一个文件**：`world_simulator_v2.json`。
+
+世界书（664 条）已经**内嵌在这张卡里**（`data.character_book`），
+导入这一个文件就等于把卡和世界书一起导入了，**不需要再单独导入世界书**。
+
+> `worldbook_standalone.json` 等文件是**可选附件**，不是必导项：
+> 只有你想用「严格无剧透版世界书」时才需要。日常使用请忽略它们。
+
+确认 Tavo 已装好并能正常聊天（随便选一张现有卡试一句）。
 
 ---
 
@@ -68,10 +74,14 @@
 
 ---
 
-## 4. 验证独立世界书
+## 4. （可选）独立世界书
 
-1. 回到世界书管理，导入 `minimal_worldbook_standalone.json`（若 Tavo 支持独立导入世界书）。
-2. 与内嵌版对照。
+**这一步不是必须的。** 只有想用严格无剧透版本时才做：
+
+- `worldbook_start_beginning.json`：已屏蔽起始点之后内容的版本；
+- `worldbook_start_after_ending.json`：从结局之后开始的完整版本。
+
+若 Tavo 支持独立导入世界书，导入后与内嵌版对照条目数与触发行为。
 
 | 观察点 | 记录 |
 |---|---|
