@@ -342,7 +342,7 @@
 
 ### Phase 0 — 格式与仓库基线（已合并）
 
-- GitLab `example-user/novel-to-tavern`，初始提交 + 4 个 Phase 0 提交，110 项测试。
+- 私有 GitLab 仓库（不公开），初始提交 + 4 个 Phase 0 提交，110 项测试。
 - 关键产出：`docs/FORMAT_COMPATIBILITY.md`（ST 1.19.0 源码级字段依据）、
   `docs/TAVO_IMPORT_CHECKLIST.md`、两个可导入的最小 fixture、酒馆格式层与校验器。
 - 期间修正：误提交的 `egg-info` 产物；`doctor` 因缺凭据返回非零退出码；

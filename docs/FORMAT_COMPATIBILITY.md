@@ -12,9 +12,9 @@
 
 | 事实 | 依据 |
 |---|---|
-| 生产酒馆运行的是 ST 1.19 | `sillytavern-deployment/k8s/deployment.yml` 部署记录（2026-09-22 迁入 K8S，namespace `sillytavern`） |
+| 对照用的酒馆实例运行的是 ST 1.19 | 该实例的部署记录（2026-09-22 迁入） |
 | 1.19 是最新的正式 release | GitHub API `/repos/SillyTavern/SillyTavern/releases`，`1.19.0` @ 2026-09-14 |
-| 镜像 tag 是 `:latest`，会漂移 | deployment.yml 用 `registry.example.invalid/ghcr-io/sillytavern/sillytavern:latest` |
+| 镜像 tag 是 `:latest`，会漂移 | 该实例部署时用的是 `sillytavern:latest`，未固定版本 |
 
 **结论**：本项目按 **1.19.0 的源码**实现。若生产镜像升级跨越版本，必须重跑 `tests/test_format_*.py` 并复核本文。
 
@@ -38,7 +38,7 @@
 
 ### ② 本机已实测成功的产物
 
-`sillytavern-deployment/character-cards/` 下 4 张卡，均已导入生产酒馆。**只作对照，未复制任何内容进本仓库。**
+本机另有一批 4 张已成功导入酒馆的角色卡（**不在本仓库内**）。**只作对照，未复制任何内容进本仓库。**
 
 ### ③ 社区规范文档
 
@@ -247,7 +247,7 @@ caseSensitive: entry.extensions?.case_sensitive ?? null
 
 ### 附：本机 4 张已导入卡的实际偏差（仅作对照记录）
 
-`sillytavern-deployment/character-cards/*.json` 全部命中上述陷阱：
+那 4 张已导入的卡全部命中上述陷阱：
 
 | 现象 | 影响 |
 |---|---|
