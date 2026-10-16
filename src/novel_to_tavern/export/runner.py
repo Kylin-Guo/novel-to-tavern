@@ -28,6 +28,7 @@ from ..tavern import (
 from ..timeline.build import TimelineEvent
 from ..tavern.triggers import audit_triggers
 from ..timeline.worldbible import PlannedEntry, summarize_plan
+from .playmode import mode_block, mode_notice
 from .builder import (
     ChapterDigest,
     Greetings,
@@ -185,6 +186,10 @@ def export(
     except ValueError as exc:
         raise ExportError(str(exc)) from exc
 
+    # 游玩模式写进卡面 —— 用户要在客户端里就能看到自己拿到的是哪一种
+    play_mode = config.project.mode
+    greetings.description = greetings.description + mode_notice(play_mode)
+
     card, worldbook = build_exports(
         book_title=book_title,
         entries=entries,
@@ -304,6 +309,7 @@ def export(
             "parity_errors": parity_report.errors,
             "card_warnings": card_report.warnings,
         },
+        "play_mode": mode_block(play_mode),
         "metrics": {
             **_evidence_stats(run_path),
             "quote_location_success_rate_meaning": (
@@ -359,6 +365,7 @@ def export(
         timeline=timeline,
         entities=entities,
         strict_result=strict_result,
+        config_mode=play_mode,
     )
     _write_text(reports_dir / AUDIT_NAME, audit)
 
@@ -725,6 +732,7 @@ def _render_audit(
     timeline: list[TimelineEvent],
     entities: list[CanonicalEntity],
     strict_result: dict | None = None,
+    config_mode: str = "branch_start",
 ) -> str:
     from ..timeline.worldbible import estimate_tokens
 
@@ -791,6 +799,14 @@ def _render_audit(
         f"- 其中生成世界书条目的实体：{sum(1 for e in entries if e.entry_id.startswith('wb_entity_'))}"
         f"（**一条 canon 事实都没有的实体不生成条目**，见 timeline_report.md 的跳过名单）",
         f"- 时间线事件：{len(timeline)}",
+        "",
+        "## 游玩模式",
+        "",
+        f"- 模式：**{mode_block(config_mode)['label']}**（`{config_mode}`）",
+        f"- 承诺：{mode_block(config_mode)['promise']}",
+        f"- 前提：{mode_block(config_mode)['caveat']}",
+        f"- canon 策略：{mode_block(config_mode)['canon_policy']}",
+        f"- 分支策略：{mode_block(config_mode)['branch_policy']}",
         "",
         "## 校验结果",
         "",

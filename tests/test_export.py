@@ -639,3 +639,97 @@ def test_provenance_records_no_credentials(tmp_path):
     assert "sk-" not in lowered
     assert "bearer " not in lowered
     assert "api_key_env" not in lowered
+
+
+# --- 游玩模式 --------------------------------------------------------------
+
+
+def test_card_description_states_the_play_mode(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    card = json.loads((run / "exports" / CARD_NAME).read_text(encoding="utf-8"))
+    assert "游玩模式" in card["data"]["description"]
+    assert "分支线" in card["data"]["description"]
+
+
+def test_manifest_records_the_play_mode_and_its_limits(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    block = json.loads((run / "exports" / "export_manifest.json").read_text(encoding="utf-8"))[
+        "play_mode"
+    ]
+    assert block["mode"] == "branch_start"
+    assert "这是设计意图" in block["caveat"]
+    assert "canon_fact" in block["canon_policy"]
+    assert "只增不改" in block["branch_policy"]
+
+
+def test_the_canon_mode_admits_it_is_not_plot_level_enforcement():
+    """最容易被误读成「强制按原著走」的是 canon_start —— 它必须自己说清楚不是。"""
+    from novel_to_tavern.export.playmode import MODE_SPEC
+
+    spec = MODE_SPEC["canon_start"]
+    assert "不是" in spec["caveat"]
+    assert "分支" in spec["caveat"]
+
+
+def test_audit_states_the_play_mode(tmp_path):
+    run = _prepare_run(tmp_path)
+    export(run, config_module.Config())
+    audit = (run / "reports" / "audit.md").read_text(encoding="utf-8")
+    assert "## 游玩模式" in audit
+    assert "canon 策略" in audit
+    assert "分支策略" in audit
+
+
+@pytest.mark.parametrize("mode,label", [
+    ("canon_start", "严格原著线"),
+    ("branch_start", "分支线（默认）"),
+    ("freeform_start", "自由线"),
+])
+def test_each_mode_has_its_own_honest_promise(tmp_path, mode, label):
+    run = _prepare_run(tmp_path)
+    config = config_module.Config()
+    config = config.model_copy(
+        update={"project": config.project.model_copy(update={"mode": mode})}
+    )
+    export(run, config)
+    card = json.loads((run / "exports" / CARD_NAME).read_text(encoding="utf-8"))
+    assert label in card["data"]["description"]
+
+
+def test_no_mode_promises_that_the_plot_will_be_followed(tmp_path):
+    """任何模式都不能承诺「剧情不会偏离原著」—— 用户一开口就已经在分支了。"""
+    from novel_to_tavern.export.playmode import MODE_SPEC
+
+    for mode, spec in MODE_SPEC.items():
+        blob = spec["promise"] + spec["caveat"]
+        for forbidden in ("保证不偏离", "不会偏离原著", "必定遵循原著"):
+            assert forbidden not in blob, f"{mode} 的措辞过头了：{forbidden}"
+
+
+def test_non_canon_fact_types_never_reach_entry_bodies():
+    """分支/用户新增的内容与原著事实必须保持可分离。"""
+    from novel_to_tavern.resolve.entities import CanonicalEntity
+    from novel_to_tavern.timeline.worldbible import plan_entity_entries
+
+    entity = CanonicalEntity(
+        id="e1", kind="character", canonical_name="甲",
+        appearance_chapters=[0], first_appearance_chapter=0, evidence_count=5,
+    )
+    ref = SourceRef(source_id="s", chapter_id="c0", start_line=1, end_line=2, quote="q")
+    facts = []
+    for i, ftype in enumerate(("canon_fact", "canon_fact", "user_added", "reconstructed", "inference", "rumor")):
+        facts.append(
+            FactRecord(
+                fact_id=f"f{i}", chunk_id="ch0_p000", source_id="s", chapter_id="c0",
+                chapter_index=0, subject="甲", predicate=f"p{i}", value=f"取值{i}",
+                fact_type=ftype, source_refs=[ref],
+            )
+        )
+    entries = plan_entity_entries([entity], facts)
+    assert entries
+    body = entries[0].content_runtime
+    assert "取值0" in body and "取值1" in body
+    for leaked in ("取值2", "取值3", "取值4", "取值5"):
+        assert leaked not in body, f"{leaked} 不是 canon，不该进条目正文"
