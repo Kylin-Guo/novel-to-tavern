@@ -43,8 +43,11 @@ FIELD_MAP_EMBEDDED_TO_STANDALONE: dict[str, str] = {
 #: 目标格式中**不存在**、因此本项目不输出的内嵌字段。
 EMBEDDED_FIELDS_NOT_EMITTED: tuple[str, ...] = ("name", "priority", "case_sensitive", "use_regex")
 
+#: ST 的 `convertCharacterBook` **不读** token_budget / scan_depth / recursive_scanning，
+#: 实际预算由 ST 的全局设置 `world_info_budget`（默认上下文的 25%）决定。
+#: 因此本项目**不写 token_budget** —— 写一个猜出来的数字，万一某个客户端真的读它，
+#: 反而会把大条目裁掉。scan_depth / recursive_scanning 在规范里存在且无害，保留。
 DEFAULT_SCAN_DEPTH = 4
-DEFAULT_TOKEN_BUDGET = 900
 
 
 @dataclass(frozen=True, slots=True)
@@ -118,14 +121,13 @@ def build_character_book(
     name: str,
     description: str = "",
     scan_depth: int = DEFAULT_SCAN_DEPTH,
-    token_budget: int = DEFAULT_TOKEN_BUDGET,
-    recursive_scanning: bool = True,
+    recursive_scanning: bool = False,
 ) -> CharacterBook:
     return CharacterBook(
         name=name,
         description=description,
         scan_depth=scan_depth,
-        token_budget=token_budget,
+        # token_budget 故意不写：ST 不读，Tavo 未知，猜一个值风险大于收益。
         recursive_scanning=recursive_scanning,
         extensions={},
         entries=[to_embedded_entry(draft, i) for i, draft in enumerate(drafts)],
@@ -156,8 +158,7 @@ def build_card_v2(
     book_name: str | None = None,
     book_description: str = "",
     scan_depth: int = DEFAULT_SCAN_DEPTH,
-    token_budget: int = DEFAULT_TOKEN_BUDGET,
-    recursive_scanning: bool = True,
+    recursive_scanning: bool = False,
 ) -> CardV2:
     """组装完整 V2 卡（含内嵌 character_book）。"""
     book = build_character_book(
@@ -165,7 +166,6 @@ def build_card_v2(
         name=book_name or f"{name} · 世界书",
         description=book_description,
         scan_depth=scan_depth,
-        token_budget=token_budget,
         recursive_scanning=recursive_scanning,
     )
     return CardV2(

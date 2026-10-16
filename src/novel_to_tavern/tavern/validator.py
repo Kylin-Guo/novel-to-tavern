@@ -115,8 +115,6 @@ def validate_character_book(book: CharacterBook, report: ValidationReport, *, st
     for key, count in sorted(key_owners.items()):
         if count > 1:
             report.warn(f"触发词 {key!r} 同时出现在 {count} 个条目上，会一起命中。")
-    if book.token_budget is None:
-        report.warn("character_book.token_budget 未设置。")
 
 
 def validate_card(card: CardV2, *, strict: bool = False, max_always_on: int | None = None) -> ValidationReport:

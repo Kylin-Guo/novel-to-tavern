@@ -241,17 +241,30 @@ def test_world_overview_lists_places_and_factions():
 def test_start_chapter_blocks_future_entries_without_deleting_them():
     entries = [
         PlannedEntry(
-            entry_id="a", category="character", title="A", content_runtime="x",
-            content_canonical="x", valid_from_chapter=0,
+            entry_id="plot", category="concept", title="剧情", content_runtime="x",
+            content_canonical="x", valid_from_chapter=9, chapter_gated=True,
         ),
         PlannedEntry(
-            entry_id="b", category="character", title="B", content_runtime="y",
-            content_canonical="y", valid_from_chapter=9,
+            entry_id="early", category="concept", title="早期剧情", content_runtime="y",
+            content_canonical="y", valid_from_chapter=0, chapter_gated=True,
         ),
     ]
     available, blocked = filter_for_start_chapter(entries, 2)
-    assert [e.entry_id for e in available] == ["a"]
-    assert [e.entry_id for e in blocked] == ["b"]
+    assert [e.entry_id for e in available] == ["early"]
+    assert [e.entry_id for e in blocked] == ["plot"]
+
+
+def test_entity_entries_are_not_gated_by_first_appearance():
+    """角色在世界里本来就存在，不该因为"还没登场"被过滤掉。"""
+    entries = [
+        PlannedEntry(
+            entry_id="late_character", category="character", title="迟到的角色",
+            content_runtime="y", content_canonical="y", valid_from_chapter=120,
+        ),
+    ]
+    available, blocked = filter_for_start_chapter(entries, 0)
+    assert [e.entry_id for e in available] == ["late_character"]
+    assert blocked == []
 
 
 def test_no_filtering_when_start_chapter_is_unset():
@@ -304,6 +317,7 @@ def _prepare_run(tmp_path: Path) -> Path:
     entities = [
         _entity("ent_0001", "西泽尔", aliases=["红龙"], chapters=(0, 9)),
         _entity("ent_0002", "帕西", chapters=(0,)),
+        _entity("ent_0003", "迟到的角色", chapters=(9,)),
     ]
 
     for name, payload in (
@@ -346,13 +360,13 @@ def test_report_mentions_token_estimate_is_rough(tmp_path):
     assert "粗估" in report
 
 
-def test_start_chapter_blocks_late_entries(tmp_path):
+def test_start_chapter_keeps_the_full_cast(tmp_path):
+    """从第 1 章开始时，全部实体条目仍然可用 —— 只是没有剧情屏蔽项。"""
     run = _prepare_run(tmp_path)
     result = build(run, start_chapter=0)
-    blocked_ids = {e.entry_id for e in result["blocked_entries"]}
     available_ids = {e.entry_id for e in result["entries"]}
-    assert blocked_ids
-    assert not (blocked_ids & available_ids)
+    assert "wb_entity_ent_0003" in available_ids
+    assert "wb_entity_ent_0001" in available_ids
 
 
 def test_missing_upstream_artifact_raises(tmp_path):

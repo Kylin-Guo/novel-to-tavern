@@ -12,7 +12,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from ..extract.schema import EventRecord, FactRecord, SourceRef
+from ..extract.schema import FactRecord, SourceRef
 from ..resolve.entities import CanonicalEntity
 from .build import TimelineEvent
 
@@ -46,9 +46,6 @@ MAX_VALUES_PER_PREDICATE = 4
 #: 人物索引条目里最多列多少人。
 MAX_INDEX_ENTRIES = 60
 
-#: 单章事件条目最多带多少个触发词，避免一章人物太多时把常用词全吸进来。
-MAX_EVENT_KEYS = 12
-
 _CJK = re.compile(r"[㐀-䶿一-鿿぀-ヿ가-힯]")
 
 
@@ -67,6 +64,11 @@ class PlannedEntry(BaseModel):
     source_refs: list[SourceRef] = Field(default_factory=list)
     estimated_tokens: int = 0
     priority: int = 0
+    chapter_gated: bool = Field(
+        default=False,
+        description="是否按起始章节屏蔽。只有「剧情类」条目为真 —— "
+        "人物与地点在世界里本来就存在，不该因为尚未登场就被过滤掉。",
+    )
     quality_flags: list[str] = Field(default_factory=list)
 
 
@@ -229,70 +231,14 @@ def plan_world_overview(
     )
 
 
-def plan_event_entries(
-    timeline: list[TimelineEvent], *, start_chapter: int | None = None
-) -> list[PlannedEntry]:
-    """按**章**合并事件条目。
-
-    早先的实现在每个事件上单开一个条目，结果是几百个 `keys=[]` 且非常驻的条目 ——
-    它们永远不会被触发，纯属占位。现在同一章的事件合成一条，并把
-    该章参与者与地点作为触发词，这样提到相关人物时该章背景才会进上下文。
-
-    每个条目记录 `valid_from_chapter` —— 起始章节早于它的条目**不得**进入活动上下文。
-    """
-    by_chapter: dict[int, list[TimelineEvent]] = {}
-    for event in timeline:
-        by_chapter.setdefault(event.chapter_index, []).append(event)
-
-    entries: list[PlannedEntry] = []
-    for chapter_index in sorted(by_chapter):
-        events = sorted(by_chapter[chapter_index], key=lambda e: e.order_in_chapter)
-        label = events[0].chapter_label or f"第{chapter_index + 1}章"
-
-        keys: list[str] = []
-        for event in events:
-            for name in [*event.participants, *( [event.location] if event.location else [] )]:
-                if name and name not in keys:
-                    keys.append(name)
-
-        body_lines = [f"{label} 发生的事："]
-        for event in events:
-            line = f"- {event.title}：{event.summary.strip()}"
-            if event.participants:
-                line += f"（在场：{'、'.join(event.participants)}）"
-            if event.location:
-                line += f"［{event.location}］"
-            body_lines.append(line)
-        body = "\n".join(body_lines)
-
-        flags = ["事件条目：需按起始章节屏蔽未来内容"]
-        if not keys:
-            flags.append("无参与者与地点，缺少触发词，只能随剧情主线条目一起被检索到")
-
-        entries.append(
-            PlannedEntry(
-                entry_id=f"wb_chapter_events_{chapter_index:04d}",
-                category="event",
-                title=f"{label} 事件",
-                content_runtime=body,
-                content_canonical=body,
-                keys=keys[:MAX_EVENT_KEYS],
-                always_on=False,
-                valid_from_chapter=chapter_index,
-                entities=sorted({p for e in events for p in e.participants}),
-                source_refs=[r for e in events for r in e.source_refs[:1]][:3],
-                estimated_tokens=estimate_tokens(body),
-                priority=30,
-                quality_flags=flags,
-            )
-        )
-    return entries
-
-
 def filter_for_start_chapter(
     entries: list[PlannedEntry], start_chapter: int | None
 ) -> tuple[list[PlannedEntry], list[PlannedEntry]]:
     """按起始章节切分条目：`(可用, 被屏蔽)`。
+
+    只屏蔽 **`chapter_gated=True`** 的条目（即剧情类）。人物、地点、世界概况
+    在世界里本来就存在，与"它在故事里第几章才登场"是两回事 —— 早先按首次出场
+    章节过滤，会让"从第 1 章开始"的世界书只剩十几个条目，世界是空的。
 
     被屏蔽的条目**不删除**，只是不进入该起始点的活动上下文。
     """
@@ -301,7 +247,8 @@ def filter_for_start_chapter(
     available: list[PlannedEntry] = []
     blocked: list[PlannedEntry] = []
     for entry in entries:
-        if entry.valid_from_chapter is not None and entry.valid_from_chapter > start_chapter:
+        gated = entry.chapter_gated and entry.valid_from_chapter is not None
+        if gated and entry.valid_from_chapter > start_chapter:
             blocked.append(entry)
         else:
             available.append(entry)

@@ -337,7 +337,7 @@ def _render_audit(
         "|---|---|---|",
         f"| exports/{CARD_NAME} | 主角色卡（内嵌 character_book） | {len(card.data.character_book.entries)} |",
         f"| exports/{WORLDBOOK_NAME} | 独立世界书（含全部条目） | {len(worldbook.entries)} |",
-        f"| exports/{WORLDBOOK_BEGINNING} | 独立世界书（**已屏蔽起始点之后的内容**） | {len(begin_card.data.character_book.entries)} |",
+        f"| exports/{WORLDBOOK_BEGINNING} | 独立世界书（**已屏蔽全书剧情记录**） | {len(begin_card.data.character_book.entries)} |",
         f"| exports/{WORLDBOOK_AFTER_END} | 独立世界书（从结局之后开始，全部内容） | {len(after_card.data.character_book.entries)} |",
         f"| exports/{TIMELINE_NAME} | 时间线 | {len(timeline)} 个事件 |",
         f"| exports/{MANIFEST_NAME} | 导出清单 | — |",
@@ -375,8 +375,8 @@ def _render_audit(
         "",
         "## 用户可选的两个起点",
         "",
-        f"1. **从故事开头开始** —— 第 1 章之前，"
-        f"屏蔽了 {len(blocked_begin)} 个起始点之后的条目。",
+        f"1. **从故事开头开始** —— 第 1 章之前，屏蔽 {len(blocked_begin)} 条"
+        "（全书剧情记录；人物与地点条目保留，见下方限制说明）。",
         f"2. **从故事最终结局之后开始** —— 第 {len(digests)} 章之后，全部内容可用。",
         "",
         "两个起点都能选：卡片的开场白会先让用户挑一个，"
@@ -389,8 +389,12 @@ def _render_audit(
         "2. 事件没有绝对时间：原文未明确给出时 `occurred_at` 一律为空，不予推算。",
         "3. 知识边界由「事件参与者」推断，标注为 `present_at_event`，"
         "不等于原著明文授权。",
-        "4. 角色卡含全书剧情（「剧情主线」条目），**剧透防护靠核心规则的时间纪律**，"
-        "不是靠条目隔离。若要严格无剧透，请改用对应的过滤版独立世界书。",
+        "4. 角色卡含全书剧情（「剧情主线」条目，触发词已收窄为"
+        "「剧情/主线/前情/剧情走向/原著剧情/故事线」）。"
+        "**剧透防护靠核心规则的时间纪律**，不是靠条目隔离。"
+        "人物与地点条目**聚合了全书事实**，不按出场章节切分 —— "
+        "角色在世界里本来就存在，与它在故事里第几章登场是两回事；"
+        "从开头开始时这些条目仍在，故不是严格的零剧透方案。",
         "5. 事实来自自动抽取，`needs_review` 的条目已被排除在条目正文之外，"
         "但仍建议人工抽查主要角色条目。",
         "",

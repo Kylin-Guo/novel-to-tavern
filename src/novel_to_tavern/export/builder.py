@@ -42,18 +42,16 @@ CORE_RULES = """这是一个多角色世界模拟器。请遵守以下运行规�
 8. 用户若选择从故事开头开始，后续剧情不必按原著发展；原著走向只作参考，不是必然结局。
 """
 
+#: 「剧情主线」的触发词。**只用不会在日常对白里随便出现的词**。
+#: 早先版本含「之前 / 后来 / 发生过 / 背景 / 回忆」—— 这些在中文里极常见，
+#: 一旦命中就会把整本剧情（2.5 万字）灌进上下文。
 PLOT_ENTRY_KEYS = [
     "剧情",
     "主线",
     "前情",
-    "之前",
-    "此前",
-    "发生过",
-    "后来",
-    "结局",
-    "回忆",
-    "原著",
-    "背景",
+    "剧情走向",
+    "原著剧情",
+    "故事线",
 ]
 
 #: 常驻的剧情骨架最多列多少行，超出转成触发条目承载。
@@ -84,6 +82,9 @@ def build_plot_entry(digests: list[ChapterDigest]) -> PlannedEntry | None:
 
     这是"角色卡必须包含当前完整剧情走向"的落点：整条走向都在卡里，
     但按章标注，配合核心规则里的时间纪律使用。
+
+    `valid_from_chapter` 设为**末章**：整本走向相当于故事讲完才知道的东西。
+    这样"从故事开头开始"的过滤版世界书会把它屏蔽掉，避免一开局就剧透全书。
     """
     if not digests:
         return None
@@ -100,6 +101,8 @@ def build_plot_entry(digests: list[ChapterDigest]) -> PlannedEntry | None:
         content_canonical=body,
         keys=list(PLOT_ENTRY_KEYS),
         always_on=False,
+        valid_from_chapter=max(d.chapter_index for d in digests),
+        chapter_gated=True,
         estimated_tokens=estimate_tokens(body),
         priority=80,
         quality_flags=["含全书剧情，需配合时间纪律使用，避免剧透到起始点之前"],
