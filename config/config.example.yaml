@@ -1,0 +1,68 @@
+project:
+  name: novel-to-tavern
+  source_path: ./input/novel.txt
+  output_root: ./runs
+  default_start_chapter: null
+  mode: branch_start # canon_start | branch_start | freeform_start
+
+input:
+  formats: [txt, md]
+  encoding: utf-8
+  chapter_detection: auto # auto | regex | manual
+  chapter_heading_regex: null
+  chunk_target_chars: 10000
+  chunk_max_chars: 16000
+  preserve_chapter_boundaries: true
+  normalize_newlines: true
+
+llm:
+  provider: openai_compatible
+  base_url_env: NOVEL_TAVERN_BASE_URL
+  api_key_env: NOVEL_TAVERN_API_KEY
+  extraction_model: null # required: set to a model available in your free API tier
+  synthesis_model: null  # default to extraction_model until testing justifies a second model
+  audit_model: null      # optional; do not configure unless required
+  temperature_extract: 0.1
+  temperature_synthesis: 0.2
+  request_timeout_seconds: 180
+  max_retries: 3
+  retry_backoff_seconds: 2
+  max_concurrent_requests: 2
+  max_output_tokens: null
+  log_token_usage_when_available: true
+  never_auto_switch_provider: true
+
+pipeline:
+  resume: true
+  cache_enabled: true
+  cache_dir: ./cache
+  preserve_raw_responses: true
+  require_source_refs_for_canon: true
+  merge_low_confidence_entities: false
+  drop_characters_by_default: false
+  fail_on_invalid_model_json: false # false means retry then quarantine, never silently accept
+  quarantine_invalid_responses: true
+
+worldbook:
+  always_on_core_rules: true
+  always_on_world_overview: true
+  always_on_character_index: true
+  max_always_on_entries: 3
+  target_runtime_budget_tokens: 5000 # planning estimate; not a guaranteed client token count
+  enable_recursive_scan: false
+  allow_mvu: false
+  allow_ejs: false
+  allow_html_beautification: false
+
+export:
+  character_card_spec: chara_card_v2
+  include_embedded_character_book: true
+  also_export_standalone_worldbook: true
+  include_individual_npc_cards: false
+  validate_before_export: true
+  overwrite_existing_run: false
+
+privacy:
+  never_log_api_keys: true
+  never_include_api_keys_in_exports: true
+  do_not_upload_novel_without_explicit_user_action: true
