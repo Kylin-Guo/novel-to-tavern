@@ -234,7 +234,7 @@ run_id：`20261016T043701Z_aead30`
 ## 11. 复现命令
 
 ```bash
-.venv/bin/python -m pytest                      # 365 项离线测试（全部离线，不联网）
+.venv/bin/python -m pytest                      # 370 项离线测试（全部离线，不联网）
 .venv/bin/n2t ingest                            # Phase 1：156 章 / 156 块
 .venv/bin/n2t extract --run-id <run_id>         # Phase 2：156 块
 .venv/bin/n2t resolve --run-id <run_id>         # Phase 3：504 实体

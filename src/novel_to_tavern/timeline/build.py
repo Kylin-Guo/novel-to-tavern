@@ -16,7 +16,30 @@ from pydantic import BaseModel, Field
 
 from ..extract.schema import EventRecord, FactRecord, FactType, RelationRecord, SourceRef
 
-KnowledgeBasis = Literal["present_at_event", "subject_of_fact", "unknown"]
+#: 一条知识记录的依据。`unknown` 表示原文没有确立这条知识。
+KnowledgeBasis = Literal["present_at_event", "subject_of_fact", "extraction_marked", "unknown"]
+
+#: 角色与这条信息的关系。
+#: - 只有 `knows` 是**已确立**的（原文明写，或该事实就是它自身的属性/行为）；
+#: - `unknown` 是默认值 —— 原文没说的，就不替它说知道。
+KnowledgeStatus = Literal[
+    "knows",
+    "suspects",
+    "believes",
+    "heard_rumor",
+    "does_not_know",
+    "unknown",
+]
+
+#: 怎么知道的。`witnessed` 只是「在场」，**不等于**看见或听见。
+AcquisitionMethod = Literal[
+    "subject",
+    "witnessed",
+    "author_explicit",
+    "inferred",
+    "rumor",
+    "unknown",
+]
 
 
 class TimelineEvent(BaseModel):
@@ -41,12 +64,38 @@ class TimelineEvent(BaseModel):
 
 
 class KnowledgeItem(BaseModel):
+    """「某个角色知道某件事」的一条记录。
+
+    **三个时间必须分开**（这是旧模型最主要的问题）：
+
+    - `revealed_at_chapter` —— **读者**在正文里看到它的章节；
+    - `acquired_at_chapter` —— **角色**可能知道的章节；原文没确立时为 `None`；
+    - `occurred_at_chapter` —— 事情本身的章节（对事件而言）。
+
+    旧模型把「事件参与者在事件章节就知道该事件」当成已确立的知识。
+    那一步跨得太大：**在场不等于看见，看见不等于听懂**；角色也可能是在
+    之后的章节里通过信件、报告、传闻、他人转述或自行推断才知道的。
+    现在 `present_at_event` 只产生一个 `candidate`（`knowledge_status="unknown"`），
+    **不产生** `knows`。
+    """
+
     entity_name: str
     item_type: Literal["event", "fact"]
     item_id: str
-    chapter_index: int
-    acquired_at_chapter: int
-    basis: KnowledgeBasis
+    revealed_at_chapter: int
+    occurred_at_chapter: int | None = None
+    acquired_at_chapter: int | None = Field(
+        default=None, description="角色可能知道的章节；原文未确立时为 None，不推算"
+    )
+    knowledge_status: KnowledgeStatus = "unknown"
+    acquisition_method: AcquisitionMethod = "unknown"
+    basis: KnowledgeBasis = "unknown"
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    candidate: bool = Field(
+        default=False,
+        description="True 表示这只是一条**候选**：结构上可能知道，但原文没有确立",
+    )
+    note: str = ""
     source_refs: list[SourceRef] = Field(default_factory=list)
 
 
@@ -114,16 +163,32 @@ def build_timeline(
     return timeline
 
 
+#: 由抽取器**显式标注**的类型 → 该主语与这条信息的关系。
+#: 这几类不需要猜测：抽取阶段已经说了这是谁的信念、传闻还是推断。
+_MARKED_STATUS: dict[str, tuple[KnowledgeStatus, AcquisitionMethod, float]] = {
+    "character_belief": ("believes", "author_explicit", 0.9),
+    "rumor": ("heard_rumor", "rumor", 0.4),
+    "inference": ("suspects", "inferred", 0.6),
+}
+
+
 def build_knowledge(
     events: list[EventRecord], facts: list[FactRecord]
 ) -> dict[str, list[KnowledgeItem]]:
     """按实体汇总「它知道什么、什么时候知道的」。
 
-    依据只有两类，都是**推断**而非原著明文，故显式记录 `basis`：
-    - `present_at_event`：该实体是事件参与者 → 在事件所属章节已知情；
-    - `subject_of_fact`：该事实的主语是它自己。
+    **只记录能站住的，其余一律留白。** 三档：
 
-    不作「事件发生后所有人都知道」这种假设。
+    1. **已确立（`knows`）** —— 只有一种情况：该事实的主语就是它自己
+       （`subject_of_fact`）。一个人知道自己叫什么、什么状态、做过什么，
+       这是唯一不需要额外证据的知识关系。
+    2. **抽取器标注的信念/传闻/推断** —— 抽取阶段已经区分了
+       `character_belief` / `rumor` / `inference`，直接沿用，标 `author_explicit`。
+    3. **候补（`candidate=True`，状态 `unknown`）** —— 事件参与者。
+       结构上「可能在场」，但**没有**任何证据说明它看见了、听懂了、记住了。
+       `acquired_at_chapter` 留 `None`，不推算。
+
+    不作「事件发生后所有人都知道」这种假设，也不把在场当成知晓。
     """
     knowledge: dict[str, list[KnowledgeItem]] = {}
 
@@ -136,9 +201,18 @@ def build_knowledge(
                     entity_name=participant,
                     item_type="event",
                     item_id=event.event_id,
-                    chapter_index=event.chapter_index,
-                    acquired_at_chapter=event.chapter_index,
+                    revealed_at_chapter=event.chapter_index,
+                    occurred_at_chapter=event.chapter_index,
+                    acquired_at_chapter=None,
+                    knowledge_status="unknown",
+                    acquisition_method="witnessed",
                     basis="present_at_event",
+                    confidence=0.2,
+                    candidate=True,
+                    note=(
+                        "该角色是事件参与者，可能在场 —— 但在场不等于看见或听懂，"
+                        "原文没有确立它是否知情"
+                    ),
                     source_refs=list(event.source_refs[:1]),
                 )
             )
@@ -146,21 +220,49 @@ def build_knowledge(
     for fact in facts:
         if fact.review_status != "accepted":
             continue
+        marked = _MARKED_STATUS.get(fact.fact_type)
+        if marked is not None:
+            status, method, confidence = marked
+            note = f"抽取阶段把这条标为 {fact.fact_type}，据此记录"
+            basis: KnowledgeBasis = "extraction_marked"
+        else:
+            status, method, confidence = "knows", "subject", 0.85
+            note = "该事实的主语就是它自己 —— 一个人知道自己是什么、在做什么"
+            basis = "subject_of_fact"
+
         knowledge.setdefault(fact.subject, []).append(
             KnowledgeItem(
                 entity_name=fact.subject,
                 item_type="fact",
                 item_id=fact.fact_id,
-                chapter_index=fact.chapter_index,
-                acquired_at_chapter=fact.chapter_index,
-                basis="subject_of_fact",
+                revealed_at_chapter=fact.chapter_index,
+                occurred_at_chapter=None,
+                acquired_at_chapter=fact.chapter_index if status == "knows" else None,
+                knowledge_status=status,
+                acquisition_method=method,
+                basis=basis,
+                confidence=confidence,
+                candidate=status != "knows",
+                note=note,
                 source_refs=list(fact.source_refs[:1]),
             )
         )
 
     for items in knowledge.values():
-        items.sort(key=lambda k: (k.acquired_at_chapter, k.item_id))
+        items.sort(key=lambda k: (k.revealed_at_chapter, k.item_id))
     return knowledge
+
+
+def knowledge_summary(knowledge: dict[str, list[KnowledgeItem]]) -> dict[str, int]:
+    """按状态统计知识记录。**候选占多数是正常且诚实的**，不是缺陷。"""
+    summary: dict[str, int] = {"total": 0, "entities": len(knowledge), "candidates": 0}
+    for items in knowledge.values():
+        for item in items:
+            summary["total"] += 1
+            summary[item.knowledge_status] = summary.get(item.knowledge_status, 0) + 1
+            if item.candidate:
+                summary["candidates"] += 1
+    return summary
 
 
 def check_leakage(

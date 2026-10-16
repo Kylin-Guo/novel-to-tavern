@@ -18,6 +18,7 @@ from novel_to_tavern.timeline import (
     TimelineError,
     build,
     build_knowledge,
+    knowledge_summary,
     build_timeline,
     check_leakage,
     clip_at_sentence,
@@ -119,12 +120,22 @@ def test_revealed_at_chapter_is_the_statement_chapter():
 # --- 知识边界 -------------------------------------------------------------
 
 
-def test_only_participants_know_an_event():
+def test_event_participants_get_candidates_not_established_knowledge():
+    """在场 ≠ 知晓：参与事件只产生**候补**，不产生「已确立的知识」。"""
     events = [_event("e1", 2, participants=["甲", "乙"])]
     knowledge = build_knowledge(events, [])
     assert set(knowledge) == {"甲", "乙"}
-    assert knowledge["甲"][0].acquired_at_chapter == 2
-    assert knowledge["甲"][0].basis == "present_at_event"
+
+    item = knowledge["甲"][0]
+    assert item.knowledge_status == "unknown"
+    assert item.acquisition_method == "witnessed"
+    assert item.basis == "present_at_event"
+    assert item.candidate is True
+    # 关键：角色**何时**知道留空，不拿事件章节顶上
+    assert item.acquired_at_chapter is None
+    # 但「读者什么时候看到它」是另一回事，必须填
+    assert item.revealed_at_chapter == 2
+    assert item.occurred_at_chapter == 2
 
 
 def test_non_participants_do_not_gain_knowledge():
@@ -135,14 +146,57 @@ def test_non_participants_do_not_gain_knowledge():
 
 
 def test_subject_of_fact_knows_its_own_fact():
+    """唯一不需要额外证据的知识关系：事实的主语就是它自己。"""
     knowledge = build_knowledge([], [_fact("f1", "甲", "identity", "骑士")])
-    assert knowledge["甲"][0].basis == "subject_of_fact"
+    item = knowledge["甲"][0]
+    assert item.basis == "subject_of_fact"
+    assert item.knowledge_status == "knows"
+    assert item.acquisition_method == "subject"
+    assert item.candidate is False
+    assert item.acquired_at_chapter == 0
+
+
+def test_a_fact_about_someone_does_not_teach_that_someone():
+    """事实的对象 ≠ 事实的知情人。主语是甲的事实，说明的是「甲自己」知道。"""
+    knowledge = build_knowledge([], [_fact("f1", "甲", "relationship", "与乙是兄弟")])
+    assert set(knowledge) == {"甲"}
+    assert "乙" not in knowledge
+
+
+@pytest.mark.parametrize(
+    ("fact_type", "status", "method"),
+    [
+        ("character_belief", "believes", "author_explicit"),
+        ("rumor", "heard_rumor", "rumor"),
+        ("inference", "suspects", "inferred"),
+    ],
+)
+def test_extraction_marked_types_map_to_their_own_status(fact_type, status, method):
+    """抽取器已经区分了信念/传闻/推断，直接沿用，不要压平成一个状态。"""
+    fact = _fact("f1", "甲", "state", "某件事")
+    fact.fact_type = fact_type
+    item = build_knowledge([], [fact])["甲"][0]
+    assert item.knowledge_status == status
+    assert item.acquisition_method == method
+    assert item.basis == "extraction_marked"
+    assert item.candidate is (status != "knows")
 
 
 def test_needs_review_items_do_not_enter_knowledge():
     events = [_event("e1", 2, participants=["甲"])]
     events[0].review_status = "needs_review"
     assert build_knowledge(events, []) == {}
+
+
+def test_knowledge_summary_counts_by_status_and_candidates():
+    events = [_event("e1", 2, participants=["甲", "乙"])]
+    facts = [_fact("f1", "甲", "identity", "骑士")]
+    summary = knowledge_summary(build_knowledge(events, facts))
+    assert summary["total"] == 3
+    assert summary["knows"] == 1
+    assert summary["unknown"] == 2
+    assert summary["candidates"] == 2
+    assert summary["entities"] == 2
 
 
 # --- 泄漏检查 -------------------------------------------------------------

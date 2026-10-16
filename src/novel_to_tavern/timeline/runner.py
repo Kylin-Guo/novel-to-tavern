@@ -17,6 +17,7 @@ from .build import (
     build_timeline,
     check_leakage,
     find_contradictions,
+    knowledge_summary,
     relation_timeline,
 )
 from .worldbible import (
@@ -173,11 +174,36 @@ def _render_report(
         "",
         "## 知识边界",
         "",
-        f"- 有知识记录的实体：{len(knowledge)}",
-        f"- 知识条目总数：{sum(len(v) for v in knowledge.values())}",
+        f"- 有知识记录的实体：{knowledge_summary(knowledge)['entities']}",
+        f"- 知识记录总数：{knowledge_summary(knowledge)['total']}",
+        f"- 其中**候补**（结构上可能知道，原文未确立）：{knowledge_summary(knowledge)['candidates']}",
         "",
-        "> 依据只有两类推断：`present_at_event`（事件参与者）与 `subject_of_fact`（事实主语自身）。",
+        "| 状态 | 条数 | 含义 |",
+        "|---|---|---|",
+    ]
+    _STATUS_MEANING = {
+        "knows": "**已确立**：该事实的主语就是它自己",
+        "believes": "抽取标注为角色信念",
+        "heard_rumor": "抽取标注为传闻",
+        "suspects": "抽取标注为推断",
+        "does_not_know": "明确不知道",
+        "unknown": "原文未确立 —— 默认值",
+    }
+    stats = knowledge_summary(knowledge)
+    for status in ("knows", "believes", "suspects", "heard_rumor", "does_not_know", "unknown"):
+        if stats.get(status):
+            lines.append(f"| `{status}` | {stats[status]} | {_STATUS_MEANING[status]} |")
+    lines += [
+        "",
+        "> ⚠️ **在场不等于知晓。** 事件参与者只记为**候补**（`candidate`，状态 `unknown`，"
+        "`acquired_at_chapter` 留空）：它可能在场，但也可能没看见、没听懂、"
+        "或者是在后面的章节里通过信件、报告、传闻、他人转述或自行推断才知道的。",
+        "> 本模型**只**把「事实主语是角色自己」这一类当成已确立的知识。",
         "> **没有**采用「事件发生后所有人都知道」这种假设。",
+        "> 候补占多数是**正常且诚实**的，不是缺陷。",
+        "",
+        "> `revealed_at_chapter`（读者看到它的章节）与 `acquired_at_chapter`"
+        "（角色可能知道的章节）是两个不同的量，不要混用。",
         "",
         "## 冲突",
         "",

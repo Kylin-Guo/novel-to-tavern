@@ -231,11 +231,21 @@ def plan_strict(
 
 
 class KnowledgeSnapshot(BaseModel):
+    """起始点快照里的一条知识。
+
+    `acquired_at_chapter` 为空表示原文未确立该角色何时（或是否）知道 ——
+    这是默认情况，不要当成 bug。
+    """
+
     entity_name: str
     item_type: str
     item_id: str
-    acquired_at_chapter: int
-    basis: str
+    revealed_at_chapter: int
+    acquired_at_chapter: int | None = None
+    knowledge_status: str = "unknown"
+    acquisition_method: str = "unknown"
+    basis: str = "unknown"
+    candidate: bool = False
 
 
 class RelationshipState(BaseModel):
@@ -292,16 +302,23 @@ def build_start_state(
     snapshots: list[KnowledgeSnapshot] = []
     for name, items in sorted((knowledge or {}).items()):
         for item in items:
-            if cutoff is None or item.acquired_at_chapter <= cutoff:
-                snapshots.append(
-                    KnowledgeSnapshot(
-                        entity_name=name,
-                        item_type=item.item_type,
-                        item_id=item.item_id,
-                        acquired_at_chapter=item.acquired_at_chapter,
-                        basis=item.basis,
-                    )
+            # 按**读者可见时间**过滤：角色何时知道未知，但内容本身
+            # 不能在起始点之前出现过。用 acquired_at 会把候补全滤掉。
+            if cutoff is not None and item.revealed_at_chapter > cutoff:
+                continue
+            snapshots.append(
+                KnowledgeSnapshot(
+                    entity_name=name,
+                    item_type=item.item_type,
+                    item_id=item.item_id,
+                    revealed_at_chapter=item.revealed_at_chapter,
+                    acquired_at_chapter=item.acquired_at_chapter,
+                    knowledge_status=item.knowledge_status,
+                    acquisition_method=item.acquisition_method,
+                    basis=item.basis,
+                    candidate=item.candidate,
                 )
+            )
 
     grouped: dict[tuple[str, str, str], list[RelationRecord]] = {}
     for relation in relations:
@@ -329,8 +346,9 @@ def build_start_state(
     notes = [
         "active_fact_ids 是「条目正文实际使用的 canon 事实」；"
         "hidden_fact_ids 是此刻尚未发生的，严格档下它们不出现在任何条目里。",
-        "knowledge 的依据是推断（present_at_event / subject_of_fact），"
-        "**在场不等于知晓**，不要当作可靠依据。",
+        "knowledge 里 candidate=true 表示**结构上可能知道**（例如事件参与者），"
+        "但原文没有确立 —— 在场不等于看见或听懂，不要当作可靠依据。",
+        "knowledge 里 acquired_at_chapter 为空是正常情况（原文未确立），不是数据缺失。",
         "occurred_at 一律为空：原文未给出绝对时间时本项目不推算。",
     ]
     if start.mode == "beginning":
