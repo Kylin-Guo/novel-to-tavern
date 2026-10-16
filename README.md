@@ -47,7 +47,9 @@
 
 ## 当前状态
 
-**Phase 0（格式与仓库基线）与 Phase 1（导入与章节索引）已完成**，Phase 2 起尚未开始。
+**Phase 0–5 已全部完成**，并已用《天之炽》三部曲（156 章 / 69.8 万字）
+跑通端到端流程，导出可导入 Tavo 的角色卡。运行详情见
+[`docs/RUN_REPORT.md`](docs/RUN_REPORT.md)。
 
 已具备：
 
@@ -61,11 +63,9 @@
 - **原文导入与章节索引**：`n2t ingest` 生成可续跑的 `runs/<run_id>/manifest.json`；
   章节与分块经过强制无损校验（区段铺满原文、按块重构等于原文）
 
-尚未具备（后续阶段）：
-
-- LLM 原子事实提取（Phase 2）
-- 实体归一、时间线、知识边界（Phase 3–4）
-- 从真实小说生成世界书与角色卡（Phase 5）
+- **原书到角色卡的完整流水线**：`ingest → extract → resolve → timeline → export`
+- **已用真实小说跑通**：156 章 → 1,806 条原子事实 → 504 个实体 → 664 条世界书条目，
+  引文 100% 可回溯到原文（5,746 / 5,746）
 
 **尚未在 Tavo 实测。** 到 2026-10-16 为止没有任何导入记录，不得据此外推兼容性。
 实测步骤见 [`docs/TAVO_IMPORT_CHECKLIST.md`](docs/TAVO_IMPORT_CHECKLIST.md)。
@@ -78,7 +78,11 @@ python3 -m venv .venv
 .venv/bin/python -m pytest          # 149 项离线测试，不访问网络、不花 API 额度
 .venv/bin/n2t --help
 .venv/bin/n2t config-check
-.venv/bin/n2t ingest                # 导入原文、建立章节索引与分块
+.venv/bin/n2t ingest                # Phase 1：导入原文、章节索引与分块
+.venv/bin/n2t extract --run-id ID   # Phase 2：分块原子事实提取
+.venv/bin/n2t resolve --run-id ID   # Phase 3：实体消歧与角色档案
+.venv/bin/n2t timeline --run-id ID  # Phase 4：时间线、知识边界、世界书规划
+.venv/bin/n2t export  --run-id ID   # Phase 5：导出角色卡与世界书
 ```
 
 Python 3.10+。运行期依赖只有 `pydantic` 与 `PyYAML`；不引入数据库、向量库或 Web 框架。
@@ -90,6 +94,7 @@ Python 3.10+。运行期依赖只有 `pydantic` 与 `PyYAML`；不引入数据�
 | [`AGENTS.md`](AGENTS.md) | 项目执行规则（证据、忠实度、安全边界） |
 | [`docs/PLAN.md`](docs/PLAN.md) | 当前阶段的实施计划与验收划分 |
 | [`docs/FORMAT_COMPATIBILITY.md`](docs/FORMAT_COMPATIBILITY.md) | 酒馆目标格式的字段依据与已知陷阱 |
+| [`docs/RUN_REPORT.md`](docs/RUN_REPORT.md) | 《天之炽》端到端运行报告与产物说明 |
 | [`docs/TAVO_IMPORT_CHECKLIST.md`](docs/TAVO_IMPORT_CHECKLIST.md) | Tavo 手工实测步骤（待执行） |
 | [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) | Phase 0–7 路线图 |
 | [`docs/UPSTREAM_ANALYSIS.md`](docs/UPSTREAM_ANALYSIS.md) | 上游项目借鉴与弃用取舍 |
