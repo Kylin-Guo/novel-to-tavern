@@ -41,6 +41,15 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("config-check", help="加载并校验配置文件，报告环境变量是否就绪")
     sub.add_parser("doctor", help="检查运行环境、配置与凭据隔离情况")
 
+    ingest_parser = sub.add_parser("ingest", help="导入原文、建立章节索引与分块（Phase 1）")
+    ingest_parser.add_argument("--run-id", help="复用/指定 run id；不指定则新建")
+    ingest_parser.add_argument(
+        "--no-resume", action="store_true", help="不复用已有状态，强制重新处理所有来源"
+    )
+    ingest_parser.add_argument(
+        "--source", metavar="PATH", help="覆盖配置里的 source_path（文件或目录）"
+    )
+
     return parser
 
 
@@ -144,6 +153,40 @@ def _cmd_doctor(args: argparse.Namespace, log) -> int:
     return 0
 
 
+def _cmd_ingest(args: argparse.Namespace, log) -> int:
+    from .ingest import IngestError, ingest
+
+    try:
+        config = config_module.load_config(args.config)
+    except config_module.ConfigError as exc:
+        print(f"配置校验失败：{exc}", file=sys.stderr)
+        return 1
+
+    if args.source:
+        config = config.model_copy(
+            update={"project": config.project.model_copy(update={"source_path": args.source})}
+        )
+
+    try:
+        run_dir, manifest = ingest(
+            config,
+            run_id=args.run_id,
+            resume=not args.no_resume,
+            log=log,
+        )
+    except (IngestError, config_module.ConfigError) as exc:
+        print(f"导入失败：{exc}", file=sys.stderr)
+        return 1
+
+    print(f"run 目录：{run_dir}")
+    print(f"来源文件：{len(manifest.sources)}")
+    print(f"章节数：{len(manifest.chapters)}")
+    print(f"分块数：{len(manifest.chunks)}")
+    print(f"警告数：{len(manifest.warnings)}")
+    print(f"报告：{run_dir / 'reports' / 'ingest_summary.md'}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -160,6 +203,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_config_check(args, log)
     if args.command == "doctor":
         return _cmd_doctor(args, log)
+    if args.command == "ingest":
+        return _cmd_ingest(args, log)
 
     parser.print_help()
     return 0
