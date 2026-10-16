@@ -95,6 +95,7 @@ class MentionRecord(BaseModel):
     source_id: str
     chapter_id: str
     chapter_index: int
+    chapter_label: str = ""
     name: str
     aliases: list[str] = Field(default_factory=list)
     kind: EntityKind
@@ -109,6 +110,7 @@ class FactRecord(BaseModel):
     source_id: str
     chapter_id: str
     chapter_index: int
+    chapter_label: str = ""
     subject: str
     predicate: str
     value: str
@@ -124,6 +126,7 @@ class EventRecord(BaseModel):
     source_id: str
     chapter_id: str
     chapter_index: int
+    chapter_label: str = ""
     order_in_chapter: int
     title: str
     summary: str
@@ -140,6 +143,7 @@ class RelationRecord(BaseModel):
     source_id: str
     chapter_id: str
     chapter_index: int
+    chapter_label: str = ""
     from_entity: str
     to_entity: str
     relation: str
@@ -155,6 +159,7 @@ class ChunkExtraction(BaseModel):
     chapter_id: str
     source_id: str
     chapter_index: int
+    chapter_label: str = ""
     chapter_title: str = ""
     summary: str = ""
     provider: str = ""

@@ -23,6 +23,7 @@ class TimelineEvent(BaseModel):
     event_id: str
     chapter_index: int
     chapter_id: str
+    chapter_label: str = ""
     order_in_chapter: int
     title: str
     summary: str
@@ -97,6 +98,7 @@ def build_timeline(
                 event_id=event.event_id,
                 chapter_index=event.chapter_index,
                 chapter_id=event.chapter_id,
+                chapter_label=event.chapter_label,
                 order_in_chapter=event.order_in_chapter,
                 title=event.title,
                 summary=event.summary,
