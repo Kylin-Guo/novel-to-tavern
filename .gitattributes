@@ -1,0 +1,6 @@
+# 统一换行符，避免跨平台 diff 噪音
+* text=auto eol=lf
+
+# 导出物是程序生成的，体量大、diff 无意义：
+# 不计入语言统计，也不在 review 里展开
+exports/** linguist-generated=true
