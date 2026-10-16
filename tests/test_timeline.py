@@ -20,10 +20,13 @@ from novel_to_tavern.timeline import (
     build_knowledge,
     build_timeline,
     check_leakage,
+    clip_at_sentence,
+    entities_without_facts,
     estimate_tokens,
     extract_relative_time,
     filter_for_start_chapter,
     find_contradictions,
+    headline_for,
     plan_character_index,
     plan_entity_entries,
     plan_world_overview,
@@ -188,16 +191,65 @@ def test_non_canon_facts_do_not_raise_contradictions():
 # --- 世界书规划 -----------------------------------------------------------
 
 
-def test_every_entity_gets_an_entry():
-    entities = [_entity(f"ent_{i:04d}", f"角色{i}") for i in range(30)]
+def test_entities_without_facts_get_no_entry():
+    """一条 canon 事实都没有的实体只能写出「item：玩具熊」这种空壳，不该进世界书。"""
+    entities = [_entity("ent_0001", "玩具熊", kind="item")]
     entries = plan_entity_entries(entities, [])
+    assert entries == []
+
+
+def test_entities_without_facts_are_reported_not_silently_dropped():
+    entities = [_entity("ent_0001", "玩具熊", kind="item"), _entity("ent_0002", "西泽尔")]
+    facts = [_fact("f1", "西泽尔", "identity", "红龙骑士团团长")]
+    skipped = entities_without_facts(entities, facts)
+    assert [e.canonical_name for e in skipped] == ["玩具熊"]
+
+
+def test_every_entity_with_facts_gets_an_entry():
+    entities = [_entity(f"ent_{i:04d}", f"角色{i}") for i in range(30)]
+    facts = [_fact(f"f{i}", f"角色{i}", "identity", f"第{i}号人物") for i in range(30)]
+    entries = plan_entity_entries(entities, facts)
     assert len(entries) == 30
+
+
+def test_needs_review_facts_do_not_qualify_an_entity():
+    """未通过证据校验的事实不算数，不能靠它把空壳实体撑起来。"""
+    entities = [_entity("ent_0001", "玩具熊", kind="item")]
+    facts = [_fact("f1", "玩具熊", "identity", "某人的玩偶", review_status="needs_review")]
+    assert plan_entity_entries(entities, facts) == []
+
+
+def test_non_canon_facts_do_not_qualify_an_entity():
+    entities = [_entity("ent_0001", "自闭症", kind="concept")]
+    facts = [_fact("f1", "自闭症", "identity", "某角色的症状", fact_type="inference")]
+    assert plan_entity_entries(entities, facts) == []
+
+
+def test_clip_at_sentence_does_not_cut_mid_sentence():
+    text = "第一句话结束了。第二句话被切断在这里没有结束"
+    clipped = clip_at_sentence(text, 12)
+    assert clipped.endswith("。")
+    assert "第二句话" not in clipped
+
+
+def test_clip_at_sentence_keeps_short_text_intact():
+    assert clip_at_sentence("很短的一句话", 40) == "很短的一句话"
+
+
+def test_headline_prefers_background_over_action():
+    entity = _entity("ent_0001", "甲")
+    facts = [
+        _fact("f1", "甲", "action", "做了一件不重要的事"),
+        _fact("f2", "甲", "background", "出身于北方的商人家庭"),
+    ]
+    assert headline_for(entity, facts) == "出身于北方的商人家庭"
 
 
 def test_entity_entry_keys_include_name_and_aliases():
     """别名/称号必须能单独触发条目，否则只用称号提到角色时会漏。"""
     entity = _entity("ent_0001", "西泽尔", aliases=["红龙", "殿下"])
-    entry = plan_entity_entries([entity], [])[0]
+    facts = [_fact("f1", "西泽尔", "identity", "红龙骑士团团长")]
+    entry = plan_entity_entries([entity], facts)[0]
     assert entry.keys == ["西泽尔", "红龙", "殿下"]
     assert entry.secondary_keys == []
 
@@ -227,15 +279,35 @@ def test_character_index_is_none_without_characters():
     assert plan_character_index([_entity("ent_0001", "某地", kind="place")]) is None
 
 
-def test_world_overview_lists_places_and_factions():
+def test_world_overview_describes_entities_not_just_names():
+    """世界概况要概括世界，不能只是名字清单。"""
     entities = [
         _entity("ent_0001", "君士坦丁堡", kind="place"),
-        _entity("ent_0002", "红龙骑士团", kind="faction"),
+        _entity("ent_0002", "炽天骑士团", kind="faction"),
     ]
-    entry = plan_world_overview(entities, [])
+    facts = [
+        _fact("f1", "君士坦丁堡", "background", "新罗马帝国的首都，皇宫建在临海一角"),
+        _fact("f2", "炽天骑士团", "identity", "西方最强的甲胄骑士团"),
+    ]
+    entry = plan_world_overview(entities, facts)
     assert entry.always_on
-    assert "君士坦丁堡" in entry.content_runtime
-    assert "红龙骑士团" in entry.content_runtime
+    assert "新罗马帝国的首都" in entry.content_runtime
+    assert "西方最强的甲胄骑士团" in entry.content_runtime
+
+
+def test_world_overview_lists_nameless_entities_separately():
+    entities = [
+        _entity("ent_0001", "君士坦丁堡", kind="place"),
+        _entity("ent_0002", "亚琛", kind="place"),
+    ]
+    facts = [_fact("f1", "君士坦丁堡", "background", "新罗马帝国的首都")]
+    entry = plan_world_overview(entities, facts)
+    assert "无独立设定" in entry.content_runtime
+    assert "亚琛" in entry.content_runtime
+
+
+def test_world_overview_is_none_without_anything():
+    assert plan_world_overview([], []) is None
 
 
 def test_start_chapter_blocks_future_entries_without_deleting_them():
@@ -306,6 +378,8 @@ def _prepare_run(tmp_path: Path) -> Path:
     facts = [
         _fact("f1", "西泽尔", "identity", "红龙骑士团团长", chapter=0),
         _fact("f2", "西泽尔", "goal", "夺回王座", chapter=9),
+        _fact("f3", "帕西", "identity", "西泽尔的随从", chapter=0),
+        _fact("f4", "迟到的角色", "identity", "第 9 章才登场的人", chapter=9),
     ]
     events = [_event("e1", 0, participants=["西泽尔", "帕西"]), _event("e2", 9, participants=["西泽尔"])]
     relations = [

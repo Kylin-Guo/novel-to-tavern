@@ -269,7 +269,7 @@ caseSensitive: entry.extensions?.case_sensitive ?? null
 | 官方文档 | **https://docs.tavoai.dev/**（`/en/`、`/cn/`） |
 | 官方文档说了什么 | 只有「可导入 SillyTavern 的卡、支持各大角色卡站点」。**没有任何字段级说明** —— 未记载 V1/V2/V3、PNG/JSON/CHARX、`character_book`、世界书。部分子页 404 或超时 |
 | 应用商店页面宣称 | 支持 Spec V1/V2/V3、PNG/JSON/CHARX，与 SillyTavern / JanitorAI / Pygmalion / RisuRealm / Chub 互通。**属营销文案，官方文档未确认** |
-| 对 `character_book` 的具体行为 | **完全无法离线验证** |
+| 对 `character_book` 的具体行为 | 官方文档无说明；**实测：内嵌世界书能被接受并显示**（2026-10，见 TAVO_IMPORT_CHECKLIST）|
 
 **结论**：本项目**不做任何 Tavo 专属假设**。策略是输出 ST 1.19 已验证过的格式，在 Tavo 里实际导入并观察（Phase 6），观察结果单独成文。
 

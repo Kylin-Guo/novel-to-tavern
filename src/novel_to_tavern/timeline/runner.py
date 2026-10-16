@@ -22,6 +22,7 @@ from .build import (
 from .worldbible import (
     PlannedEntry,
     filter_for_start_chapter,
+    entities_without_facts,
     plan_character_index,
     plan_entity_entries,
     plan_world_overview,
@@ -89,6 +90,7 @@ def build(run_dir: str | Path, *, start_chapter: int | None = None) -> dict:
     if index_entry:
         entries.append(index_entry)
     entries.extend(plan_entity_entries(entities, facts))
+    skipped_entities = entities_without_facts(entities, facts)
     # 章节事件条目已移除：它们与「剧情主线」内容重复，且触发词取的是该章在场人物，
     # 主要人物出场上百章 → 一句话会同时命中上百条（实测 117 条 ≈ 6 万 token）。
 
@@ -119,6 +121,7 @@ def build(run_dir: str | Path, *, start_chapter: int | None = None) -> dict:
         leakage_reports=leakage_reports,
         entries=available,
         blocked=blocked,
+        skipped_entities=skipped_entities,
         plan_stats=plan_stats,
         start_chapter=start_chapter,
         total_chapters=total_chapters,
@@ -132,6 +135,7 @@ def build(run_dir: str | Path, *, start_chapter: int | None = None) -> dict:
         "leakage": leakage_reports,
         "entries": available,
         "blocked_entries": blocked,
+        "skipped_entities": skipped_entities,
         "plan_stats": plan_stats,
         "total_chapters": total_chapters,
     }
@@ -146,6 +150,7 @@ def _render_report(
     leakage_reports: dict[str, list[LeakageFinding]],
     entries: list[PlannedEntry],
     blocked: list[PlannedEntry],
+    skipped_entities: list[CanonicalEntity],
     plan_stats: dict,
     start_chapter: int | None,
     total_chapters: int,
@@ -223,6 +228,26 @@ def _render_report(
             f"| {category} | {len(group)} | {sum(1 for e in group if e.always_on)} | "
             f"{sum(e.estimated_tokens for e in group)} |"
         )
+
+    if skipped_entities:
+        lines += [
+            "",
+            "## 未生成世界书条目的实体",
+            "",
+            f"共 {len(skipped_entities)} 个实体**一条已校验的 canon 事实都没有**，"
+            "只能写出「item：玩具熊」这种零信息空壳，因此不生成条目。",
+            "",
+            "> 它们仍保留在 `canonical/entities.json` 里（来源可追溯），"
+            "只是不进世界书 —— 不是静默丢弃。",
+            "",
+        ]
+        by_kind: dict[str, list[str]] = {}
+        for entity in skipped_entities:
+            by_kind.setdefault(entity.kind, []).append(entity.canonical_name)
+        for kind in sorted(by_kind, key=lambda k: -len(by_kind[k])):
+            names = by_kind[kind]
+            preview = "、".join(names[:30]) + ("…" if len(names) > 30 else "")
+            lines.append(f"- **{kind}**（{len(names)}）：{preview}")
 
     flagged = [e for e in entries if e.quality_flags]
     if flagged:

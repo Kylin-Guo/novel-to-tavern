@@ -54,9 +54,6 @@ PLOT_ENTRY_KEYS = [
     "故事线",
 ]
 
-#: 常驻的剧情骨架最多列多少行，超出转成触发条目承载。
-MAX_SKELETON_LINES = 12
-
 
 class ChapterDigest(BaseModel):
     chapter_index: int
@@ -109,6 +106,38 @@ def build_plot_entry(digests: list[ChapterDigest]) -> PlannedEntry | None:
     )
 
 
+def build_plot_entry(digests: list[ChapterDigest]) -> PlannedEntry | None:
+    """完整剧情走向（逐章），作为触发条目。
+
+    这是"角色卡必须包含当前完整剧情走向"的落点：整条走向都在卡里，
+    但按章标注，配合核心规则里的时间纪律使用。
+
+    `valid_from_chapter` 设为**末章**：整本走向相当于故事讲完才知道的东西。
+    这样"从故事开头开始"的过滤版世界书会把它屏蔽掉，避免一开局就剧透全书。
+    """
+    if not digests:
+        return None
+    lines = [
+        f"{chapter_label(d.chapter_index, d.title)}：{d.summary.strip() or '（无摘要）'}"
+        for d in digests
+    ]
+    body = "原著剧情主线（逐章，按时间顺序）：\n" + "\n".join(lines)
+    return PlannedEntry(
+        entry_id="wb_plot_main",
+        category="concept",
+        title="剧情主线（逐章）",
+        content_runtime=body,
+        content_canonical=body,
+        keys=list(PLOT_ENTRY_KEYS),
+        always_on=False,
+        valid_from_chapter=max(d.chapter_index for d in digests),
+        chapter_gated=True,
+        estimated_tokens=estimate_tokens(body),
+        priority=80,
+        quality_flags=["含全书剧情，需配合时间纪律使用，避免剧透到起始点之前"],
+    )
+
+
 def plot_skeleton_text(digests: list[ChapterDigest]) -> str:
     """常驻的极简剧情骨架：只给阶段划分，让模型知道故事的大致形态。
 
@@ -125,9 +154,14 @@ def plot_skeleton_text(digests: list[ChapterDigest]) -> str:
     return f"\n剧情阶段（完整逐章走向见「剧情主线」条目，需要时检索它）：\n{body}"
 
 
-def build_core_rules_entry(digests: list[ChapterDigest]) -> PlannedEntry:
-    """常驻的核心规则条目。本项目撰写的模拟器设定 + 剧情骨架。"""
-    body = CORE_RULES + plot_skeleton_text(digests)
+def build_core_rules_entry() -> PlannedEntry:
+    """常驻的核心规则条目。
+
+    只放**运行规则**。原先还把逐章剧情骨架塞在这里，结果是：条目叫「世界运行规则」，
+    内容却是一份被 `[:60]` 硬切、句子断在半截的章节大纲 —— 名实不符且难读。
+    剧情走向由「剧情主线」条目负责；概括世界由「世界概况」条目负责。
+    """
+    body = CORE_RULES
     return PlannedEntry(
         entry_id="wb_core_rules",
         category="core_rules",

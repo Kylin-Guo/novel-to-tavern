@@ -16,7 +16,6 @@ from .builder import (
     build_greetings,
     build_plot_entry,
     plan_to_drafts,
-    plot_skeleton_text,
 )
 from .runner import (
     AUDIT_NAME,
@@ -49,5 +48,4 @@ __all__ = [
     "build_plot_entry",
     "export",
     "plan_to_drafts",
-    "plot_skeleton_text",
 ]

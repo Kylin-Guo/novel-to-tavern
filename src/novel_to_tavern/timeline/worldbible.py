@@ -43,6 +43,19 @@ _KIND_TO_CATEGORY: dict[str, EntryCategory] = {
 #: 每个谓词最多渲染多少条取值，避免单个角色条目膨胀。
 MAX_VALUES_PER_PREDICATE = 4
 
+#: 一个实体至少要有这么多条已校验的 canon 事实，才值得单开一个世界书条目。
+#: 否则只能渲染成「item：玩具熊」这种零信息的空壳 —— 占预算、无帮助。
+MIN_ENTITY_FACTS = 1
+
+#: 世界概况里各分类最多列多少个「带一句说明」的实体。
+OVERVIEW_TOP_PER_KIND = {"faction": 6, "place": 8, "concept": 5, "ability": 4, "item": 4}
+
+#: 世界概况里「只列名字」的补充清单上限。
+OVERVIEW_NAME_ONLY_LIMIT = 24
+
+#: 概况里单条说明的最大长度。
+OVERVIEW_LINE_CHARS = 64
+
 #: 人物索引条目里最多列多少人。
 MAX_INDEX_ENTRIES = 60
 
@@ -82,6 +95,94 @@ def estimate_tokens(text: str) -> int:
     cjk = len(_CJK.findall(text))
     other = len(text) - cjk
     return cjk + (other + 3) // 4
+
+
+def _facts_by_entity(
+    entities: list[CanonicalEntity], facts: list[FactRecord]
+) -> dict[str, list[FactRecord]]:
+    """`{entity.id: [该实体的已校验 canon 事实]}`。"""
+    by_subject: dict[str, list[FactRecord]] = defaultdict(list)
+    for fact in facts:
+        if fact.review_status != "accepted" or fact.fact_type != "canon_fact":
+            continue
+        by_subject[fact.subject].append(fact)
+
+    result: dict[str, list[FactRecord]] = {}
+    for entity in entities:
+        names = {entity.canonical_name, *entity.aliases}
+        collected: list[FactRecord] = []
+        for name in names:
+            collected.extend(by_subject.get(name, []))
+        result[entity.id] = collected
+    return result
+
+
+def entities_without_facts(
+    entities: list[CanonicalEntity], facts: list[FactRecord]
+) -> list[CanonicalEntity]:
+    """没有一条已校验事实的实体 —— 它们不该单开世界书条目。
+
+    这些实体仍保留在 canonical 数据里（来源可追溯），只是不进世界书。
+    被跳过的名单会写进报告，不是静默丢弃。
+    """
+    by_entity = _facts_by_entity(entities, facts)
+    return [e for e in entities if len(by_entity.get(e.id, [])) < MIN_ENTITY_FACTS]
+
+
+#: 概括一个实体时优先用哪些谓词 —— 越靠前越像「它是什么」，越靠后越像「它做了什么」。
+_HEADLINE_PREDICATES = (
+    "identity",
+    "background",
+    "ability",
+    "possession",
+    "appearance",
+    "alias",
+    "goal",
+    "state",
+    "action",
+)
+
+#: 定义式表述的标志词。有这些词的取值更像"这东西是什么"，而不是"它这章干了什么"。
+_DEFINITIONAL_MARKERS = ("是", "叫做", "称为", "名为", "属于", "指", "由")
+
+
+def clip_at_sentence(text: str, limit: int = OVERVIEW_LINE_CHARS) -> str:
+    """按长度裁剪，但**在句读处断开**，不把句子切在半截。"""
+    text = text.strip()
+    if len(text) <= limit:
+        return text
+    window = text[:limit]
+    for mark in ("。", "；", "，", ";", ",", "、"):
+        cut = window.rfind(mark)
+        if cut >= limit // 2:
+            return window[: cut + 1].rstrip("，、；,;")
+    return window.rstrip() + "…"
+
+
+def headline_for(entity: CanonicalEntity, facts: list[FactRecord]) -> str:
+    """从实体的事实里挑一句最能说明它的，用于世界概况。
+
+    同一谓词下可能有多条（跨章节），先挑像「定义」的那条 ——
+    否则会出现「十字禁卫军：本章出动十二个师团」这种把某章战况当成组织介绍的情况。
+    """
+    buckets: dict[str, list[FactRecord]] = defaultdict(list)
+    for fact in facts:
+        buckets[fact.predicate].append(fact)
+
+    def best(candidates: list[FactRecord]) -> FactRecord:
+        def score(fact: FactRecord) -> tuple[int, int]:
+            definitional = any(m in fact.value for m in _DEFINITIONAL_MARKERS)
+            long_enough = len(fact.value) >= 10
+            return (int(definitional) + int(long_enough), -len(fact.value))
+
+        return max(candidates, key=score)
+
+    for predicate in _HEADLINE_PREDICATES:
+        if buckets.get(predicate):
+            return clip_at_sentence(best(buckets[predicate]).value)
+    for predicate in sorted(buckets):
+        return clip_at_sentence(best(buckets[predicate]).value)
+    return ""
 
 
 def _render_facts(
@@ -130,27 +231,28 @@ def plan_entity_entries(
     *,
     start_chapter: int | None = None,
 ) -> list[PlannedEntry]:
-    """为每个实体规划一个世界书条目。
+    """为**有已校验事实**的实体规划世界书条目。
 
-    **不按体量裁剪**：所有实体都会得到条目，重要性只体现在 `priority` 上。
+    一条 canon 事实都没有的实体（「玩具熊」「自闭症」这类顺带提到的名词）会被跳过 ——
+    它们只能渲染成「item：玩具熊」这种零信息空壳，占触发预算却毫无帮助。
+    被跳过的名单由 `entities_without_facts` 给出并写进报告，不是静默丢弃。
+
+    有事实的实体**不按体量裁剪**，重要性只体现在 `priority` 上。
     """
-    facts_by_subject: dict[str, list[FactRecord]] = defaultdict(list)
-    for fact in facts:
-        facts_by_subject[fact.subject].append(fact)
+    by_entity = _facts_by_entity(entities, facts)
 
     entries: list[PlannedEntry] = []
     for entity in sorted(entities, key=lambda e: (-e.evidence_count, e.canonical_name)):
-        names = {entity.canonical_name, *entity.aliases}
-        own_facts = [f for name in names for f in facts_by_subject.get(name, [])]
+        own_facts = by_entity.get(entity.id, [])
+        if len(own_facts) < MIN_ENTITY_FACTS:
+            # 写不出任何有来源的内容 → 不生成条目
+            continue
 
         runtime = _render_facts(own_facts, with_sources=False)
         canonical = _render_facts(own_facts, with_sources=True)
         primary, secondary = _entity_keys(entity)
 
         flags: list[str] = []
-        if not runtime:
-            runtime = f"{entity.kind}：{entity.canonical_name}"
-            flags.append("无已校验事实，仅条目占位")
         if len(runtime) > 1200:
             flags.append(f"内容偏长（{len(runtime)} 字），建议人工精简")
 
@@ -206,18 +308,58 @@ def plan_character_index(entities: list[CanonicalEntity]) -> PlannedEntry | None
 def plan_world_overview(
     entities: list[CanonicalEntity], facts: list[FactRecord]
 ) -> PlannedEntry | None:
-    """常驻的世界概况：由证据量最高的地点/势力条目拼出。"""
-    parts: list[str] = []
-    for kind, label in (("place", "地点"), ("faction", "势力")):
-        picked = sorted(
-            (e for e in entities if e.kind == kind), key=lambda e: -e.evidence_count
-        )[:8]
+    """常驻的世界概况。
+
+    这才是「概括这个世界」的地方：按势力/地点/核心设定分组，每组挑几个最有
+    证据的实体各配**一句**来自原著的说明，其余只列名字。
+    早先的实现只输出「地点：A、B、C」这种名字清单，信息量接近零。
+    """
+    by_entity = _facts_by_entity(entities, facts)
+    sections: list[tuple[str, str]] = [
+        ("faction", "势力"),
+        ("place", "地点"),
+        ("concept", "核心设定"),
+        ("ability", "能力与技术"),
+        ("item", "重要物品"),
+    ]
+
+    lines: list[str] = []
+    name_only: list[str] = []
+
+    for kind, label in sections:
+        pool = [e for e in entities if e.kind == kind]
+        with_facts = sorted(
+            (e for e in pool if by_entity.get(e.id)), key=lambda e: -e.evidence_count
+        )
+        limit = OVERVIEW_TOP_PER_KIND.get(kind, 4)
+        picked = with_facts[:limit]
+
         if picked:
-            parts.append(f"{label}：" + "、".join(e.canonical_name for e in picked))
-    if not parts:
+            lines.append(f"{label}：")
+            for entity in picked:
+                headline = headline_for(entity, by_entity[entity.id])
+                if headline:
+                    lines.append(f"　· {entity.canonical_name}：{headline}")
+                else:
+                    lines.append(f"　· {entity.canonical_name}")
+
+        rest = [e.canonical_name for e in pool if not by_entity.get(e.id)]
+        rest += [e.canonical_name for e in with_facts[limit:]]
+        name_only.extend(rest)
+
+    if not lines and not name_only:
         return None
 
-    body = "\n".join(parts)
+    body = "\n".join(lines)
+    if name_only:
+        extra = "、".join(sorted(dict.fromkeys(name_only))[:OVERVIEW_NAME_ONLY_LIMIT])
+        if extra:
+            body += f"\n其它提及名称（无独立设定）：{extra}"
+
+    flags: list[str] = []
+    if not lines:
+        flags.append("没有任何实体带已校验事实，概况退化为名称清单")
+
     return PlannedEntry(
         entry_id="wb_overview",
         category="world_overview",
@@ -228,6 +370,7 @@ def plan_world_overview(
         always_on=True,
         estimated_tokens=estimate_tokens(body),
         priority=95,
+        quality_flags=flags,
     )
 
 

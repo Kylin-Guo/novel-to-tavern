@@ -32,7 +32,7 @@
         {
           "id": 0,
           "keys": [],
-          "content": "这是一个多角色世界模拟器。请遵守以下运行规则：\n\n1. 世界自行运转。NPC 按自己的目标与性格行动，不围着用户转，也不替用户做决定。\n2. 用户独占其扮演角色的行动、台词与内心。不要替用户说话或决定其想法。\n3. NPC 只知道两件事：截至当前时间点已经发生的事，以及它有合法渠道获知的事。\n   没在场、没人告诉它的事，它不知道。\n4. 角色的性格、动机与说话方式必须与「人物」条目一致，不得为了剧情方便而改变。\n5. 保持连续：时间、地点、伤势、持有物、资源与因果不能凭空跳变。\n6. 严格区分四类信息：原著已明确的事实、某个角色**以为**的事实、世界中的传闻、以及本次分支产生的新事件。\n   分支新事件不得说成原著设定。\n7. 时间点由用户选择。世界书「剧情主线」条目按章标注了原著走向；\n   **标注章节晚于当前起始点的内容尚未发生**，NPC 不得据此行动、不得提前知道。\n8. 用户若选择从故事开头开始，后续剧情不必按原著发展；原著走向只作参考，不是必然结局。\n\n剧情阶段（完整逐章走向见「剧情主线」条目，需要时检索它）：\n　　第1章：秋天，君士坦丁堡皇宫临海一角的圣女塔来了一位穿黑色军服的十五六岁男孩，持新罗马皇室狮子徽章，奉皇帝特许见塔上的人。塔顶卧\n　　第14章：夜里十一点，教务长庞加莱亲自在车站等候，把米内放回校舍，单独带西泽尔去办公室。西泽尔以校规自辩，指出校规不支持开除，并说\n　　第27章：庞加莱与贝隆打开低温车厢和铁棺，见到冰下沉睡的炽天使——一百年前摧毁旧罗马帝国黑骑士团的初始机动甲胄原型机。庞加莱惊叹时\n　　第40章：璎珞因血液被换走而枯萎，西泽尔远远望着铁棺。达斯蒙德自觉计划顺利，用盲人属下监听动静；炽天铁骑来袭的报告传来，龙德施泰特\n　　第53章：暴风雨之夜，枢机会在西斯廷大教堂的小经堂对西泽尔开庭审判。西泽尔被铐在铁十字架上受审，西塞罗大主教指控他在马斯顿教堂穿上\n　　第66章：实验体被连射铳击杀后由白袍解剖师就地肢解，托雷斯带西泽尔进入叹息之墙内，见到密涅瓦机关负责人佛朗哥教授。佛朗哥展示冰库中\n　　第79章：西泽尔在失控状态下把冈扎罗的甲胄拆成一堆废铁，家长们与孩子们被铁墙与后门撤离，只剩教皇独坐看台。西泽尔随后在红松林中醒来\n　　第92章：西泽尔以突击矛凌空击爆焚城炮炮弹，借爆炸逃脱并砸开黑铁大门冲向台伯河。他在废弃小巷里接受密涅瓦机关佛朗哥教授一行的补给与\n　　第105章：宝儿确认西泽尔要起用她这枚隐形的棋子，答应为他收集上流社会的情报。西泽尔说明自己在马斯顿三年退步了，但保住了经验，打算重\n　　第118章：西泽尔跳上高台打飞阿方索，却在举着燃烧棒的薇若兰面前跪下抱住她，喊她“妈妈”；薇若兰趁机把裸露的线头接在他身上，靠外部电\n　　第131章：万国盛典期间西泽尔没有去赴叶尼塞使馆的舞会。他回到中央圣所，见到佛朗哥为他造好的新炽天使“红龙”，并再次穿上甲胄，完成踢\n　　第144章：在原罪机关的二号实验场，普罗米修斯“古洛诺斯”为观摩的贵公子们做射击与挥刀的测试表演，并一刀斩裂一具炽天铁骑Ⅳ型，路易吉",
+          "content": "这是一个多角色世界模拟器。请遵守以下运行规则：\n\n1. 世界自行运转。NPC 按自己的目标与性格行动，不围着用户转，也不替用户做决定。\n2. 用户独占其扮演角色的行动、台词与内心。不要替用户说话或决定其想法。\n3. NPC 只知道两件事：截至当前时间点已经发生的事，以及它有合法渠道获知的事。\n   没在场、没人告诉它的事，它不知道。\n4. 角色的性格、动机与说话方式必须与「人物」条目一致，不得为了剧情方便而改变。\n5. 保持连续：时间、地点、伤势、持有物、资源与因果不能凭空跳变。\n6. 严格区分四类信息：原著已明确的事实、某个角色**以为**的事实、世界中的传闻、以及本次分支产生的新事件。\n   分支新事件不得说成原著设定。\n7. 时间点由用户选择。世界书「剧情主线」条目按章标注了原著走向；\n   **标注章节晚于当前起始点的内容尚未发生**，NPC 不得据此行动、不得提前知道。\n8. 用户若选择从故事开头开始，后续剧情不必按原著发展；原著走向只作参考，不是必然结局。\n",
           "enabled": true,
           "insertion_order": 10,
           "position": "before_char",
@@ -43,7 +43,7 @@
         {
           "id": 1,
           "keys": [],
-          "content": "地点：马斯顿、翡冷翠、锡兰、坎特伯雷堡、都灵圣教院、台伯河、维苏威火山、亚琛\n势力：炽天骑士团、密涅瓦机关、枢机会、十字禁卫军、异端审判局、圣堂装甲师、原罪机关、教皇国",
+          "content": "势力：\n　· 炽天骑士团：由男孩组成的军队，被戏称为“铁甲童子军”\n　· 密涅瓦机关：教皇国的最高技术机关，以六翼猫头鹰为徽记\n　· 枢机会：教皇国的领袖，成员多半是红衣主教，选举教皇也可以罢免教皇；教皇本身更像荣誉性职位，主要工作是布道\n　· 十字禁卫军：教皇国的中央军，可能是整个西方世界最令人敬畏的军队\n　· 异端审判局：全世界只有教皇国有这一机构，是纯粹的军事机构，最初为打击威胁教廷的异端而设立，后负担间谍工作\n　· 圣堂装甲师：直接效忠于枢机会的一支机密部队\n地点：\n　· 马斯顿：只有一座城市的中立商业国\n　· 翡冷翠：地下核心工厂生产教皇国最机密的机械装备，因此被称为永不陷落的城市\n　· 锡兰：是个贫穷的国家，平民中很多人都不识字\n　· 坎特伯雷堡：三年前是翡冷翠著名的豪宅之一，有花岗岩高墙与黑铁大门\n　· 都灵圣教院：由弥赛亚圣教设立，历史只有一百年左右，却是世界学府的巅峰，教皇国半数高官出自此校\n　· 台伯河：河上常有顺流而下的浮尸，是处理仇人的好地方\n　· 维苏威火山：世界上最大的熔炉，用于熔炼级别最高的武器级合金，百年来只熄火过三次\n　· 阿瓦隆：教徒在阿瓦隆找到的不是神迹，而是另一个文明的遗迹，一个失落的史前文明\n核心设定：\n　· 校长奖学金：此项奖励根本就是罗曼校长为拜伦少爷设置的\n　· 星见：夏国管理太庙的巫女领袖，按古规必须终生是处女\n　· 紫瞳：神话里恶魔的眼睛就是紫色，多数家庭视紫瞳孩子为不祥\n　· 圣域：圣域内法律与指挥权皆不生效，只有枢机会的神权生效\n　· 魔女：弥赛亚圣教教义中最危险的恶魔，化成美女的模样蛊惑世人\n能力与技术：\n　· 狂化：强行取得骑士之骨的控制权，这种事只会发生在天赋骑士身上\n重要物品：\n　· 炽天使：东方人称机动甲胄为“铁傀儡”，认为那是某种邪恶的机器\n　· 普罗米修斯：项目已持续十年以上，十五年里不断吃掉原本属于密涅瓦机关的预算\n　· 欧米茄：并非技术验证品而是实战武器，人类穿不上但有别的某种东西能穿上\n　· 屠龙者圣乔治：曾是炽天骑士团团长的专用武装，炽天骑士团的象征\n其它提及名称（无独立设定）：Excalibur、Hypnos秘药、Longinus、Rex Immortalis、《圣约》、一号实验场、一字曰心冲锋队、万能钥匙、三号控制中心、上城区、下城区、不朽之王、不朽之王模式、世界之蟒号、东方、东方图书馆、东方总督、中央圣所、中央实验场、中山之狼、中山国、中校军徽、中校领章、二号实验场",
           "enabled": true,
           "insertion_order": 20,
           "position": "before_char",
@@ -267,7 +267,7 @@
             "机动甲胄",
             "炽天使甲胄"
           ],
-          "content": "ability：敏捷得如同金属制造的生命体，腾空翻转仍保持极佳平衡，双腕能弹出锋利直刃；所能荷载的能量有限，只有五分钟的极限活动时间；是有灵魂的机械，挑选骑士而非被骑士控制；平均每十万人里可能只有一人能驾驭；被排斥的骑士会死在甲胄里面；由机械驱动，重量可达数百公斤，身高可以是常人的几倍\nappearance：只有两米出头，造型修长，细节中透着古奥狰狞，某些部件看起来像骨骼\nbackground：世界各国机动甲胄都以它为原型，但所剩不多，制造技术已失传、不可复制；各国机动甲胄先用红水银浸泡过的“硬金”制造甲胄骨骼，再附加可拆卸部件；被甲胄变成活死人者称“木偶骑士”，教廷仍把他们塞进甲胄当工具使用；采用古式神经回路，会对骑士产生严重精神冲击，只有万分之一的人能忍受；最先组建机甲骑士部队的是教皇国，之后各国仿造或改进并建立机甲骑士团\ngoal：被派来监视龙德施泰特\nidentity：最初的机动甲胄，一百年前一战摧毁了旧罗马帝国号称“世界最强”的黑骑士团；代号炽天使，正式名称是初代超机动战术甲胄，百年前被制造出来；东方人称机动甲胄为“铁傀儡”，认为那是某种邪恶的机器\nstate：蒸汽储备只够用五分钟，五分钟一过便成废铁；沉睡冰下时体温很低、呼吸微弱靠鼻管；醒来后几分钟内即恢复正常体温，机能基本不受低温影响；原计划不唤醒，睡在低温冰块中而非冰水混合液体里，至死未醒；胸、腹、胯部可卸下，躯干“脊椎”部分无法拆卸；脱卸过程极其痛苦，像把骑士放在地狱中煎熬，金色针状电极从后背拔出流血",
+          "content": "ability：敏捷得如同金属制造的生命体，腾空翻转仍保持极佳平衡，双腕能弹出锋利直刃；所能荷载的能量有限，只有五分钟的极限活动时间；由机械驱动，重量可达数百公斤，身高可以是常人的几倍；是有灵魂的机械，挑选骑士而非被骑士控制；平均每十万人里可能只有一人能驾驭；被排斥的骑士会死在甲胄里面\nappearance：只有两米出头，造型修长，细节中透着古奥狰狞，某些部件看起来像骨骼\nbackground：世界各国机动甲胄都以它为原型，但所剩不多，制造技术已失传、不可复制；各国机动甲胄先用红水银浸泡过的“硬金”制造甲胄骨骼，再附加可拆卸部件；被甲胄变成活死人者称“木偶骑士”，教廷仍把他们塞进甲胄当工具使用；采用古式神经回路，会对骑士产生严重精神冲击，只有万分之一的人能忍受；最先组建机甲骑士部队的是教皇国，之后各国仿造或改进并建立机甲骑士团\ngoal：被派来监视龙德施泰特\nidentity：最初的机动甲胄，一百年前一战摧毁了旧罗马帝国号称“世界最强”的黑骑士团；代号炽天使，正式名称是初代超机动战术甲胄，百年前被制造出来；东方人称机动甲胄为“铁傀儡”，认为那是某种邪恶的机器\nstate：蒸汽储备只够用五分钟，五分钟一过便成废铁；沉睡冰下时体温很低、呼吸微弱靠鼻管；醒来后几分钟内即恢复正常体温，机能基本不受低温影响；胸、腹、胯部可卸下，躯干“脊椎”部分无法拆卸；原计划不唤醒，睡在低温冰块中而非冰水混合液体里，至死未醒；脱卸过程极其痛苦，像把骑士放在地狱中煎熬，金色针状电极从后背拔出流血",
           "enabled": true,
           "insertion_order": 190,
           "position": "after_char",
@@ -1304,4877 +1304,1973 @@
         {
           "id": 102,
           "keys": [
-            "德隆爵士"
-          ],
-          "content": "character：德隆爵士",
-          "enabled": true,
-          "insertion_order": 1030,
-          "position": "after_char",
-          "comment": "德隆爵士",
-          "extensions": {}
-        },
-        {
-          "id": 103,
-          "keys": [
             "教廷"
           ],
           "content": "background：百年来派密使在世界各地筛选有潜力的孩子带回翡冷翠反复试验；为保住马斯顿那个秘密下令圣堂装甲师杀掉所有目击者，只有西泽尔与阿黛尔因是教皇儿女而生还\ngoal：必须在东方接触史前遗迹之前征服东方\nstate：不承认史前文明，一再封锁阿瓦隆的秘密，以维护弥赛亚圣教存在的根基",
           "enabled": true,
-          "insertion_order": 1040,
+          "insertion_order": 1030,
           "position": "after_char",
           "comment": "教廷",
           "extensions": {}
         },
         {
-          "id": 104,
+          "id": 103,
           "keys": [
             "新罗马帝国"
           ],
           "content": "ability：狮心系列甲胄很精确，擅长操纵巨型的枪械\nbackground：由一半宣布效忠教皇的罗马帝国土地成立，定都君士坦丁堡\nidentity：教皇国最忠诚的盟友，国力强盛、技术先进",
           "enabled": true,
-          "insertion_order": 1050,
+          "insertion_order": 1040,
           "position": "after_char",
           "comment": "新罗马帝国",
           "extensions": {}
         },
         {
-          "id": 105,
+          "id": 104,
           "keys": [
             "穆法兰"
           ],
           "content": "appearance：个头不高但身材凹凸有致，清秀可人，校服裙下是一双红色的系带高跟鞋，鞋带上有金色铃铛\nidentity：都灵圣教院的寒门学生，由校务处派出领新生参观校园",
           "enabled": true,
-          "insertion_order": 1060,
+          "insertion_order": 1050,
           "position": "after_char",
           "comment": "穆法兰",
           "extensions": {}
         },
         {
-          "id": 106,
+          "id": 105,
           "keys": [
             "红水银"
           ],
           "content": "ability：极易燃烧并爆发高热，能与各种金属结合改变其属性\nbackground：教士们在被冰雪覆盖的荒岛上发现，是如鲜血般流淌在冰层深处的液体；燃烧起来热量极大的红色液体，是弥赛亚圣教在冰海小岛上找到的神秘物质，浓缩蒸汽为骑士提供动力\nstate：军用甲胄使用的更高级别能源，属于绝对的军用品，黑市上买不到",
           "enabled": true,
-          "insertion_order": 1070,
+          "insertion_order": 1060,
           "position": "after_char",
           "comment": "红水银",
           "extensions": {}
         },
         {
-          "id": 107,
+          "id": 106,
           "keys": [
             "骑士之骨"
           ],
           "content": "ability：电极插入骑士脊椎读取神经信号再传给甲胄，使甲胄变成身体的一部分；没有安装装甲板和武器，但单凭力量就能撕裂钢铁\nidentity：炽天使的核心部分，即炽天使的骨骼，用金属打造，硬金电极沿脊椎排列，比人类骨骼大出一号\nstate：还没有安装装甲板和其他附件，但基础系统完整，是一件危险的暴力机器，接触失控者只有死路一条；拆除外接系统后西泽尔根本没法控制机动甲胄，其价值仅限于帮降低神经接驳系统的反噬",
           "enabled": true,
-          "insertion_order": 1080,
+          "insertion_order": 1070,
           "position": "after_char",
           "comment": "骑士之骨",
           "extensions": {}
         },
         {
-          "id": 108,
+          "id": 107,
           "keys": [
             "Excalibur",
             "圣剑装具·Excalibur"
           ],
           "content": "identity：炽天铁骑用来一剑砍开普罗米修斯胸口的圣剑装具；炽天骑士团团长专属武器，与圣枪装具·Longinus同源\nstate：历代骑士中能握住它的不超过二十个，对绝大多数人无用",
           "enabled": true,
-          "insertion_order": 1090,
+          "insertion_order": 1080,
           "position": "after_char",
           "comment": "Excalibur",
           "extensions": {}
         },
         {
-          "id": 109,
+          "id": 108,
           "keys": [
             "中山国"
           ],
           "content": "background：位于东西方交界处，奉夏国为宗主国，是大夏联邦成员国之一，几百年前因山中发现金矿、移民会聚而形成国家；距离洛阳约2000公里，文化上跟夏国一脉相承，有“小夏国”的称号；东方国家，是夏国的属国，被视为教皇国的半个敌人",
           "enabled": true,
-          "insertion_order": 1100,
+          "insertion_order": 1090,
           "position": "after_char",
           "comment": "中山国",
           "extensions": {}
         },
         {
-          "id": 110,
+          "id": 109,
           "keys": [
             "塔拉夏"
           ],
           "content": "identity：薇若兰的副手，狡黠的年轻工程师，演习中驾驶拼装的二代普罗米修斯",
           "enabled": true,
-          "insertion_order": 1110,
+          "insertion_order": 1100,
           "position": "after_char",
           "comment": "塔拉夏",
           "extensions": {}
         },
         {
-          "id": 111,
+          "id": 110,
           "keys": [
             "彼得罗夫",
             "秘银之鬼"
           ],
           "content": "background：设计普罗米修斯与神怒Ⅱ型，反覆研究密涅瓦机关的作品并自称洞察机械核心规则\nstate：普罗米修斯被击毁后用短铳打碎自己的头颅自杀；认为自己的发明在炽天铁骑面前不堪一击，开枪自杀",
           "enabled": true,
-          "insertion_order": 1120,
+          "insertion_order": 1110,
           "position": "after_char",
           "comment": "彼得罗夫",
           "extensions": {}
         },
         {
-          "id": 112,
+          "id": 111,
           "keys": [
             "教皇隆·博尔吉亚"
           ],
           "content": "goal：等西泽尔凭自己的力量杀到他面前要求加冕，否则就放弃他\nstate：患重病，剧烈咳嗽并咳出猩红色的血，需服一枚绿色的药片",
           "enabled": true,
-          "insertion_order": 1130,
+          "insertion_order": 1120,
           "position": "after_char",
           "comment": "教皇隆·博尔吉亚",
           "extensions": {}
         },
         {
-          "id": 113,
+          "id": 112,
           "keys": [
             "军部"
           ],
           "content": "identity：其中大多数是不喜欢西泽尔父亲的人，即圣座的政治对手\nstate：以军部名义入驻中央圣所监督实验进度，强行提速，想尽快把选拔的孩子送进骑士舱测试",
           "enabled": true,
-          "insertion_order": 1140,
+          "insertion_order": 1130,
           "position": "after_char",
           "comment": "军部",
           "extensions": {}
         },
         {
-          "id": 114,
+          "id": 113,
           "keys": [
             "斯梅尔少校"
           ],
           "content": "identity：异端审判局驻马斯顿的潜伏军官，率炽天铁骑前来夺车",
           "enabled": true,
-          "insertion_order": 1150,
+          "insertion_order": 1140,
           "position": "after_char",
           "comment": "斯梅尔少校",
           "extensions": {}
         },
         {
-          "id": 115,
+          "id": 114,
           "keys": [
             "贝拉蒙老爷"
           ],
           "content": "identity：贝拉蒙少爷的父亲，克里特的行政次长，中年丧偶\nstate：断绝与各路情人的来往，一心锻炼身体要再度当新郎；不敢对琳琅夫人有非分之想，只求与儿子安静过完此生",
           "enabled": true,
-          "insertion_order": 1160,
+          "insertion_order": 1150,
           "position": "after_char",
           "comment": "贝拉蒙老爷",
           "extensions": {}
         },
         {
-          "id": 116,
+          "id": 115,
           "keys": [
             "转轮王"
           ],
           "content": "ability：因腿部延长，奔跑极速高于金刚猛士；与金刚猛士一样不怕进水，优质铜合金在红水银中浸泡后同样不锈\nappearance：胸部刻着东方文字，并蚀刻着巨大的星轮图案\nstate：背包里灌注的是黑市上买不到的红水银蒸汽",
           "enabled": true,
-          "insertion_order": 1170,
+          "insertion_order": 1160,
           "position": "after_char",
           "comment": "转轮王",
           "extensions": {}
         },
         {
-          "id": 117,
+          "id": 116,
           "keys": [
             "原罪机关总长"
           ],
           "content": "appearance：戴白银面具，面具镂空雕花，只露出一双湛蓝色像大海的眼睛；声音非常年轻",
           "enabled": true,
-          "insertion_order": 1180,
+          "insertion_order": 1170,
           "position": "after_char",
           "comment": "原罪机关总长",
           "extensions": {}
         },
         {
-          "id": 118,
+          "id": 117,
           "keys": [
             "台伯河"
           ],
           "content": "background：河上常有顺流而下的浮尸，是处理仇人的好地方",
           "enabled": true,
-          "insertion_order": 1190,
+          "insertion_order": 1180,
           "position": "after_char",
           "comment": "台伯河",
           "extensions": {}
         },
         {
-          "id": 119,
+          "id": 118,
           "keys": [
             "教官"
           ],
           "content": "identity：唐璜等人当年的教官，仍留在炽天骑士团的前任炽天使骑士",
           "enabled": true,
-          "insertion_order": 1200,
+          "insertion_order": 1190,
           "position": "after_char",
           "comment": "教官",
           "extensions": {}
         },
         {
-          "id": 120,
+          "id": 119,
           "keys": [
             "昆提良的父亲"
           ],
           "content": "identity：退役的炽天使骑士，为教皇国征战、军功升至上尉\npossession：半截暗金色的炽天骑士团制式断剑和一枚勋章",
           "enabled": true,
-          "insertion_order": 1210,
+          "insertion_order": 1200,
           "position": "after_char",
           "comment": "昆提良的父亲",
           "extensions": {}
         },
         {
-          "id": 121,
+          "id": 120,
           "keys": [
             "查理曼王国"
           ],
           "content": "ability：烙印骑士甲胄以高速著称，最适合的武器是锋利的骑士剑\nstate：与教皇国联姻后两国关系更亲近，债务问题可迎刃而解",
           "enabled": true,
-          "insertion_order": 1220,
+          "insertion_order": 1210,
           "position": "after_char",
           "comment": "查理曼王国",
           "extensions": {}
         },
         {
-          "id": 122,
+          "id": 121,
           "keys": [
             "海菲兹"
           ],
           "content": "identity：校警队长，真实身份是教皇国的潜伏军官",
           "enabled": true,
-          "insertion_order": 1230,
+          "insertion_order": 1220,
           "position": "after_char",
           "comment": "海菲兹",
           "extensions": {}
         },
         {
-          "id": 123,
-          "keys": [
-            "骑警"
-          ],
-          "content": "faction：骑警",
-          "enabled": true,
-          "insertion_order": 1240,
-          "position": "after_char",
-          "comment": "骑警",
-          "extensions": {}
-        },
-        {
-          "id": 124,
+          "id": 122,
           "keys": [
             "骑警长官"
           ],
           "content": "identity：艾雷斯男爵的哥哥，清楚西泽尔等人的身份，不怕他们的军人身份",
           "enabled": true,
-          "insertion_order": 1250,
+          "insertion_order": 1230,
           "position": "after_char",
           "comment": "骑警长官",
           "extensions": {}
         },
         {
-          "id": 125,
+          "id": 123,
           "keys": [
             "万国盛典"
           ],
           "content": "background：不超过三个月后在翡冷翠举行，各国使团将以拜见教皇的名义到来，届时举行普罗米修斯与炽天使的对抗战，胜者成为最终定型的未来武装；三个月后由教皇国举办，西方各国派使团前往翡冷翠，盛典期间教皇国会展示最新的机动武器；机械艺术和外交的盛会，通常每隔十年在翡冷翠举办一次",
           "enabled": true,
-          "insertion_order": 1260,
+          "insertion_order": 1240,
           "position": "after_char",
           "comment": "万国盛典",
           "extensions": {}
         },
         {
-          "id": 126,
+          "id": 124,
           "keys": [
             "维苏威火山"
           ],
           "content": "background：日夜不息地喷吐火焰，开闸时流出各种颜色的钢水；没人知道谁建设了它，也没人能复制它\nidentity：世界上最大的熔炉，用于熔炼级别最高的武器级合金，百年来只熄火过三次",
           "enabled": true,
-          "insertion_order": 1270,
+          "insertion_order": 1250,
           "position": "after_char",
           "comment": "维苏威火山",
           "extensions": {}
         },
         {
-          "id": 127,
-          "keys": [
-            "西塞罗"
-          ],
-          "content": "character：西塞罗",
-          "enabled": true,
-          "insertion_order": 1280,
-          "position": "after_char",
-          "comment": "西塞罗",
-          "extensions": {}
-        },
-        {
-          "id": 128,
+          "id": 125,
           "keys": [
             "闪虎"
           ],
           "content": "appearance：神怒骑士团的标准格斗短剑，厚度是普通短剑的三倍，长度是普通剑的一倍半，刃口带粗大锯齿\nidentity：一对带锯齿的短刀，最基本的机甲武器，类似步兵的防身小刀",
           "enabled": true,
-          "insertion_order": 1290,
+          "insertion_order": 1260,
           "position": "after_char",
           "comment": "闪虎",
           "extensions": {}
         },
         {
-          "id": 129,
-          "keys": [
-            "亚琛"
-          ],
-          "content": "place：亚琛",
-          "enabled": true,
-          "insertion_order": 1300,
-          "position": "after_char",
-          "comment": "亚琛",
-          "extensions": {}
-        },
-        {
-          "id": 130,
+          "id": 126,
           "keys": [
             "佩德罗·博尔吉亚",
             "佩德罗"
           ],
           "content": "identity：十七岁，母亲是朱丽叶·格里高利，教皇国首屈一指的数学家，考入恒动天学宫，任财政总长的首席秘书",
           "enabled": true,
-          "insertion_order": 1310,
+          "insertion_order": 1270,
           "position": "after_char",
           "comment": "佩德罗·博尔吉亚",
           "extensions": {}
         },
         {
-          "id": 131,
+          "id": 127,
           "keys": [
             "太监"
           ],
           "content": "background：也许贪污受贿，但绝不希望皇权旁落，只能靠皇帝往上爬",
           "enabled": true,
-          "insertion_order": 1320,
+          "insertion_order": 1280,
           "position": "after_char",
           "comment": "太监",
           "extensions": {}
         },
         {
-          "id": 132,
+          "id": 128,
           "keys": [
             "校长奖学金"
           ],
           "content": "background：每年只发放给一名毕业生，学费全免并发放丰厚生活费，象征校长的隆重推荐；候选者共有五人，最后看核心科目机械学成绩，最高者胜出；此项奖励根本就是罗曼校长为拜伦少爷设置的",
           "enabled": true,
-          "insertion_order": 1330,
+          "insertion_order": 1290,
           "position": "after_char",
           "comment": "校长奖学金",
           "extensions": {}
         },
         {
-          "id": 133,
+          "id": 129,
           "keys": [
             "泰伦特"
           ],
           "content": "appearance：只是个十三四岁的男孩\nstate：扑向西泽尔时手中只攥着一块石头",
           "enabled": true,
-          "insertion_order": 1340,
+          "insertion_order": 1300,
           "position": "after_char",
           "comment": "泰伦特",
           "extensions": {}
         },
         {
-          "id": 134,
-          "keys": [
-            "神怒骑士团"
-          ],
-          "content": "faction：神怒骑士团",
-          "enabled": true,
-          "insertion_order": 1350,
-          "position": "after_char",
-          "comment": "神怒骑士团",
-          "extensions": {}
-        },
-        {
-          "id": 135,
+          "id": 130,
           "keys": [
             "蒸汽里的男孩"
           ],
           "content": "ability：懂锡兰文字，能通过指尖发黄判断裘卡杜接触过吗啡粗制品\nidentity：排在第七个上场的挑战者",
           "enabled": true,
-          "insertion_order": 1360,
+          "insertion_order": 1310,
           "position": "after_char",
           "comment": "蒸汽里的男孩",
           "extensions": {}
         },
         {
-          "id": 136,
+          "id": 131,
           "keys": [
             "试制机零号"
           ],
           "content": "ability：仅用一只左手就摁停了全速突击的古洛诺斯，并拧下其头颅",
           "enabled": true,
-          "insertion_order": 1370,
+          "insertion_order": 1320,
           "position": "after_char",
           "comment": "试制机零号",
           "extensions": {}
         },
         {
-          "id": 137,
+          "id": 132,
           "keys": [
             "连射铳"
           ],
           "content": "appearance：长度超过两米，重量达50公斤，唯有庞加莱这种精英骑士才能执掌\nbackground：高台上装有四柄，带着长长的弹链\nidentity：炽天使的专用武器之一",
           "enabled": true,
-          "insertion_order": 1380,
+          "insertion_order": 1330,
           "position": "after_char",
           "comment": "连射铳",
           "extensions": {}
         },
         {
-          "id": 138,
+          "id": 133,
           "keys": [
             "阿瓦隆"
           ],
           "content": "background：位于北方冰海尽头的神秘岛屿，圣典记载了它的大约位置；人们从冰下挖出神创时代遗失的技术，今天的各式机械与翡冷翠城都源于那种神秘技术；教徒在阿瓦隆找到的不是神迹，而是另一个文明的遗迹，一个失落的史前文明\nstate：自教士离开后再也没有被找到，好像沉入了大海",
           "enabled": true,
-          "insertion_order": 1390,
+          "insertion_order": 1340,
           "position": "after_char",
           "comment": "阿瓦隆",
           "extensions": {}
         },
         {
-          "id": 139,
+          "id": 134,
           "keys": [
             "一字曰心冲锋队"
           ],
           "content": "background：来自夏国属国中山国，因凶猛异常而被教皇国关注；把脸涂成死人颜色、戴白色头带，表示已把自己看作死人",
           "enabled": true,
-          "insertion_order": 1400,
+          "insertion_order": 1350,
           "position": "after_char",
           "comment": "一字曰心冲锋队",
           "extensions": {}
         },
         {
-          "id": 140,
+          "id": 135,
           "keys": [
             "博尔吉亚家"
           ],
           "content": "goal：期待未来的骑士王出在博尔吉亚家，不在乎是普罗米修斯还是炽天使获胜\nidentity：以荆棘玫瑰为家徽，出了现任教皇",
           "enabled": true,
-          "insertion_order": 1410,
+          "insertion_order": 1360,
           "position": "after_char",
           "comment": "博尔吉亚家",
           "extensions": {}
         },
         {
-          "id": 141,
+          "id": 136,
           "keys": [
             "星见"
           ],
           "content": "background：巫女的领袖，以占卜星辰预测未来，以禁忌秘法守护大夏国运，通常终生都是处女；夏国皇廷供奉的巫女通常终生是处女，星见本人尤其如此\nidentity：夏国管理太庙的巫女领袖，按古规必须终生是处女",
           "enabled": true,
-          "insertion_order": 1420,
+          "insertion_order": 1370,
           "position": "after_char",
           "comment": "星见",
           "extensions": {}
         },
         {
-          "id": 142,
+          "id": 137,
           "keys": [
             "炽天铁骑Ⅳ型"
           ],
           "content": "appearance：身高2.47米，战术强化之后高度甚至能达到2.70米\nbackground：佛朗哥改进后的作品，炽天骑士团如今的主力甲胄\nidentity：教皇国炽天骑士团的机动甲胄，当今世界最先进的战争兵器",
           "enabled": true,
-          "insertion_order": 1430,
+          "insertion_order": 1380,
           "position": "after_char",
           "comment": "炽天铁骑Ⅳ型",
           "extensions": {}
         },
         {
-          "id": 143,
+          "id": 138,
           "keys": [
             "神怒Ⅱ型"
           ],
           "content": "ability：双动力核心，铍青铜装甲，峰值出力高达3000马力，是机动甲胄演进史的里程碑之作\nappearance：身高约2.5米，重接近150公斤，两个动力核心，峰值出力2800马力，材质为较柔软的铜合金\nbackground：世界上第一具拥有两个动力核心的机动甲胄，爆炸威力是神怒Ⅰ型的五倍以上\nstate：重大缺陷是对骑士极其挑剔，叶尼塞皇国半数骑士无法驾驭，导致它只是昙花一现",
           "enabled": true,
-          "insertion_order": 1440,
+          "insertion_order": 1390,
           "position": "after_char",
           "comment": "神怒Ⅱ型",
           "extensions": {}
         },
         {
-          "id": 144,
+          "id": 139,
           "keys": [
             "莉诺雅骑士团"
           ],
           "content": "identity：校内高年级男生组成、立志守护莉诺雅的组织，莉诺雅本人并不知道",
           "enabled": true,
-          "insertion_order": 1450,
+          "insertion_order": 1400,
           "position": "after_char",
           "comment": "莉诺雅骑士团",
           "extensions": {}
         },
         {
-          "id": 145,
-          "keys": [
-            "马莫斯上尉"
-          ],
-          "content": "character：马莫斯上尉",
-          "enabled": true,
-          "insertion_order": 1460,
-          "position": "after_char",
-          "comment": "马莫斯上尉",
-          "extensions": {}
-        },
-        {
-          "id": 146,
-          "keys": [
-            "龙牙剑"
-          ],
-          "content": "item：龙牙剑",
-          "enabled": true,
-          "insertion_order": 1470,
-          "position": "after_char",
-          "comment": "龙牙剑",
-          "extensions": {}
-        },
-        {
-          "id": 147,
+          "id": 140,
           "keys": [
             "中央圣所"
           ],
           "content": "background：当初制造炽天使甲胄的地方，至今是密涅瓦机关最神圣的实验场；位于地面以下175米，是天然的地下空穴而非人类开凿（指这一带地底）",
           "enabled": true,
-          "insertion_order": 1480,
+          "insertion_order": 1410,
           "position": "after_char",
           "comment": "中央圣所",
           "extensions": {}
         },
         {
-          "id": 148,
+          "id": 141,
           "keys": [
             "利维坦级飞艇"
           ],
           "content": "background：教皇国最杰出的战争工具之一，有百余米长的巨型气囊，填充轻质气体，能载重上浮到云层，出其不意且绝对无声\nstate：下降高度后被涂白磷的来复枪弹击中气囊焚毁，以自身生命为代价把黑箱丢进圣堂",
           "enabled": true,
-          "insertion_order": 1490,
+          "insertion_order": 1420,
           "position": "after_char",
           "comment": "利维坦级飞艇",
           "extensions": {}
         },
         {
-          "id": 149,
+          "id": 142,
           "keys": [
             "剑舞者"
           ],
           "content": "possession：配备加长版格斗双剑“天秤座”，格斗技巧在炽天铁骑中居前列",
           "enabled": true,
-          "insertion_order": 1500,
+          "insertion_order": 1430,
           "position": "after_char",
           "comment": "剑舞者",
           "extensions": {}
         },
         {
-          "id": 150,
+          "id": 143,
           "keys": [
             "教皇厅"
           ],
           "content": "goal：要的不是黑龙的追随者而是竞争者，是空前绝后的骑士之王",
           "enabled": true,
-          "insertion_order": 1510,
+          "insertion_order": 1440,
           "position": "after_char",
           "comment": "教皇厅",
           "extensions": {}
         },
         {
-          "id": 151,
-          "keys": [
-            "皇家卫士"
-          ],
-          "content": "faction：皇家卫士",
-          "enabled": true,
-          "insertion_order": 1520,
-          "position": "after_char",
-          "comment": "皇家卫士",
-          "extensions": {}
-        },
-        {
-          "id": 152,
+          "id": 144,
           "keys": [
             "迪迪埃"
           ],
           "content": "background：年近六十，是恋童癖\ngoal：为其子克莱德曼向阿黛尔求婚",
           "enabled": true,
-          "insertion_order": 1530,
+          "insertion_order": 1450,
           "position": "after_char",
           "comment": "迪迪埃",
           "extensions": {}
         },
         {
-          "id": 153,
+          "id": 145,
           "keys": [
             "雷霆牙"
           ],
           "content": "ability：后坐力惊人、重量惊人、生产成本惊人，以暴力闻名但准头有缺陷\nbackground：教皇国历史上最失败的武器设计之一，量产计划作废\nhistory：薇若兰受命主持研发，只用三个月拿出试制版",
           "enabled": true,
-          "insertion_order": 1540,
+          "insertion_order": 1460,
           "position": "after_char",
           "comment": "雷霆牙",
           "extensions": {}
         },
         {
-          "id": 154,
+          "id": 146,
           "keys": [
             "教皇宫"
           ],
           "content": "state：新年酒会警戒级别是全年的最高级，必要时重炮群可把广场轰成废墟",
           "enabled": true,
-          "insertion_order": 1550,
+          "insertion_order": 1470,
           "position": "after_char",
           "comment": "教皇宫",
           "extensions": {}
         },
         {
-          "id": 155,
+          "id": 147,
           "keys": [
             "朱砂"
           ],
           "content": "appearance：毛色红如朱砂，是夔龙马马群中的王者\nstate：额头上带着一个被子弹打穿的可怕弹洞",
           "enabled": true,
-          "insertion_order": 1560,
+          "insertion_order": 1480,
           "position": "after_char",
           "comment": "朱砂",
           "extensions": {}
         },
         {
-          "id": 156,
+          "id": 148,
           "keys": [
             "海格力斯之架"
           ],
           "content": "identity：武装炽天使的机械，用于装脱甲胄，体积太大无法带走；武装炽天使的专属机械",
           "enabled": true,
-          "insertion_order": 1570,
+          "insertion_order": 1490,
           "position": "after_char",
           "comment": "海格力斯之架",
           "extensions": {}
         },
         {
-          "id": 157,
+          "id": 149,
           "keys": [
             "男生"
           ],
           "content": "goal：考察新来的四人，背景够强就拉进圣峰狮子会，不够格就让他们滚远\nstate：戴家徽戒指，是贵族少爷，穆法兰正讨好他",
           "enabled": true,
-          "insertion_order": 1580,
+          "insertion_order": 1500,
           "position": "after_char",
           "comment": "男生",
           "extensions": {}
         },
         {
-          "id": 158,
+          "id": 150,
           "keys": [
             "白狼"
           ],
           "content": "background：翡冷翠郊外的山中这种狼为数不少",
           "enabled": true,
-          "insertion_order": 1590,
+          "insertion_order": 1510,
           "position": "after_char",
           "comment": "白狼",
           "extensions": {}
         },
         {
-          "id": 159,
+          "id": 151,
           "keys": [
             "紫瞳"
           ],
           "content": "background：神话里恶魔的眼睛就是紫色，多数家庭视紫瞳孩子为不祥；历代炽天使骑士中紫瞳比例相当大，被认为在驾驭炽天使方面有特殊优势",
           "enabled": true,
-          "insertion_order": 1600,
+          "insertion_order": 1520,
           "position": "after_char",
           "comment": "紫瞳",
           "extensions": {}
         },
         {
-          "id": 160,
-          "keys": [
-            "经纪人"
-          ],
-          "content": "character：经纪人",
-          "enabled": true,
-          "insertion_order": 1610,
-          "position": "after_char",
-          "comment": "经纪人",
-          "extensions": {}
-        },
-        {
-          "id": 161,
+          "id": 152,
           "keys": [
             "老神父"
           ],
           "content": "state：为抢救数学研究资料连续进出火场，被浓烟熏倒身亡",
           "enabled": true,
-          "insertion_order": 1620,
+          "insertion_order": 1530,
           "position": "after_char",
           "comment": "老神父",
           "extensions": {}
         },
         {
-          "id": 162,
-          "keys": [
-            "黑衣人"
-          ],
-          "content": "character：黑衣人",
-          "enabled": true,
-          "insertion_order": 1630,
-          "position": "after_char",
-          "comment": "黑衣人",
-          "extensions": {}
-        },
-        {
-          "id": 163,
+          "id": 153,
           "keys": [
             "史宾赛大主教"
           ],
           "content": "ability：神学造诣堪称教团第一，辩论从不犯错",
           "enabled": true,
-          "insertion_order": 1640,
+          "insertion_order": 1540,
           "position": "after_char",
           "comment": "史宾赛大主教",
           "extensions": {}
         },
         {
-          "id": 164,
+          "id": 154,
           "keys": [
             "圣域"
           ],
           "content": "background：以摩斯密码箱通报的地址为中心，半径一公里内标记为圣域，法律不生效，无关的人须尽快撤走；圣域内法律与指挥权皆不生效，只有枢机会的神权生效；以灾难发生地为中心、一公里为半径，只有教廷军队有执法权",
           "enabled": true,
-          "insertion_order": 1650,
+          "insertion_order": 1550,
           "position": "after_char",
           "comment": "圣域",
           "extensions": {}
         },
         {
-          "id": 165,
-          "keys": [
-            "圣堂装甲师少将"
-          ],
-          "content": "character：圣堂装甲师少将",
-          "enabled": true,
-          "insertion_order": 1660,
-          "position": "after_char",
-          "comment": "圣堂装甲师少将",
-          "extensions": {}
-        },
-        {
-          "id": 166,
+          "id": 155,
           "keys": [
             "夏宫"
           ],
           "content": "background：本来是夏天家里老人们避暑的地方，现在是家族聚会的场地；其实是一座机械的圣堂，地下有类似维苏威火山的熔炉提供动力",
           "enabled": true,
-          "insertion_order": 1670,
+          "insertion_order": 1560,
           "position": "after_char",
           "comment": "夏宫",
           "extensions": {}
         },
         {
-          "id": 167,
+          "id": 156,
           "keys": [
             "夔龙马"
           ],
           "content": "ability：能够扛得动五十公斤重的重甲\nbackground：身形惊人的巨型战马，由特殊的繁育机关培育；惊人的体力靠藏在马鞍中的兴奋剂提供，兴奋剂令它们不知疲倦直到战死",
           "enabled": true,
-          "insertion_order": 1680,
+          "insertion_order": 1570,
           "position": "after_char",
           "comment": "夔龙马",
           "extensions": {}
         },
         {
-          "id": 168,
+          "id": 157,
           "keys": [
             "女老师"
           ],
           "content": "ability：用自上而下的方式讲授机械的逻辑和哲学，主张机械是另外一种生命\nappearance：穿色彩绚丽的真丝短旗袍，白色长发，巧克力色肌肤，尖而细的白色高跟鞋",
           "enabled": true,
-          "insertion_order": 1690,
+          "insertion_order": 1580,
           "position": "after_char",
           "comment": "女老师",
           "extensions": {}
         },
         {
-          "id": 169,
-          "keys": [
-            "年轻神父"
-          ],
-          "content": "character：年轻神父",
-          "enabled": true,
-          "insertion_order": 1700,
-          "position": "after_char",
-          "comment": "年轻神父",
-          "extensions": {}
-        },
-        {
-          "id": 170,
-          "keys": [
-            "恒动天学宫"
-          ],
-          "content": "place：恒动天学宫",
-          "enabled": true,
-          "insertion_order": 1710,
-          "position": "after_char",
-          "comment": "恒动天学宫",
-          "extensions": {}
-        },
-        {
-          "id": 171,
+          "id": 158,
           "keys": [
             "拜伦侯爵"
           ],
           "content": "identity：新罗马帝国军部的要员，曾任皇帝的首席参谋长",
           "enabled": true,
-          "insertion_order": 1720,
+          "insertion_order": 1590,
           "position": "after_char",
           "comment": "拜伦侯爵",
           "extensions": {}
         },
         {
-          "id": 172,
+          "id": 159,
           "keys": [
             "摩斯密码箱"
           ],
           "content": "ability：密涅瓦机关的新型设备，使最高指挥官不必亲临前线\nbackground：报警时接收者须停下所有工作解读地址并传达给友方",
           "enabled": true,
-          "insertion_order": 1730,
+          "insertion_order": 1600,
           "position": "after_char",
           "comment": "摩斯密码箱",
           "extensions": {}
         },
         {
-          "id": 173,
+          "id": 160,
           "keys": [
             "撒旦教团"
           ],
           "content": "background：异端中的极恶组织，用各种方式挑战弥赛亚圣教的统治，首脑占据通缉榜前列",
           "enabled": true,
-          "insertion_order": 1740,
+          "insertion_order": 1610,
           "position": "after_char",
           "comment": "撒旦教团",
           "extensions": {}
         },
         {
-          "id": 174,
-          "keys": [
-            "教皇博尔吉亚三世"
-          ],
-          "content": "character：教皇博尔吉亚三世",
-          "enabled": true,
-          "insertion_order": 1750,
-          "position": "after_char",
-          "comment": "教皇博尔吉亚三世",
-          "extensions": {}
-        },
-        {
-          "id": 175,
+          "id": 161,
           "keys": [
             "来访的中年男人"
           ],
           "content": "identity：自称此次前来只是作为学生家长\npossession：佩戴黄金圣徽",
           "enabled": true,
-          "insertion_order": 1760,
+          "insertion_order": 1620,
           "position": "after_char",
           "comment": "来访的中年男人",
           "extensions": {}
         },
         {
-          "id": 176,
+          "id": 162,
           "keys": [
             "蒂塔夫人"
           ],
           "content": "identity：翡冷翠最有名的沙龙女王之一，代表市民给教皇献花\npossession：戴着用名钻“婆罗多之星”镶嵌的项链，穿着孔雀羽装饰的拖地长裙",
           "enabled": true,
-          "insertion_order": 1770,
+          "insertion_order": 1630,
           "position": "after_char",
           "comment": "蒂塔夫人",
           "extensions": {}
         },
         {
-          "id": 177,
+          "id": 163,
           "keys": [
             "蜘蛛巢"
           ],
           "content": "background：阿方索亲手制作、专为战场指挥官设计的腕表，西泽尔十五岁时的生日礼物\npossession：一块指挥官腕表，由他手下一名机械师赠送",
           "enabled": true,
-          "insertion_order": 1780,
+          "insertion_order": 1640,
           "position": "after_char",
           "comment": "蜘蛛巢",
           "extensions": {}
         },
         {
-          "id": 178,
-          "keys": [
-            "西斯廷大教堂"
-          ],
-          "content": "place：西斯廷大教堂",
-          "enabled": true,
-          "insertion_order": 1790,
-          "position": "after_char",
-          "comment": "西斯廷大教堂",
-          "extensions": {}
-        },
-        {
-          "id": 179,
-          "keys": [
-            "赫斯塔尔少校"
-          ],
-          "content": "character：赫斯塔尔少校",
-          "enabled": true,
-          "insertion_order": 1800,
-          "position": "after_char",
-          "comment": "赫斯塔尔少校",
-          "extensions": {}
-        },
-        {
-          "id": 180,
+          "id": 164,
           "keys": [
             "金刚猛士"
           ],
           "content": "ability：加厚装甲板令它能扛住军用火铳的近距离射击",
           "enabled": true,
-          "insertion_order": 1810,
+          "insertion_order": 1650,
           "position": "after_char",
           "comment": "金刚猛士",
           "extensions": {}
         },
         {
-          "id": 181,
+          "id": 165,
           "keys": [
             "马其顿阵"
           ],
           "content": "ability：小型化后可一次发射上百枚全金属箭矢，破甲箭头\nbackground：本由教皇国研发，用蒸汽炮发射成束长矛，威力聚集在矛尖，足以贯穿机动甲胄装甲板；教皇国认为它对自己用处不大，怕落到东方人手里，于是把图纸封存起来",
           "enabled": true,
-          "insertion_order": 1820,
+          "insertion_order": 1660,
           "position": "after_char",
           "comment": "马其顿阵",
           "extensions": {}
         },
         {
-          "id": 182,
-          "keys": [
-            "中年贵族"
-          ],
-          "content": "character：中年贵族",
-          "enabled": true,
-          "insertion_order": 1830,
-          "position": "after_char",
-          "comment": "中年贵族",
-          "extensions": {}
-        },
-        {
-          "id": 183,
-          "keys": [
-            "副官"
-          ],
-          "content": "character：副官",
-          "enabled": true,
-          "insertion_order": 1840,
-          "position": "after_char",
-          "comment": "副官",
-          "extensions": {}
-        },
-        {
-          "id": 184,
+          "id": 166,
           "keys": [
             "幕后权力者"
           ],
           "content": "goal：认定西泽尔没有用，决定放弃他并让一切结束在西斯廷大教堂",
           "enabled": true,
-          "insertion_order": 1850,
+          "insertion_order": 1670,
           "position": "after_char",
           "comment": "幕后权力者",
           "extensions": {}
         },
         {
-          "id": 185,
+          "id": 167,
           "keys": [
             "美第奇家族"
           ],
           "content": "background：家徽是蛇发女妖美杜莎，以银行业发家，掌握西方世界的金融大权",
           "enabled": true,
-          "insertion_order": 1860,
+          "insertion_order": 1680,
           "position": "after_char",
           "comment": "美第奇家族",
           "extensions": {}
         },
         {
-          "id": 186,
+          "id": 168,
           "keys": [
             "金伦加隧道"
           ],
           "content": "appearance：在山腹挖掘的长达十二公里的隧道，花整整五年，耗费十二节车厢的炸药；是楚舜华的目标",
           "enabled": true,
-          "insertion_order": 1870,
+          "insertion_order": 1690,
           "position": "after_char",
           "comment": "金伦加隧道",
           "extensions": {}
         },
         {
-          "id": 187,
+          "id": 169,
           "keys": [
             "魔女"
           ],
           "content": "background：弥赛亚圣教教义中最危险的恶魔，化成美女的模样蛊惑世人\nstate：触碰魔女是绝大禁忌，许多撒旦教团神父警告会引发不可预测的恐怖后果",
           "enabled": true,
-          "insertion_order": 1880,
+          "insertion_order": 1700,
           "position": "after_char",
           "comment": "魔女",
           "extensions": {}
         },
         {
-          "id": 188,
-          "keys": [
-            "假面骑士兄弟会"
-          ],
-          "content": "faction：假面骑士兄弟会",
-          "enabled": true,
-          "insertion_order": 1890,
-          "position": "after_char",
-          "comment": "假面骑士兄弟会",
-          "extensions": {}
-        },
-        {
-          "id": 189,
+          "id": 170,
           "keys": [
             "医疗组长"
           ],
           "content": "background：几年之前换了新人，没有参与过西泽尔当年的实验",
           "enabled": true,
-          "insertion_order": 1900,
+          "insertion_order": 1710,
           "position": "after_char",
           "comment": "医疗组长",
           "extensions": {}
         },
         {
-          "id": 190,
+          "id": 171,
           "keys": [
             "安东尼元帅"
           ],
           "content": "identity：十字禁卫军元帅，教皇国级别最高的现役军人",
           "enabled": true,
-          "insertion_order": 1910,
+          "insertion_order": 1720,
           "position": "after_char",
           "comment": "安东尼元帅",
           "extensions": {}
         },
         {
-          "id": 191,
+          "id": 172,
           "keys": [
             "家族晚宴"
           ],
           "content": "background：入镜厅用餐的都是十几岁的男孩女孩，最小的与西泽尔差不多大，年长的约十八岁\ngoal：为选拔最优秀的后代而举行，表现出色者获家族最大支持",
           "enabled": true,
-          "insertion_order": 1920,
+          "insertion_order": 1730,
           "position": "after_char",
           "comment": "家族晚宴",
           "extensions": {}
         },
         {
-          "id": 192,
+          "id": 173,
           "keys": [
             "家族邮差"
           ],
           "content": "identity：只有翡冷翠最大的几个家族才有，进入任何豪华住宅都不会被阻拦",
           "enabled": true,
-          "insertion_order": 1930,
+          "insertion_order": 1740,
           "position": "after_char",
           "comment": "家族邮差",
           "extensions": {}
         },
         {
-          "id": 193,
+          "id": 174,
           "keys": [
             "巴别塔"
           ],
           "content": "background：密涅瓦机关对圆台的称呼，取自弥赛亚圣教神话中通往天国的高塔",
           "enabled": true,
-          "insertion_order": 1940,
+          "insertion_order": 1750,
           "position": "after_char",
           "comment": "巴别塔",
           "extensions": {}
         },
         {
-          "id": 194,
+          "id": 175,
           "keys": [
             "狮心骑士团"
           ],
           "content": "background：皇帝座下的部队，号称能和教皇国的炽天骑士团相比，却在锡兰山地作战中遭重创",
           "enabled": true,
-          "insertion_order": 1950,
+          "insertion_order": 1760,
           "position": "after_char",
           "comment": "狮心骑士团",
           "extensions": {}
         },
         {
-          "id": 195,
+          "id": 176,
           "keys": [
             "神怒骑士"
           ],
           "content": "appearance：都是见过血的老兵，熊虎一般的后背微微隆起",
           "enabled": true,
-          "insertion_order": 1960,
+          "insertion_order": 1770,
           "position": "after_char",
           "comment": "神怒骑士",
           "extensions": {}
         },
         {
-          "id": 196,
-          "keys": [
-            "试制机一号"
-          ],
-          "content": "item：试制机一号",
-          "enabled": true,
-          "insertion_order": 1970,
-          "position": "after_char",
-          "comment": "试制机一号",
-          "extensions": {}
-        },
-        {
-          "id": 197,
-          "keys": [
-            "金伦加会战"
-          ],
-          "content": "event：金伦加会战",
-          "enabled": true,
-          "insertion_order": 1980,
-          "position": "after_char",
-          "comment": "金伦加会战",
-          "extensions": {}
-        },
-        {
-          "id": 198,
+          "id": 177,
           "keys": [
             "铁十字堡"
           ],
           "content": "appearance：位于教廷区内的巨大白色建筑，平实如白色岩石，从正上方看呈完美正十字形，建了近百年\nstate：独立的系统，不完全服从于教廷，建立了一套复杂的军功系统",
           "enabled": true,
-          "insertion_order": 1990,
+          "insertion_order": 1780,
           "position": "after_char",
           "comment": "铁十字堡",
           "extensions": {}
         },
         {
-          "id": 199,
+          "id": 178,
           "keys": [
             "阿瓦隆之舟"
           ],
           "content": "identity：配备重型装甲的白色礼车，是教皇博尔吉亚三世的座驾",
           "enabled": true,
-          "insertion_order": 2000,
+          "insertion_order": 1790,
           "position": "after_char",
           "comment": "阿瓦隆之舟",
           "extensions": {}
         },
         {
-          "id": 200,
+          "id": 179,
           "keys": [
             "风部队"
           ],
           "content": "background：兼具高速和重甲的骑兵，承担冲锋任务",
           "enabled": true,
-          "insertion_order": 2010,
+          "insertion_order": 1800,
           "position": "after_char",
           "comment": "风部队",
           "extensions": {}
         },
         {
-          "id": 201,
+          "id": 180,
           "keys": [
             "高文·美第奇"
           ],
           "content": "identity：美第奇家的少爷，法老宫赌局的组织者，以能花钱和会玩著称",
           "enabled": true,
-          "insertion_order": 2020,
+          "insertion_order": 1810,
           "position": "after_char",
           "comment": "高文·美第奇",
           "extensions": {}
         },
         {
-          "id": 202,
+          "id": 181,
           "keys": [
             "黑骑士团"
           ],
           "content": "state：进攻翡冷翠时被炽天铁骑全歼，几乎没有生还者",
           "enabled": true,
-          "insertion_order": 2030,
+          "insertion_order": 1820,
           "position": "after_char",
           "comment": "黑骑士团",
           "extensions": {}
         },
         {
-          "id": 203,
+          "id": 182,
           "keys": [
             "Longinus"
           ],
           "content": "background：足长四米的异形枪械，没人能抵挡它的一击\nstate：破城弹已经顶入枪膛，但龙德施泰特暂未射击",
           "enabled": true,
-          "insertion_order": 2040,
+          "insertion_order": 1830,
           "position": "after_char",
           "comment": "Longinus",
           "extensions": {}
         },
         {
-          "id": 204,
+          "id": 183,
           "keys": [
             "伏羲金钱"
           ],
           "content": "appearance：八角形钱币，正面男神、背面女神，皆人面蛇身，蛇尾越过边缘纠缠在一起",
           "enabled": true,
-          "insertion_order": 2050,
+          "insertion_order": 1840,
           "position": "after_char",
           "comment": "伏羲金钱",
           "extensions": {}
         },
         {
-          "id": 205,
+          "id": 184,
           "keys": [
             "克里特岛"
           ],
           "content": "background：教皇国属地，偏远落后，岛上只有初等学校",
           "enabled": true,
-          "insertion_order": 2060,
+          "insertion_order": 1850,
           "position": "after_char",
           "comment": "克里特岛",
           "extensions": {}
         },
         {
-          "id": 206,
-          "keys": [
-            "原罪机关主人"
-          ],
-          "content": "character：原罪机关主人",
-          "enabled": true,
-          "insertion_order": 2070,
-          "position": "after_char",
-          "comment": "原罪机关主人",
-          "extensions": {}
-        },
-        {
-          "id": 207,
-          "keys": [
-            "君士坦丁堡"
-          ],
-          "content": "place：君士坦丁堡",
-          "enabled": true,
-          "insertion_order": 2080,
-          "position": "after_char",
-          "comment": "君士坦丁堡",
-          "extensions": {}
-        },
-        {
-          "id": 208,
+          "id": 185,
           "keys": [
             "圣女塔"
           ],
           "content": "background：百年前皇帝为深爱的一位立志成为修女的皇妃所建的修行地",
           "enabled": true,
-          "insertion_order": 2090,
+          "insertion_order": 1860,
           "position": "after_char",
           "comment": "圣女塔",
           "extensions": {}
         },
         {
-          "id": 209,
+          "id": 186,
           "keys": [
             "圣枪装具·Longinus"
           ],
           "content": "ability：世界上射程最长的枪，调整后射程能超过四公里，由龙德施泰特负责操作以射杀楚舜华\nappearance：外形像火枪但长度达四米，表面纠缠曲折铜管；弹头长达二十厘米、婴儿手臂粗细，表面有复杂螺旋花纹",
           "enabled": true,
-          "insertion_order": 2100,
+          "insertion_order": 1870,
           "position": "after_char",
           "comment": "圣枪装具·Longinus",
           "extensions": {}
         },
         {
-          "id": 210,
+          "id": 187,
           "keys": [
             "奥古斯都"
           ],
           "content": "ability：昆提良的定制甲胄，冲锋型，强化装甲，动力核心为亥伯龙三代，配备完美金属盾牌与大型破甲斧",
           "enabled": true,
-          "insertion_order": 2110,
+          "insertion_order": 1880,
           "position": "after_char",
           "comment": "奥古斯都",
           "extensions": {}
         },
         {
-          "id": 211,
-          "keys": [
-            "安东尼将军"
-          ],
-          "content": "character：安东尼将军",
-          "enabled": true,
-          "insertion_order": 2120,
-          "position": "after_char",
-          "comment": "安东尼将军",
-          "extensions": {}
-        },
-        {
-          "id": 212,
+          "id": 188,
           "keys": [
             "宗教秘密法",
             "《宗教秘密法》"
           ],
           "content": "background：星历1794年制定，教皇国盟友必须接受才能得到技术支持",
           "enabled": true,
-          "insertion_order": 2130,
+          "insertion_order": 1890,
           "position": "after_char",
           "comment": "宗教秘密法",
           "extensions": {}
         },
         {
-          "id": 213,
+          "id": 189,
           "keys": [
             "开罐刀"
           ],
           "content": "background：由密涅瓦机关发明的大口径破甲枪，锥形弹能有效穿透甲胄；骑士们戏称自己为铁皮罐头，故有此名",
           "enabled": true,
-          "insertion_order": 2140,
+          "insertion_order": 1900,
           "position": "after_char",
           "comment": "开罐刀",
           "extensions": {}
         },
         {
-          "id": 214,
+          "id": 190,
           "keys": [
             "悬空灯"
           ],
           "content": "ability：牛油灯烧热气囊中的空气，灯能在夜空悬浮半小时\nbackground：用牛皮表层制成一人高的半透明气囊，内安置牛油灯",
           "enabled": true,
-          "insertion_order": 2150,
+          "insertion_order": 1910,
           "position": "after_char",
           "comment": "悬空灯",
           "extensions": {}
         },
         {
-          "id": 215,
+          "id": 191,
           "keys": [
             "明堂"
           ],
           "content": "background：天子议事之所，取“兼听则明”之意",
           "enabled": true,
-          "insertion_order": 2160,
+          "insertion_order": 1920,
           "position": "after_char",
           "comment": "明堂",
           "extensions": {}
         },
         {
-          "id": 216,
+          "id": 192,
           "keys": [
             "查士丁尼七世"
           ],
           "content": "appearance：英明果敢，是闻名西方的美男子",
           "enabled": true,
-          "insertion_order": 2170,
+          "insertion_order": 1930,
           "position": "after_char",
           "comment": "查士丁尼七世",
           "extensions": {}
         },
         {
-          "id": 217,
-          "keys": [
-            "格里高利家"
-          ],
-          "content": "faction：格里高利家",
-          "enabled": true,
-          "insertion_order": 2180,
-          "position": "after_char",
-          "comment": "格里高利家",
-          "extensions": {}
-        },
-        {
-          "id": 218,
+          "id": 193,
           "keys": [
             "火车"
           ],
           "content": "appearance：整体漆黑、磨砂表面几乎无反光，运行极安静，车厢体积是正常车厢的几倍且全封闭，温度始终在零摄氏度以下\nbackground：不遵循任何列车时刻表，悄无声息来去，经过的铁路都为它清空，亲眼见过它的人极少，押车人频繁更换，所到之处战火蔓延",
           "enabled": true,
-          "insertion_order": 2190,
+          "insertion_order": 1940,
           "position": "after_char",
           "comment": "火车",
           "extensions": {}
         },
         {
-          "id": 219,
+          "id": 194,
           "keys": [
             "炽天武装"
           ],
           "content": "background：由教皇国核心技术机关密涅瓦机关制造，造价高昂、数量极其有限\nstate：跟炽天使比起来就是七拼八凑的二流货色",
           "enabled": true,
-          "insertion_order": 2200,
+          "insertion_order": 1950,
           "position": "after_char",
           "comment": "炽天武装",
           "extensions": {}
         },
         {
-          "id": 220,
-          "keys": [
-            "特洛伊酒店"
-          ],
-          "content": "place：特洛伊酒店",
-          "enabled": true,
-          "insertion_order": 2210,
-          "position": "after_char",
-          "comment": "特洛伊酒店",
-          "extensions": {}
-        },
-        {
-          "id": 221,
+          "id": 195,
           "keys": [
             "破山弩"
           ],
           "content": "background：有数百年历史的钢铁弩机，威力极大，射程极远\nstate：唯一缺陷是必须由经验丰富的弩手操纵",
           "enabled": true,
-          "insertion_order": 2220,
+          "insertion_order": 1960,
           "position": "after_char",
           "comment": "破山弩",
           "extensions": {}
         },
         {
-          "id": 222,
+          "id": 196,
           "keys": [
             "神授骑士"
           ],
           "content": "background：适格者的另一种称呼，能力是神授的，无法通过学习强化；没有固定比例，最好的情况下百名侍从骑士中能出一个",
           "enabled": true,
-          "insertion_order": 2230,
+          "insertion_order": 1970,
           "position": "after_char",
           "comment": "神授骑士",
           "extensions": {}
         },
         {
-          "id": 223,
-          "keys": [
-            "美第奇家"
-          ],
-          "content": "faction：美第奇家",
-          "enabled": true,
-          "insertion_order": 2240,
-          "position": "after_char",
-          "comment": "美第奇家",
-          "extensions": {}
-        },
-        {
-          "id": 224,
+          "id": 197,
           "keys": [
             "苏珊娜·美第奇"
           ],
           "content": "background：路易吉和胡安的母亲，美第奇家族的女儿，地位不凡",
           "enabled": true,
-          "insertion_order": 2250,
+          "insertion_order": 1980,
           "position": "after_char",
           "comment": "苏珊娜·美第奇",
           "extensions": {}
         },
         {
-          "id": 225,
-          "keys": [
-            "莎珊小姐"
-          ],
-          "content": "character：莎珊小姐",
-          "enabled": true,
-          "insertion_order": 2260,
-          "position": "after_char",
-          "comment": "莎珊小姐",
-          "extensions": {}
-        },
-        {
-          "id": 226,
+          "id": 198,
           "keys": [
             "莲花广场"
           ],
           "content": "background：每年国庆时这里会举行泼水庆祝的仪式",
           "enabled": true,
-          "insertion_order": 2270,
+          "insertion_order": 1990,
           "position": "after_char",
           "comment": "莲花广场",
           "extensions": {}
         },
         {
-          "id": 227,
+          "id": 199,
           "keys": [
             "蔷薇之鬼"
           ],
           "content": "ability：刺客型甲胄，超轻护甲，极限速度，配备黑刃、锥枪与曲刃镰",
           "enabled": true,
-          "insertion_order": 2280,
+          "insertion_order": 2000,
           "position": "after_char",
           "comment": "蔷薇之鬼",
           "extensions": {}
         },
         {
-          "id": 228,
+          "id": 200,
           "keys": [
             "那几位阁下"
           ],
           "content": "state：不愿听到西泽尔取得足以威胁黑龙成绩的消息，让他们不开心的后果很可怕",
           "enabled": true,
-          "insertion_order": 2290,
+          "insertion_order": 2010,
           "position": "after_char",
           "comment": "那几位阁下",
           "extensions": {}
         },
         {
-          "id": 229,
-          "keys": [
-            "金吾卫"
-          ],
-          "content": "faction：金吾卫",
-          "enabled": true,
-          "insertion_order": 2300,
-          "position": "after_char",
-          "comment": "金吾卫",
-          "extensions": {}
-        },
-        {
-          "id": 230,
+          "id": 201,
           "keys": [
             "铛铛车"
           ],
           "content": "background：由马斯顿王立机械学院修建的试验性铁路，坚固程度无法跑重型列车，地图上标为虚线",
           "enabled": true,
-          "insertion_order": 2310,
+          "insertion_order": 2020,
           "position": "after_char",
           "comment": "铛铛车",
           "extensions": {}
         },
         {
-          "id": 231,
+          "id": 202,
           "keys": [
             "锡兰王都"
           ],
           "content": "state：人口约70万，一夜之间从不同道路逃散一空",
           "enabled": true,
-          "insertion_order": 2320,
+          "insertion_order": 2030,
           "position": "after_char",
           "comment": "锡兰王都",
           "extensions": {}
         },
         {
-          "id": 232,
-          "keys": [
-            "雷"
-          ],
-          "content": "character：雷",
-          "enabled": true,
-          "insertion_order": 2330,
-          "position": "after_char",
-          "comment": "雷",
-          "extensions": {}
-        },
-        {
-          "id": 233,
-          "keys": [
-            "高文"
-          ],
-          "content": "character：高文",
-          "enabled": true,
-          "insertion_order": 2340,
-          "position": "after_char",
-          "comment": "高文",
-          "extensions": {}
-        },
-        {
-          "id": 234,
+          "id": 203,
           "keys": [
             "仲夏夜庆典"
           ],
           "content": "background：马斯顿每年举办，游客与本地人载歌载舞豪饮香槟，男孩借礼服与香槟向心爱女孩表白",
           "enabled": true,
-          "insertion_order": 2350,
+          "insertion_order": 2040,
           "position": "after_char",
           "comment": "仲夏夜庆典",
           "extensions": {}
         },
         {
-          "id": 235,
-          "keys": [
-            "六翼猫头鹰"
-          ],
-          "content": "concept：六翼猫头鹰",
-          "enabled": true,
-          "insertion_order": 2360,
-          "position": "after_char",
-          "comment": "六翼猫头鹰",
-          "extensions": {}
-        },
-        {
-          "id": 236,
-          "keys": [
-            "卫士长"
-          ],
-          "content": "character：卫士长",
-          "enabled": true,
-          "insertion_order": 2370,
-          "position": "after_char",
-          "comment": "卫士长",
-          "extensions": {}
-        },
-        {
-          "id": 237,
+          "id": 204,
           "keys": [
             "叹息之墙"
           ],
           "content": "identity：原意是分隔天堂和地狱的墙壁，任地狱中的灵魂怨念几千万年也绝不坍塌",
           "enabled": true,
-          "insertion_order": 2380,
+          "insertion_order": 2050,
           "position": "after_char",
           "comment": "叹息之墙",
           "extensions": {}
         },
         {
-          "id": 238,
+          "id": 205,
           "keys": [
             "圣峰狮子会"
           ],
           "content": "background：与骷髅兄弟会并列为都灵圣教院最负盛名的两大秘密社团，二者相互敌对",
           "enabled": true,
-          "insertion_order": 2390,
+          "insertion_order": 2060,
           "position": "after_char",
           "comment": "圣峰狮子会",
           "extensions": {}
         },
         {
-          "id": 239,
+          "id": 206,
           "keys": [
             "圣战之路"
           ],
           "content": "goal：计划从马斯顿出发，穿越高加索山的山隘，直达夏国的战略要塞龙城",
           "enabled": true,
-          "insertion_order": 2400,
+          "insertion_order": 2070,
           "position": "after_char",
           "comment": "圣战之路",
           "extensions": {}
         },
         {
-          "id": 240,
-          "keys": [
-            "大夏联邦"
-          ],
-          "content": "faction：大夏联邦",
-          "enabled": true,
-          "insertion_order": 2410,
-          "position": "after_char",
-          "comment": "大夏联邦",
-          "extensions": {}
-        },
-        {
-          "id": 241,
+          "id": 207,
           "keys": [
             "天赋骑士"
           ],
           "content": "identity：是能够和神经接驳系统融合的怪物，只有这种人能穿上炽天使甲胄",
           "enabled": true,
-          "insertion_order": 2420,
+          "insertion_order": 2080,
           "position": "after_char",
           "comment": "天赋骑士",
           "extensions": {}
         },
         {
-          "id": 242,
-          "keys": [
-            "尼古拉亲王"
-          ],
-          "content": "character：尼古拉亲王",
-          "enabled": true,
-          "insertion_order": 2430,
-          "position": "after_char",
-          "comment": "尼古拉亲王",
-          "extensions": {}
-        },
-        {
-          "id": 243,
+          "id": 208,
           "keys": [
             "尼禄"
           ],
           "content": "state：被宣布为异端并烧死在火刑架上",
           "enabled": true,
-          "insertion_order": 2440,
+          "insertion_order": 2090,
           "position": "after_char",
           "comment": "尼禄",
           "extensions": {}
         },
         {
-          "id": 244,
+          "id": 209,
           "keys": [
             "所罗门王"
           ],
           "content": "ability：阿方索的支援型甲胄，燃料舱最大，可为其他骑士补充能源，肩部火神炮射程达一公里",
           "enabled": true,
-          "insertion_order": 2450,
+          "insertion_order": 2100,
           "position": "after_char",
           "comment": "所罗门王",
           "extensions": {}
         },
         {
-          "id": 245,
-          "keys": [
-            "攻城锤"
-          ],
-          "content": "character：攻城锤",
-          "enabled": true,
-          "insertion_order": 2460,
-          "position": "after_char",
-          "comment": "攻城锤",
-          "extensions": {}
-        },
-        {
-          "id": 246,
-          "keys": [
-            "旧罗马帝国"
-          ],
-          "content": "faction：旧罗马帝国",
-          "enabled": true,
-          "insertion_order": 2470,
-          "position": "after_char",
-          "comment": "旧罗马帝国",
-          "extensions": {}
-        },
-        {
-          "id": 247,
-          "keys": [
-            "洛阳"
-          ],
-          "content": "place：洛阳",
-          "enabled": true,
-          "insertion_order": 2480,
-          "position": "after_char",
-          "comment": "洛阳",
-          "extensions": {}
-        },
-        {
-          "id": 248,
+          "id": 210,
           "keys": [
             "焚城炮"
           ],
           "content": "ability：炮弹灌满红水银，划陡峭弧线落下，把整座城市化为火海",
           "enabled": true,
-          "insertion_order": 2490,
+          "insertion_order": 2110,
           "position": "after_char",
           "comment": "焚城炮",
           "extensions": {}
         },
         {
-          "id": 249,
+          "id": 211,
           "keys": [
             "狂化"
           ],
           "content": "identity：强行取得骑士之骨的控制权，这种事只会发生在天赋骑士身上",
           "enabled": true,
-          "insertion_order": 2500,
+          "insertion_order": 2120,
           "position": "after_char",
           "comment": "狂化",
           "extensions": {}
         },
         {
-          "id": 250,
+          "id": 212,
           "keys": [
             "猎狐犬"
           ],
           "content": "state：只有屠龙者三分之二高的次品小号甲胄，锈迹斑斑、零件松动",
           "enabled": true,
-          "insertion_order": 2510,
+          "insertion_order": 2130,
           "position": "after_char",
           "comment": "猎狐犬",
           "extensions": {}
         },
         {
-          "id": 251,
-          "keys": [
-            "琳琅"
-          ],
-          "content": "character：琳琅",
-          "enabled": true,
-          "insertion_order": 2520,
-          "position": "after_char",
-          "comment": "琳琅",
-          "extensions": {}
-        },
-        {
-          "id": 252,
-          "keys": [
-            "白衣修士"
-          ],
-          "content": "faction：白衣修士",
-          "enabled": true,
-          "insertion_order": 2530,
-          "position": "after_char",
-          "comment": "白衣修士",
-          "extensions": {}
-        },
-        {
-          "id": 253,
+          "id": 213,
           "keys": [
             "神圣灾难"
           ],
           "content": "background：关于神与魔鬼等超越人类认知范畴的事件",
           "enabled": true,
-          "insertion_order": 2540,
+          "insertion_order": 2140,
           "position": "after_char",
           "comment": "神圣灾难",
           "extensions": {}
         },
         {
-          "id": 254,
-          "keys": [
-            "红衣主教"
-          ],
-          "content": "faction：红衣主教",
-          "enabled": true,
-          "insertion_order": 2550,
-          "position": "after_char",
-          "comment": "红衣主教",
-          "extensions": {}
-        },
-        {
-          "id": 255,
+          "id": 214,
           "keys": [
             "美第奇"
           ],
           "content": "identity：翡冷翠与博尔吉亚并列的大姓氏之一",
           "enabled": true,
-          "insertion_order": 2560,
+          "insertion_order": 2150,
           "position": "after_char",
           "comment": "美第奇",
           "extensions": {}
         },
         {
-          "id": 256,
-          "keys": [
-            "莫妮卡夫人"
-          ],
-          "content": "character：莫妮卡夫人",
-          "enabled": true,
-          "insertion_order": 2570,
-          "position": "after_char",
-          "comment": "莫妮卡夫人",
-          "extensions": {}
-        },
-        {
-          "id": 257,
-          "keys": [
-            "莱娅小姐"
-          ],
-          "content": "character：莱娅小姐",
-          "enabled": true,
-          "insertion_order": 2580,
-          "position": "after_char",
-          "comment": "莱娅小姐",
-          "extensions": {}
-        },
-        {
-          "id": 258,
+          "id": 215,
           "keys": [
             "诺丁山初等学校"
           ],
           "content": "background：由教廷出资创办的小学校，围绕一间小教堂建造，教师由牧师和修女兼任，学生住校",
           "enabled": true,
-          "insertion_order": 2590,
+          "insertion_order": 2160,
           "position": "after_char",
           "comment": "诺丁山初等学校",
           "extensions": {}
         },
         {
-          "id": 259,
+          "id": 216,
           "keys": [
             "铁戒指"
           ],
           "content": "background：教皇国炽天骑士团的荣誉徽记，每枚不同，内圈雕刻持有者名字；荣誉战死后戒指供奉在翡冷翠的英灵殿",
           "enabled": true,
-          "insertion_order": 2600,
+          "insertion_order": 2170,
           "position": "after_char",
           "comment": "铁戒指",
           "extensions": {}
         },
         {
-          "id": 260,
-          "keys": [
-            "银翼兄弟会"
-          ],
-          "content": "faction：银翼兄弟会",
-          "enabled": true,
-          "insertion_order": 2610,
-          "position": "after_char",
-          "comment": "银翼兄弟会",
-          "extensions": {}
-        },
-        {
-          "id": 261,
-          "keys": [
-            "银行家"
-          ],
-          "content": "character：银行家",
-          "enabled": true,
-          "insertion_order": 2620,
-          "position": "after_char",
-          "comment": "银行家",
-          "extensions": {}
-        },
-        {
-          "id": 262,
+          "id": 217,
           "keys": [
             "锡兰战争"
           ],
           "content": "background：星历1884年因贸易摩擦，新罗马帝国向夏国臣属国锡兰国宣战",
           "enabled": true,
-          "insertion_order": 2630,
+          "insertion_order": 2180,
           "position": "after_char",
           "comment": "锡兰战争",
           "extensions": {}
         },
         {
-          "id": 263,
-          "keys": [
-            "锡兰青年"
-          ],
-          "content": "character：锡兰青年",
-          "enabled": true,
-          "insertion_order": 2640,
-          "position": "after_char",
-          "comment": "锡兰青年",
-          "extensions": {}
-        },
-        {
-          "id": 264,
+          "id": 218,
           "keys": [
             "镜厅"
           ],
           "content": "appearance：数以百计的巨大镜子相互反射的大厅，晚宴在此进行，长桌能容纳五十人同时进餐",
           "enabled": true,
-          "insertion_order": 2650,
+          "insertion_order": 2190,
           "position": "after_char",
           "comment": "镜厅",
           "extensions": {}
         },
         {
-          "id": 265,
+          "id": 219,
           "keys": [
             "马斯顿公爵"
           ],
           "content": "background：神秘的马斯顿公爵向教廷表忠并愿意承建圣战之路，随后马斯顿公国宣布脱离西方国家联盟、成为中立的商业国",
           "enabled": true,
-          "insertion_order": 2660,
+          "insertion_order": 2200,
           "position": "after_char",
           "comment": "马斯顿公爵",
           "extensions": {}
         },
         {
-          "id": 266,
+          "id": 220,
           "keys": [
             "骑士圣堂"
           ],
           "content": "identity：所有炽天骑士团成员宣誓效忠之处，殿堂内有历代机动甲胄外壳与战旗",
           "enabled": true,
-          "insertion_order": 2670,
+          "insertion_order": 2210,
           "position": "after_char",
           "comment": "骑士圣堂",
           "extensions": {}
         },
         {
-          "id": 267,
+          "id": 221,
           "keys": [
             "骑士舱"
           ],
           "content": "identity：巴别塔顶部那张极薄钢板打造的异形座椅，就是实验用的骑士舱",
           "enabled": true,
-          "insertion_order": 2680,
+          "insertion_order": 2220,
           "position": "after_char",
           "comment": "骑士舱",
           "extensions": {}
         },
         {
-          "id": 268,
-          "keys": [
-            "骷髅地"
-          ],
-          "content": "place：骷髅地",
-          "enabled": true,
-          "insertion_order": 2690,
-          "position": "after_char",
-          "comment": "骷髅地",
-          "extensions": {}
-        },
-        {
-          "id": 269,
+          "id": 222,
           "keys": [
             "龙吼"
           ],
           "content": "background：是薇若兰改进的远程炮，一举增加30%射程和50%精确度",
           "enabled": true,
-          "insertion_order": 2700,
+          "insertion_order": 2230,
           "position": "after_char",
           "comment": "龙吼",
           "extensions": {}
         },
         {
-          "id": 270,
-          "keys": [
-            "龙王"
-          ],
-          "content": "character：龙王",
-          "enabled": true,
-          "insertion_order": 2710,
-          "position": "after_char",
-          "comment": "龙王",
-          "extensions": {}
-        },
-        {
-          "id": 271,
-          "keys": [
-            "下城区"
-          ],
-          "content": "place：下城区",
-          "enabled": true,
-          "insertion_order": 2720,
-          "position": "after_char",
-          "comment": "下城区",
-          "extensions": {}
-        },
-        {
-          "id": 272,
+          "id": 223,
           "keys": [
             "不朽之王模式"
           ],
           "content": "ability：可通过电缆远距离控制甲胄来激活",
           "enabled": true,
-          "insertion_order": 2730,
+          "insertion_order": 2240,
           "position": "after_char",
           "comment": "不朽之王模式",
           "extensions": {}
         },
         {
-          "id": 273,
+          "id": 224,
           "keys": [
             "东方"
           ],
           "content": "background：人类已知世界以阿尔卑斯山为界分为东方和西方，东方国土浩瀚、国家众多，以古老的夏国最强大，夏国领土比西方各国加起来还大",
           "enabled": true,
-          "insertion_order": 2740,
+          "insertion_order": 2250,
           "position": "after_char",
           "comment": "东方",
           "extensions": {}
         },
         {
-          "id": 274,
+          "id": 225,
           "keys": [
             "东方总督"
           ],
           "content": "goal：由一位空前绝后的开拓者打通前往东方的道路，为教廷统一整个世界",
           "enabled": true,
-          "insertion_order": 2750,
+          "insertion_order": 2260,
           "position": "after_char",
           "comment": "东方总督",
           "extensions": {}
         },
         {
-          "id": 275,
+          "id": 226,
           "keys": [
             "低温车厢"
           ],
           "content": "ability：靠蒸汽驱动，用冷凝方式制造低温，便于运输特殊货物，主要运输食材如北方冰海的蓝鳍金枪鱼",
           "enabled": true,
-          "insertion_order": 2760,
+          "insertion_order": 2270,
           "position": "after_char",
           "comment": "低温车厢",
           "extensions": {}
         },
         {
-          "id": 276,
-          "keys": [
-            "使馆区"
-          ],
-          "content": "place：使馆区",
-          "enabled": true,
-          "insertion_order": 2770,
-          "position": "after_char",
-          "comment": "使馆区",
-          "extensions": {}
-        },
-        {
-          "id": 277,
+          "id": 227,
           "keys": [
             "军徽"
           ],
           "content": "appearance：一般军徽是十字架加盾牌，西泽尔的军徽是十字架加火焰，火焰象征炽天使",
           "enabled": true,
-          "insertion_order": 2780,
+          "insertion_order": 2280,
           "position": "after_char",
           "comment": "军徽",
           "extensions": {}
         },
         {
-          "id": 278,
+          "id": 228,
           "keys": [
             "冰霜巨人"
           ],
           "content": "ability：冷凝机，必要时释放大量冷空气给维苏威火山降温",
           "enabled": true,
-          "insertion_order": 2790,
+          "insertion_order": 2290,
           "position": "after_char",
           "comment": "冰霜巨人",
           "extensions": {}
         },
         {
-          "id": 279,
+          "id": 229,
           "keys": [
             "十连战"
           ],
           "content": "background：腓特烈连续对战十名格斗者的一场特殊赌局",
           "enabled": true,
-          "insertion_order": 2800,
+          "insertion_order": 2300,
           "position": "after_char",
           "comment": "十连战",
           "extensions": {}
         },
         {
-          "id": 280,
+          "id": 230,
           "keys": [
             "占卜"
           ],
           "content": "background：在东方是寻常事，在西方则是禁忌之术；占卜者必损害自己的性命根本",
           "enabled": true,
-          "insertion_order": 2810,
+          "insertion_order": 2310,
           "position": "after_char",
           "comment": "占卜",
           "extensions": {}
         },
         {
-          "id": 281,
+          "id": 231,
           "keys": [
             "卡巴拉之树"
           ],
           "content": "background：又称生命之树，古老圣典中有记载，是弥赛亚圣教最庞大也最神秘的圣徽",
           "enabled": true,
-          "insertion_order": 2820,
+          "insertion_order": 2320,
           "position": "after_char",
           "comment": "卡巴拉之树",
           "extensions": {}
         },
         {
-          "id": 282,
+          "id": 232,
           "keys": [
             "史前文明"
           ],
           "content": "background：发源于世界的东方，阿瓦隆只是遗落在西方的一处小小遗迹",
           "enabled": true,
-          "insertion_order": 2830,
+          "insertion_order": 2330,
           "position": "after_char",
           "comment": "史前文明",
           "extensions": {}
         },
         {
-          "id": 283,
+          "id": 233,
           "keys": [
             "吗啡"
           ],
           "content": "background：能镇痛并减轻心理压力，但副作用大且会成瘾，医生只开给眼看没救的人",
           "enabled": true,
-          "insertion_order": 2840,
+          "insertion_order": 2340,
           "position": "after_char",
           "comment": "吗啡",
           "extensions": {}
         },
         {
-          "id": 284,
+          "id": 234,
           "keys": [
             "咆哮雷神"
           ],
           "content": "possession：配备超重型的手持式连射炮与粗壮弹链",
           "enabled": true,
-          "insertion_order": 2850,
+          "insertion_order": 2350,
           "position": "after_char",
           "comment": "咆哮雷神",
           "extensions": {}
         },
         {
-          "id": 285,
-          "keys": [
-            "圣枪装具·朗基努斯"
-          ],
-          "content": "item：圣枪装具·朗基努斯",
-          "enabled": true,
-          "insertion_order": 2860,
-          "position": "after_char",
-          "comment": "圣枪装具·朗基努斯",
-          "extensions": {}
-        },
-        {
-          "id": 286,
+          "id": 235,
           "keys": [
             "天使"
           ],
           "content": "background：弥赛亚圣教认为天使是神创造的仆人，最高等级称炽天使，由纯净光焰构成，守护神的御座",
           "enabled": true,
-          "insertion_order": 2870,
+          "insertion_order": 2360,
           "position": "after_char",
           "comment": "天使",
           "extensions": {}
         },
         {
-          "id": 287,
+          "id": 236,
           "keys": [
             "家徽戒指"
           ],
           "content": "ability：持有者在城中享有特权，即使犯法警察和法官也会格外优待",
           "enabled": true,
-          "insertion_order": 2880,
+          "insertion_order": 2370,
           "position": "after_char",
           "comment": "家徽戒指",
           "extensions": {}
         },
         {
-          "id": 288,
+          "id": 237,
           "keys": [
             "家族圣堂"
           ],
           "content": "appearance：位于荒无人烟的裂谷对岸，建造水准与教皇宫相当，前方有建在裂谷石柱上的白色大理石长桥",
           "enabled": true,
-          "insertion_order": 2890,
+          "insertion_order": 2380,
           "position": "after_char",
           "comment": "家族圣堂",
           "extensions": {}
         },
         {
-          "id": 289,
+          "id": 238,
           "keys": [
             "封邑"
           ],
           "content": "background：家族的专属土地，家族在专属土地上享有一切权力，绝大部分法律不生效而代之以家族法则",
           "enabled": true,
-          "insertion_order": 2900,
+          "insertion_order": 2390,
           "position": "after_char",
           "comment": "封邑",
           "extensions": {}
         },
         {
-          "id": 290,
+          "id": 239,
           "keys": [
             "山中修道院"
           ],
           "content": "background：修道士避开城市喧嚣研究神学，清苦度日，自酿啤酒",
           "enabled": true,
-          "insertion_order": 2910,
+          "insertion_order": 2400,
           "position": "after_char",
           "comment": "山中修道院",
           "extensions": {}
         },
         {
-          "id": 291,
-          "keys": [
-            "布里斯特公爵"
-          ],
-          "content": "character：布里斯特公爵",
-          "enabled": true,
-          "insertion_order": 2920,
-          "position": "after_char",
-          "comment": "布里斯特公爵",
-          "extensions": {}
-        },
-        {
-          "id": 292,
+          "id": 240,
           "keys": [
             "手杖剑"
           ],
           "content": "ability：柄里藏高纯度红水银，真实用途是炸死持剑者",
           "enabled": true,
-          "insertion_order": 2930,
+          "insertion_order": 2410,
           "position": "after_char",
           "comment": "手杖剑",
           "extensions": {}
         },
         {
-          "id": 293,
+          "id": 241,
           "keys": [
             "斩铁剑"
           ],
           "content": "ability：蒸汽机驱动的硬金铡刀，几乎可切断一切人造物，甚至一次切断一辆虎式战车",
           "enabled": true,
-          "insertion_order": 2940,
+          "insertion_order": 2420,
           "position": "after_char",
           "comment": "斩铁剑",
           "extensions": {}
         },
         {
-          "id": 294,
-          "keys": [
-            "昂格里亚"
-          ],
-          "content": "place：昂格里亚",
-          "enabled": true,
-          "insertion_order": 2950,
-          "position": "after_char",
-          "comment": "昂格里亚",
-          "extensions": {}
-        },
-        {
-          "id": 295,
+          "id": 242,
           "keys": [
             "杀凰"
           ],
           "content": "goal：狙杀楚舜华的任务代号",
           "enabled": true,
-          "insertion_order": 2960,
+          "insertion_order": 2430,
           "position": "after_char",
           "comment": "杀凰",
           "extensions": {}
         },
         {
-          "id": 296,
+          "id": 243,
           "keys": [
             "林部队"
           ],
           "content": "background：弩弓部队，负责压制和控场",
           "enabled": true,
-          "insertion_order": 2970,
+          "insertion_order": 2440,
           "position": "after_char",
           "comment": "林部队",
           "extensions": {}
         },
         {
-          "id": 297,
+          "id": 244,
           "keys": [
             "格里高利家族"
           ],
           "content": "background：家徽是双头狮鹫，被称为狮鹫家族，把持着对西方最重要的资源红水银",
           "enabled": true,
-          "insertion_order": 2980,
+          "insertion_order": 2450,
           "position": "after_char",
           "comment": "格里高利家族",
           "extensions": {}
         },
         {
-          "id": 298,
-          "keys": [
-            "法老宫"
-          ],
-          "content": "place：法老宫",
-          "enabled": true,
-          "insertion_order": 2990,
-          "position": "after_char",
-          "comment": "法老宫",
-          "extensions": {}
-        },
-        {
-          "id": 299,
-          "keys": [
-            "洛邑"
-          ],
-          "content": "place：洛邑",
-          "enabled": true,
-          "insertion_order": 3000,
-          "position": "after_char",
-          "comment": "洛邑",
-          "extensions": {}
-        },
-        {
-          "id": 300,
+          "id": 245,
           "keys": [
             "熔岩之心"
           ],
           "content": "background：从不打扫的区域积起接近半尺的炭化层，历史甚至长于教皇国本身",
           "enabled": true,
-          "insertion_order": 3010,
+          "insertion_order": 2460,
           "position": "after_char",
           "comment": "熔岩之心",
           "extensions": {}
         },
         {
-          "id": 301,
+          "id": 246,
           "keys": [
             "特赦令"
           ],
           "content": "background：每一份经教皇签字生效的特赦令都是枢机会批准过的，教皇的签名只是走形式，强行签出也不会生效",
           "enabled": true,
-          "insertion_order": 3020,
+          "insertion_order": 2470,
           "position": "after_char",
           "comment": "特赦令",
           "extensions": {}
         },
         {
-          "id": 302,
+          "id": 247,
           "keys": [
             "白蜡木杆"
           ],
           "content": "appearance：长约3.5米、直径10厘米，两端磨成圆形，多年来一直未开封",
           "enabled": true,
-          "insertion_order": 3030,
+          "insertion_order": 2480,
           "position": "after_char",
           "comment": "白蜡木杆",
           "extensions": {}
         },
         {
-          "id": 303,
-          "keys": [
-            "石头"
-          ],
-          "content": "item：石头",
-          "enabled": true,
-          "insertion_order": 3040,
-          "position": "after_char",
-          "comment": "石头",
-          "extensions": {}
-        },
-        {
-          "id": 304,
-          "keys": [
-            "破喉咙"
-          ],
-          "content": "character：破喉咙",
-          "enabled": true,
-          "insertion_order": 3050,
-          "position": "after_char",
-          "comment": "破喉咙",
-          "extensions": {}
-        },
-        {
-          "id": 305,
-          "keys": [
-            "秘银"
-          ],
-          "content": "item：秘银",
-          "enabled": true,
-          "insertion_order": 3060,
-          "position": "after_char",
-          "comment": "秘银",
-          "extensions": {}
-        },
-        {
-          "id": 306,
-          "keys": [
-            "红水银蒸汽"
-          ],
-          "content": "concept：红水银蒸汽",
-          "enabled": true,
-          "insertion_order": 3070,
-          "position": "after_char",
-          "comment": "红水银蒸汽",
-          "extensions": {}
-        },
-        {
-          "id": 307,
+          "id": 248,
           "keys": [
             "肩辇"
           ],
           "content": "background：夏皇赐予臣子的最高礼遇，赐“入朝乘辇，面君不拜”",
           "enabled": true,
-          "insertion_order": 3080,
+          "insertion_order": 2490,
           "position": "after_char",
           "comment": "肩辇",
           "extensions": {}
         },
         {
-          "id": 308,
+          "id": 249,
           "keys": [
             "脑白质切除手术"
           ],
           "content": "background：术后病人会变得迟钝麻木、连身边的人也不认识，但自理能力还有",
           "enabled": true,
-          "insertion_order": 3090,
+          "insertion_order": 2500,
           "position": "after_char",
           "comment": "脑白质切除手术",
           "extensions": {}
         },
         {
-          "id": 309,
+          "id": 250,
           "keys": [
             "英雄人格"
           ],
           "content": "background：部分人类在极端情绪下由英雄人格取代表层人格，潜能被彻底激发，但也是自毁人格",
           "enabled": true,
-          "insertion_order": 3100,
+          "insertion_order": 2510,
           "position": "after_char",
           "comment": "英雄人格",
           "extensions": {}
         },
         {
-          "id": 310,
-          "keys": [
-            "通天宫"
-          ],
-          "content": "place：通天宫",
-          "enabled": true,
-          "insertion_order": 3110,
-          "position": "after_char",
-          "comment": "通天宫",
-          "extensions": {}
-        },
-        {
-          "id": 311,
+          "id": 251,
           "keys": [
             "铁钥匙"
           ],
           "content": "ability：唯一能打开世界之蟒号车厢的钥匙，由贝隆随身携带",
           "enabled": true,
-          "insertion_order": 3120,
+          "insertion_order": 2520,
           "position": "after_char",
           "comment": "铁钥匙",
           "extensions": {}
         },
         {
-          "id": 312,
+          "id": 252,
           "keys": [
             "镇流开关"
           ],
           "content": "background：机动甲胄濒临崩溃时会强制熄火的安全装置",
           "enabled": true,
-          "insertion_order": 3130,
+          "insertion_order": 2530,
           "position": "after_char",
           "comment": "镇流开关",
           "extensions": {}
         },
         {
-          "id": 313,
+          "id": 253,
           "keys": [
             "阿修罗"
           ],
           "content": "identity：原诚为将来仿造的机动甲胄提议的名字",
           "enabled": true,
-          "insertion_order": 3140,
+          "insertion_order": 2540,
           "position": "after_char",
           "comment": "阿修罗",
           "extensions": {}
         },
         {
-          "id": 314,
+          "id": 254,
           "keys": [
             "陆行战舰"
           ],
           "content": "state：三年前封存入库，至今没有合适的新晋骑士",
           "enabled": true,
-          "insertion_order": 3150,
+          "insertion_order": 2550,
           "position": "after_char",
           "comment": "陆行战舰",
           "extensions": {}
         },
         {
-          "id": 315,
+          "id": 255,
           "keys": [
             "零玖式火铳"
           ],
           "content": "background：夏国大约十年前制造的军品，算是东方阵营相当先进的武器",
           "enabled": true,
-          "insertion_order": 3160,
+          "insertion_order": 2560,
           "position": "after_char",
           "comment": "零玖式火铳",
           "extensions": {}
         },
         {
-          "id": 316,
+          "id": 256,
           "keys": [
             "露天测试场"
           ],
           "content": "appearance：圆形，地面盖一层铸铁板，铸铁板上再铺设轨道，用于测试中大型机械",
           "enabled": true,
-          "insertion_order": 3170,
+          "insertion_order": 2570,
           "position": "after_char",
           "comment": "露天测试场",
           "extensions": {}
         },
         {
-          "id": 317,
+          "id": 257,
           "keys": [
             "青丝"
           ],
           "content": "appearance：血色重锦上的古剑，剑长两尺，剑刃淡青色，靠近剑锷处有错金篆字“青丝”",
           "enabled": true,
-          "insertion_order": 3180,
+          "insertion_order": 2580,
           "position": "after_char",
           "comment": "青丝",
           "extensions": {}
         },
         {
-          "id": 318,
+          "id": 258,
           "keys": [
             "青铜切断者"
           ],
           "content": "possession：装备蒸汽驱动的刀锯，能切开天启战车的装甲",
           "enabled": true,
-          "insertion_order": 3190,
+          "insertion_order": 2590,
           "position": "after_char",
           "comment": "青铜切断者",
           "extensions": {}
         },
         {
-          "id": 319,
+          "id": 259,
           "keys": [
             "风金属"
           ],
           "content": "identity：教廷的技师们研制出的轻盈且柔韧的金属，贵族旅行箱都用它制造",
           "enabled": true,
-          "insertion_order": 3200,
+          "insertion_order": 2600,
           "position": "after_char",
           "comment": "风金属",
           "extensions": {}
         },
         {
-          "id": 320,
+          "id": 260,
           "keys": [
             "骑枪297"
           ],
           "content": "background：密涅瓦机关最沉重的制式骑枪之一，重达297磅",
           "enabled": true,
-          "insertion_order": 3210,
+          "insertion_order": 2610,
           "position": "after_char",
           "comment": "骑枪297",
           "extensions": {}
         },
         {
-          "id": 321,
+          "id": 261,
           "keys": [
             "骸骨场"
           ],
           "content": "background：一处专门用于遗弃炽天使甲胄的深槽，深不见底，像堆满钢铁骨骸的坟墓",
           "enabled": true,
-          "insertion_order": 3220,
+          "insertion_order": 2620,
           "position": "after_char",
           "comment": "骸骨场",
           "extensions": {}
         },
         {
-          "id": 322,
+          "id": 262,
           "keys": [
             "黄金套管"
           ],
           "content": "background：植入后背让电极从套管内走，手术中可用麻醉药，但术后恢复期会痛得要命",
           "enabled": true,
-          "insertion_order": 3230,
+          "insertion_order": 2630,
           "position": "after_char",
           "comment": "黄金套管",
           "extensions": {}
         },
         {
-          "id": 323,
+          "id": 263,
           "keys": [
             "黑色石拱门"
           ],
           "content": "background：星历1824年锡兰“千年国诞”时建造的重要标记物",
           "enabled": true,
-          "insertion_order": 3240,
+          "insertion_order": 2640,
           "position": "after_char",
           "comment": "黑色石拱门",
           "extensions": {}
         },
         {
-          "id": 324,
-          "keys": [
-            "龙吼火炮"
-          ],
-          "content": "item：龙吼火炮",
-          "enabled": true,
-          "insertion_order": 3250,
-          "position": "after_char",
-          "comment": "龙吼火炮",
-          "extensions": {}
-        },
-        {
-          "id": 325,
+          "id": 264,
           "keys": [
             "龙城"
           ],
           "content": "background：夏国的军事要塞，堪称夏国的国门，装配了千门重炮",
           "enabled": true,
-          "insertion_order": 3260,
+          "insertion_order": 2650,
           "position": "after_char",
           "comment": "龙城",
           "extensions": {}
         },
         {
-          "id": 326,
+          "id": 265,
           "keys": [
             "龙炎"
           ],
           "content": "ability：指挥官佩枪，蜂巢式弹夹可装六发子弹，近距离可打爆一匹马的脑袋",
           "enabled": true,
-          "insertion_order": 3270,
+          "insertion_order": 2660,
           "position": "after_char",
           "comment": "龙炎",
-          "extensions": {}
-        },
-        {
-          "id": 327,
-          "keys": [
-            "不朽之王"
-          ],
-          "content": "ability：不朽之王",
-          "enabled": true,
-          "insertion_order": 3280,
-          "position": "after_char",
-          "comment": "不朽之王",
-          "extensions": {}
-        },
-        {
-          "id": 328,
-          "keys": [
-            "中央实验场"
-          ],
-          "content": "place：中央实验场",
-          "enabled": true,
-          "insertion_order": 3290,
-          "position": "after_char",
-          "comment": "中央实验场",
-          "extensions": {}
-        },
-        {
-          "id": 329,
-          "keys": [
-            "中山之狼"
-          ],
-          "content": "concept：中山之狼",
-          "enabled": true,
-          "insertion_order": 3300,
-          "position": "after_char",
-          "comment": "中山之狼",
-          "extensions": {}
-        },
-        {
-          "id": 330,
-          "keys": [
-            "克莱德曼王子"
-          ],
-          "content": "character：克莱德曼王子",
-          "enabled": true,
-          "insertion_order": 3310,
-          "position": "after_char",
-          "comment": "克莱德曼王子",
-          "extensions": {}
-        },
-        {
-          "id": 331,
-          "keys": [
-            "克里特"
-          ],
-          "content": "place：克里特",
-          "enabled": true,
-          "insertion_order": 3320,
-          "position": "after_char",
-          "comment": "克里特",
-          "extensions": {}
-        },
-        {
-          "id": 332,
-          "keys": [
-            "冥神的新娘"
-          ],
-          "content": "item：冥神的新娘",
-          "enabled": true,
-          "insertion_order": 3330,
-          "position": "after_char",
-          "comment": "冥神的新娘",
-          "extensions": {}
-        },
-        {
-          "id": 333,
-          "keys": [
-            "凡尔登"
-          ],
-          "content": "place：凡尔登",
-          "enabled": true,
-          "insertion_order": 3340,
-          "position": "after_char",
-          "comment": "凡尔登",
-          "extensions": {}
-        },
-        {
-          "id": 334,
-          "keys": [
-            "叶尼塞王妃"
-          ],
-          "content": "character：叶尼塞王妃",
-          "enabled": true,
-          "insertion_order": 3350,
-          "position": "after_char",
-          "comment": "叶尼塞王妃",
-          "extensions": {}
-        },
-        {
-          "id": 335,
-          "keys": [
-            "圣典"
-          ],
-          "content": "item：圣典",
-          "enabled": true,
-          "insertion_order": 3360,
-          "position": "after_char",
-          "comment": "圣典",
-          "extensions": {}
-        },
-        {
-          "id": 336,
-          "keys": [
-            "拆骨擒拿"
-          ],
-          "content": "ability：拆骨擒拿",
-          "enabled": true,
-          "insertion_order": 3370,
-          "position": "after_char",
-          "comment": "拆骨擒拿",
-          "extensions": {}
-        },
-        {
-          "id": 337,
-          "keys": [
-            "断剑"
-          ],
-          "content": "item：断剑",
-          "enabled": true,
-          "insertion_order": 3380,
-          "position": "after_char",
-          "comment": "断剑",
-          "extensions": {}
-        },
-        {
-          "id": 338,
-          "keys": [
-            "斯泰因"
-          ],
-          "content": "item：斯泰因",
-          "enabled": true,
-          "insertion_order": 3390,
-          "position": "after_char",
-          "comment": "斯泰因",
-          "extensions": {}
-        },
-        {
-          "id": 339,
-          "keys": [
-            "朱丽叶·格里高利"
-          ],
-          "content": "character：朱丽叶·格里高利",
-          "enabled": true,
-          "insertion_order": 3400,
-          "position": "after_char",
-          "comment": "朱丽叶·格里高利",
-          "extensions": {}
-        },
-        {
-          "id": 340,
-          "keys": [
-            "查士丁尼"
-          ],
-          "content": "character：查士丁尼",
-          "enabled": true,
-          "insertion_order": 3410,
-          "position": "after_char",
-          "comment": "查士丁尼",
-          "extensions": {}
-        },
-        {
-          "id": 341,
-          "keys": [
-            "查理曼"
-          ],
-          "content": "place：查理曼",
-          "enabled": true,
-          "insertion_order": 3420,
-          "position": "after_char",
-          "comment": "查理曼",
-          "extensions": {}
-        },
-        {
-          "id": 342,
-          "keys": [
-            "波菲里奥·博尔吉亚"
-          ],
-          "content": "character：波菲里奥·博尔吉亚",
-          "enabled": true,
-          "insertion_order": 3430,
-          "position": "after_char",
-          "comment": "波菲里奥·博尔吉亚",
-          "extensions": {}
-        },
-        {
-          "id": 343,
-          "keys": [
-            "狮心骑士团副团长"
-          ],
-          "content": "character：狮心骑士团副团长",
-          "enabled": true,
-          "insertion_order": 3440,
-          "position": "after_char",
-          "comment": "狮心骑士团副团长",
-          "extensions": {}
-        },
-        {
-          "id": 344,
-          "keys": [
-            "狮牙连环"
-          ],
-          "content": "ability：狮牙连环",
-          "enabled": true,
-          "insertion_order": 3450,
-          "position": "after_char",
-          "comment": "狮牙连环",
-          "extensions": {}
-        },
-        {
-          "id": 345,
-          "keys": [
-            "瓦伦西亚省"
-          ],
-          "content": "place：瓦伦西亚省",
-          "enabled": true,
-          "insertion_order": 3460,
-          "position": "after_char",
-          "comment": "瓦伦西亚省",
-          "extensions": {}
-        },
-        {
-          "id": 346,
-          "keys": [
-            "管风琴"
-          ],
-          "content": "item：管风琴",
-          "enabled": true,
-          "insertion_order": 3470,
-          "position": "after_char",
-          "comment": "管风琴",
-          "extensions": {}
-        },
-        {
-          "id": 347,
-          "keys": [
-            "罗伯托·博尔吉亚"
-          ],
-          "content": "character：罗伯托·博尔吉亚",
-          "enabled": true,
-          "insertion_order": 3480,
-          "position": "after_char",
-          "comment": "罗伯托·博尔吉亚",
-          "extensions": {}
-        },
-        {
-          "id": 348,
-          "keys": [
-            "苏菲亚剧院"
-          ],
-          "content": "place：苏菲亚剧院",
-          "enabled": true,
-          "insertion_order": 3490,
-          "position": "after_char",
-          "comment": "苏菲亚剧院",
-          "extensions": {}
-        },
-        {
-          "id": 349,
-          "keys": [
-            "蓝鲟"
-          ],
-          "content": "character：蓝鲟",
-          "enabled": true,
-          "insertion_order": 3500,
-          "position": "after_char",
-          "comment": "蓝鲟",
-          "extensions": {}
-        },
-        {
-          "id": 350,
-          "keys": [
-            "蛇形剑"
-          ],
-          "content": "item：蛇形剑",
-          "enabled": true,
-          "insertion_order": 3510,
-          "position": "after_char",
-          "comment": "蛇形剑",
-          "extensions": {}
-        },
-        {
-          "id": 351,
-          "keys": [
-            "蜂巢式火铳"
-          ],
-          "content": "item：蜂巢式火铳",
-          "enabled": true,
-          "insertion_order": 3520,
-          "position": "after_char",
-          "comment": "蜂巢式火铳",
-          "extensions": {}
-        },
-        {
-          "id": 352,
-          "keys": [
-            "西斯廷教堂"
-          ],
-          "content": "place：西斯廷教堂",
-          "enabled": true,
-          "insertion_order": 3530,
-          "position": "after_char",
-          "comment": "西斯廷教堂",
-          "extensions": {}
-        },
-        {
-          "id": 353,
-          "keys": [
-            "贝淑芬妮"
-          ],
-          "content": "character：贝淑芬妮",
-          "enabled": true,
-          "insertion_order": 3540,
-          "position": "after_char",
-          "comment": "贝淑芬妮",
-          "extensions": {}
-        },
-        {
-          "id": 354,
-          "keys": [
-            "阿德琳娜"
-          ],
-          "content": "character：阿德琳娜",
-          "enabled": true,
-          "insertion_order": 3550,
-          "position": "after_char",
-          "comment": "阿德琳娜",
-          "extensions": {}
-        },
-        {
-          "id": 355,
-          "keys": [
-            "骷髅兄弟会"
-          ],
-          "content": "faction：骷髅兄弟会",
-          "enabled": true,
-          "insertion_order": 3560,
-          "position": "after_char",
-          "comment": "骷髅兄弟会",
-          "extensions": {}
-        },
-        {
-          "id": 356,
-          "keys": [
-            "黑天使"
-          ],
-          "content": "item：黑天使",
-          "enabled": true,
-          "insertion_order": 3570,
-          "position": "after_char",
-          "comment": "黑天使",
-          "extensions": {}
-        },
-        {
-          "id": 357,
-          "keys": [
-            "黑天使军徽"
-          ],
-          "content": "item：黑天使军徽",
-          "enabled": true,
-          "insertion_order": 3580,
-          "position": "after_char",
-          "comment": "黑天使军徽",
-          "extensions": {}
-        },
-        {
-          "id": 358,
-          "keys": [
-            "龙胆花"
-          ],
-          "content": "item：龙胆花",
-          "enabled": true,
-          "insertion_order": 3590,
-          "position": "after_char",
-          "comment": "龙胆花",
-          "extensions": {}
-        },
-        {
-          "id": 359,
-          "keys": [
-            "龙雀"
-          ],
-          "content": "character：龙雀",
-          "enabled": true,
-          "insertion_order": 3600,
-          "position": "after_char",
-          "comment": "龙雀",
-          "extensions": {}
-        },
-        {
-          "id": 360,
-          "keys": [
-            "Hypnos秘药"
-          ],
-          "content": "item：Hypnos秘药",
-          "enabled": true,
-          "insertion_order": 3610,
-          "position": "after_char",
-          "comment": "Hypnos秘药",
-          "extensions": {}
-        },
-        {
-          "id": 361,
-          "keys": [
-            "Rex Immortalis"
-          ],
-          "content": "concept：Rex Immortalis",
-          "enabled": true,
-          "insertion_order": 3620,
-          "position": "after_char",
-          "comment": "Rex Immortalis",
-          "extensions": {}
-        },
-        {
-          "id": 362,
-          "keys": [
-            "《圣约》"
-          ],
-          "content": "item：《圣约》",
-          "enabled": true,
-          "insertion_order": 3630,
-          "position": "after_char",
-          "comment": "《圣约》",
-          "extensions": {}
-        },
-        {
-          "id": 363,
-          "keys": [
-            "一号实验场"
-          ],
-          "content": "place：一号实验场",
-          "enabled": true,
-          "insertion_order": 3640,
-          "position": "after_char",
-          "comment": "一号实验场",
-          "extensions": {}
-        },
-        {
-          "id": 364,
-          "keys": [
-            "万能钥匙"
-          ],
-          "content": "item：万能钥匙",
-          "enabled": true,
-          "insertion_order": 3650,
-          "position": "after_char",
-          "comment": "万能钥匙",
-          "extensions": {}
-        },
-        {
-          "id": 365,
-          "keys": [
-            "三号控制中心"
-          ],
-          "content": "place：三号控制中心",
-          "enabled": true,
-          "insertion_order": 3660,
-          "position": "after_char",
-          "comment": "三号控制中心",
-          "extensions": {}
-        },
-        {
-          "id": 366,
-          "keys": [
-            "上城区"
-          ],
-          "content": "place：上城区",
-          "enabled": true,
-          "insertion_order": 3670,
-          "position": "after_char",
-          "comment": "上城区",
-          "extensions": {}
-        },
-        {
-          "id": 367,
-          "keys": [
-            "东方图书馆"
-          ],
-          "content": "place：东方图书馆",
-          "enabled": true,
-          "insertion_order": 3680,
-          "position": "after_char",
-          "comment": "东方图书馆",
-          "extensions": {}
-        },
-        {
-          "id": 368,
-          "keys": [
-            "中校军徽"
-          ],
-          "content": "item：中校军徽",
-          "enabled": true,
-          "insertion_order": 3690,
-          "position": "after_char",
-          "comment": "中校军徽",
-          "extensions": {}
-        },
-        {
-          "id": 369,
-          "keys": [
-            "中校领章"
-          ],
-          "content": "item：中校领章",
-          "enabled": true,
-          "insertion_order": 3700,
-          "position": "after_char",
-          "comment": "中校领章",
-          "extensions": {}
-        },
-        {
-          "id": 370,
-          "keys": [
-            "二号实验场"
-          ],
-          "content": "place：二号实验场",
-          "enabled": true,
-          "insertion_order": 3710,
-          "position": "after_char",
-          "comment": "二号实验场",
-          "extensions": {}
-        },
-        {
-          "id": 371,
-          "keys": [
-            "亚历山大·彼得罗夫"
-          ],
-          "content": "character：亚历山大·彼得罗夫",
-          "enabled": true,
-          "insertion_order": 3720,
-          "position": "after_char",
-          "comment": "亚历山大·彼得罗夫",
-          "extensions": {}
-        },
-        {
-          "id": 372,
-          "keys": [
-            "亥伯龙"
-          ],
-          "content": "item：亥伯龙",
-          "enabled": true,
-          "insertion_order": 3730,
-          "position": "after_char",
-          "comment": "亥伯龙",
-          "extensions": {}
-        },
-        {
-          "id": 373,
-          "keys": [
-            "伏特加"
-          ],
-          "content": "item：伏特加",
-          "enabled": true,
-          "insertion_order": 3740,
-          "position": "after_char",
-          "comment": "伏特加",
-          "extensions": {}
-        },
-        {
-          "id": 374,
-          "keys": [
-            "何塞"
-          ],
-          "content": "character：何塞",
-          "enabled": true,
-          "insertion_order": 3750,
-          "position": "after_char",
-          "comment": "何塞",
-          "extensions": {}
-        },
-        {
-          "id": 375,
-          "keys": [
-            "光明王"
-          ],
-          "content": "item：光明王",
-          "enabled": true,
-          "insertion_order": 3760,
-          "position": "after_char",
-          "comment": "光明王",
-          "extensions": {}
-        },
-        {
-          "id": 376,
-          "keys": [
-            "军法处"
-          ],
-          "content": "faction：军法处",
-          "enabled": true,
-          "insertion_order": 3770,
-          "position": "after_char",
-          "comment": "军法处",
-          "extensions": {}
-        },
-        {
-          "id": 377,
-          "keys": [
-            "军籍证明书"
-          ],
-          "content": "item：军籍证明书",
-          "enabled": true,
-          "insertion_order": 3780,
-          "position": "after_char",
-          "comment": "军籍证明书",
-          "extensions": {}
-        },
-        {
-          "id": 378,
-          "keys": [
-            "冥神"
-          ],
-          "content": "character：冥神",
-          "enabled": true,
-          "insertion_order": 3790,
-          "position": "after_char",
-          "comment": "冥神",
-          "extensions": {}
-        },
-        {
-          "id": 379,
-          "keys": [
-            "冶金局"
-          ],
-          "content": "faction：冶金局",
-          "enabled": true,
-          "insertion_order": 3800,
-          "position": "after_char",
-          "comment": "冶金局",
-          "extensions": {}
-        },
-        {
-          "id": 380,
-          "keys": [
-            "刀剑狂徒"
-          ],
-          "content": "item：刀剑狂徒",
-          "enabled": true,
-          "insertion_order": 3810,
-          "position": "after_char",
-          "comment": "刀剑狂徒",
-          "extensions": {}
-        },
-        {
-          "id": 381,
-          "keys": [
-            "刑具"
-          ],
-          "content": "item：刑具",
-          "enabled": true,
-          "insertion_order": 3820,
-          "position": "after_char",
-          "comment": "刑具",
-          "extensions": {}
-        },
-        {
-          "id": 382,
-          "keys": [
-            "利维坦级的飞艇"
-          ],
-          "content": "item：利维坦级的飞艇",
-          "enabled": true,
-          "insertion_order": 3830,
-          "position": "after_char",
-          "comment": "利维坦级的飞艇",
-          "extensions": {}
-        },
-        {
-          "id": 383,
-          "keys": [
-            "刺剑"
-          ],
-          "content": "item：刺剑",
-          "enabled": true,
-          "insertion_order": 3840,
-          "position": "after_char",
-          "comment": "刺剑",
-          "extensions": {}
-        },
-        {
-          "id": 384,
-          "keys": [
-            "前任总长"
-          ],
-          "content": "character：前任总长",
-          "enabled": true,
-          "insertion_order": 3850,
-          "position": "after_char",
-          "comment": "前任总长",
-          "extensions": {}
-        },
-        {
-          "id": 385,
-          "keys": [
-            "勋章"
-          ],
-          "content": "item：勋章",
-          "enabled": true,
-          "insertion_order": 3860,
-          "position": "after_char",
-          "comment": "勋章",
-          "extensions": {}
-        },
-        {
-          "id": 386,
-          "keys": [
-            "南十字军"
-          ],
-          "content": "faction：南十字军",
-          "enabled": true,
-          "insertion_order": 3870,
-          "position": "after_char",
-          "comment": "南十字军",
-          "extensions": {}
-        },
-        {
-          "id": 387,
-          "keys": [
-            "卡罗素飞轮"
-          ],
-          "content": "item：卡罗素飞轮",
-          "enabled": true,
-          "insertion_order": 3880,
-          "position": "after_char",
-          "comment": "卡罗素飞轮",
-          "extensions": {}
-        },
-        {
-          "id": 388,
-          "keys": [
-            "卡龙达斯堡"
-          ],
-          "content": "place：卡龙达斯堡",
-          "enabled": true,
-          "insertion_order": 3890,
-          "position": "after_char",
-          "comment": "卡龙达斯堡",
-          "extensions": {}
-        },
-        {
-          "id": 389,
-          "keys": [
-            "卫士"
-          ],
-          "content": "faction：卫士",
-          "enabled": true,
-          "insertion_order": 3900,
-          "position": "after_char",
-          "comment": "卫士",
-          "extensions": {}
-        },
-        {
-          "id": 390,
-          "keys": [
-            "原罪机关的实验场"
-          ],
-          "content": "place：原罪机关的实验场",
-          "enabled": true,
-          "insertion_order": 3910,
-          "position": "after_char",
-          "comment": "原罪机关的实验场",
-          "extensions": {}
-        },
-        {
-          "id": 391,
-          "keys": [
-            "叶尼塞大使馆"
-          ],
-          "content": "place：叶尼塞大使馆",
-          "enabled": true,
-          "insertion_order": 3920,
-          "position": "after_char",
-          "comment": "叶尼塞大使馆",
-          "extensions": {}
-        },
-        {
-          "id": 392,
-          "keys": [
-            "叶尼塞特使"
-          ],
-          "content": "character：叶尼塞特使",
-          "enabled": true,
-          "insertion_order": 3930,
-          "position": "after_char",
-          "comment": "叶尼塞特使",
-          "extensions": {}
-        },
-        {
-          "id": 393,
-          "keys": [
-            "君臣双花"
-          ],
-          "content": "concept：君臣双花",
-          "enabled": true,
-          "insertion_order": 3940,
-          "position": "after_char",
-          "comment": "君臣双花",
-          "extensions": {}
-        },
-        {
-          "id": 394,
-          "keys": [
-            "哈巴东伯爵"
-          ],
-          "content": "character：哈巴东伯爵",
-          "enabled": true,
-          "insertion_order": 3950,
-          "position": "after_char",
-          "comment": "哈巴东伯爵",
-          "extensions": {}
-        },
-        {
-          "id": 395,
-          "keys": [
-            "圣枪"
-          ],
-          "content": "item：圣枪",
-          "enabled": true,
-          "insertion_order": 3960,
-          "position": "after_char",
-          "comment": "圣枪",
-          "extensions": {}
-        },
-        {
-          "id": 396,
-          "keys": [
-            "圣枪·朗基努斯"
-          ],
-          "content": "item：圣枪·朗基努斯",
-          "enabled": true,
-          "insertion_order": 3970,
-          "position": "after_char",
-          "comment": "圣枪·朗基努斯",
-          "extensions": {}
-        },
-        {
-          "id": 397,
-          "keys": [
-            "圣母"
-          ],
-          "content": "concept：圣母",
-          "enabled": true,
-          "insertion_order": 3980,
-          "position": "after_char",
-          "comment": "圣母",
-          "extensions": {}
-        },
-        {
-          "id": 398,
-          "keys": [
-            "圣母光婴堂"
-          ],
-          "content": "place：圣母光婴堂",
-          "enabled": true,
-          "insertion_order": 3990,
-          "position": "after_char",
-          "comment": "圣母光婴堂",
-          "extensions": {}
-        },
-        {
-          "id": 399,
-          "keys": [
-            "圣母慈悲医院"
-          ],
-          "content": "place：圣母慈悲医院",
-          "enabled": true,
-          "insertion_order": 4000,
-          "position": "after_char",
-          "comment": "圣母慈悲医院",
-          "extensions": {}
-        },
-        {
-          "id": 400,
-          "keys": [
-            "坦克"
-          ],
-          "content": "item：坦克",
-          "enabled": true,
-          "insertion_order": 4010,
-          "position": "after_char",
-          "comment": "坦克",
-          "extensions": {}
-        },
-        {
-          "id": 401,
-          "keys": [
-            "大课讲堂"
-          ],
-          "content": "place：大课讲堂",
-          "enabled": true,
-          "insertion_order": 4020,
-          "position": "after_char",
-          "comment": "大课讲堂",
-          "extensions": {}
-        },
-        {
-          "id": 402,
-          "keys": [
-            "天华门"
-          ],
-          "content": "place：天华门",
-          "enabled": true,
-          "insertion_order": 4030,
-          "position": "after_char",
-          "comment": "天华门",
-          "extensions": {}
-        },
-        {
-          "id": 403,
-          "keys": [
-            "婆罗多之星"
-          ],
-          "content": "item：婆罗多之星",
-          "enabled": true,
-          "insertion_order": 4040,
-          "position": "after_char",
-          "comment": "婆罗多之星",
-          "extensions": {}
-        },
-        {
-          "id": 404,
-          "keys": [
-            "媵"
-          ],
-          "content": "concept：媵",
-          "enabled": true,
-          "insertion_order": 4050,
-          "position": "after_char",
-          "comment": "媵",
-          "extensions": {}
-        },
-        {
-          "id": 405,
-          "keys": [
-            "安妮·斯图亚特"
-          ],
-          "content": "character：安妮·斯图亚特",
-          "enabled": true,
-          "insertion_order": 4060,
-          "position": "after_char",
-          "comment": "安妮·斯图亚特",
-          "extensions": {}
-        },
-        {
-          "id": 406,
-          "keys": [
-            "射手座"
-          ],
-          "content": "item：射手座",
-          "enabled": true,
-          "insertion_order": 4070,
-          "position": "after_char",
-          "comment": "射手座",
-          "extensions": {}
-        },
-        {
-          "id": 407,
-          "keys": [
-            "屠龙者驾驶者"
-          ],
-          "content": "character：屠龙者驾驶者",
-          "enabled": true,
-          "insertion_order": 4080,
-          "position": "after_char",
-          "comment": "屠龙者驾驶者",
-          "extensions": {}
-        },
-        {
-          "id": 408,
-          "keys": [
-            "巨盾"
-          ],
-          "content": "item：巨盾",
-          "enabled": true,
-          "insertion_order": 4090,
-          "position": "after_char",
-          "comment": "巨盾",
-          "extensions": {}
-        },
-        {
-          "id": 409,
-          "keys": [
-            "巫教"
-          ],
-          "content": "faction：巫教",
-          "enabled": true,
-          "insertion_order": 4100,
-          "position": "after_char",
-          "comment": "巫教",
-          "extensions": {}
-        },
-        {
-          "id": 410,
-          "keys": [
-            "幽暗之力"
-          ],
-          "content": "concept：幽暗之力",
-          "enabled": true,
-          "insertion_order": 4110,
-          "position": "after_char",
-          "comment": "幽暗之力",
-          "extensions": {}
-        },
-        {
-          "id": 411,
-          "keys": [
-            "影武者"
-          ],
-          "content": "concept：影武者",
-          "enabled": true,
-          "insertion_order": 4120,
-          "position": "after_char",
-          "comment": "影武者",
-          "extensions": {}
-        },
-        {
-          "id": 412,
-          "keys": [
-            "忍冬"
-          ],
-          "content": "item：忍冬",
-          "enabled": true,
-          "insertion_order": 4130,
-          "position": "after_char",
-          "comment": "忍冬",
-          "extensions": {}
-        },
-        {
-          "id": 413,
-          "keys": [
-            "恐惧深渊"
-          ],
-          "content": "concept：恐惧深渊",
-          "enabled": true,
-          "insertion_order": 4140,
-          "position": "after_char",
-          "comment": "恐惧深渊",
-          "extensions": {}
-        },
-        {
-          "id": 414,
-          "keys": [
-            "手铳"
-          ],
-          "content": "item：手铳",
-          "enabled": true,
-          "insertion_order": 4150,
-          "position": "after_char",
-          "comment": "手铳",
-          "extensions": {}
-        },
-        {
-          "id": 415,
-          "keys": [
-            "拂晓之矛"
-          ],
-          "content": "item：拂晓之矛",
-          "enabled": true,
-          "insertion_order": 4160,
-          "position": "after_char",
-          "comment": "拂晓之矛",
-          "extensions": {}
-        },
-        {
-          "id": 416,
-          "keys": [
-            "拘束衣"
-          ],
-          "content": "item：拘束衣",
-          "enabled": true,
-          "insertion_order": 4170,
-          "position": "after_char",
-          "comment": "拘束衣",
-          "extensions": {}
-        },
-        {
-          "id": 417,
-          "keys": [
-            "拜占庭帝国"
-          ],
-          "content": "faction：拜占庭帝国",
-          "enabled": true,
-          "insertion_order": 4180,
-          "position": "after_char",
-          "comment": "拜占庭帝国",
-          "extensions": {}
-        },
-        {
-          "id": 418,
-          "keys": [
-            "指挥剑"
-          ],
-          "content": "item：指挥剑",
-          "enabled": true,
-          "insertion_order": 4190,
-          "position": "after_char",
-          "comment": "指挥剑",
-          "extensions": {}
-        },
-        {
-          "id": 419,
-          "keys": [
-            "撒旦教"
-          ],
-          "content": "concept：撒旦教",
-          "enabled": true,
-          "insertion_order": 4200,
-          "position": "after_char",
-          "comment": "撒旦教",
-          "extensions": {}
-        },
-        {
-          "id": 420,
-          "keys": [
-            "教团"
-          ],
-          "content": "faction：教团",
-          "enabled": true,
-          "insertion_order": 4210,
-          "position": "after_char",
-          "comment": "教团",
-          "extensions": {}
-        },
-        {
-          "id": 421,
-          "keys": [
-            "教廷区"
-          ],
-          "content": "place：教廷区",
-          "enabled": true,
-          "insertion_order": 4220,
-          "position": "after_char",
-          "comment": "教廷区",
-          "extensions": {}
-        },
-        {
-          "id": 422,
-          "keys": [
-            "斗兽场"
-          ],
-          "content": "place：斗兽场",
-          "enabled": true,
-          "insertion_order": 4230,
-          "position": "after_char",
-          "comment": "斗兽场",
-          "extensions": {}
-        },
-        {
-          "id": 423,
-          "keys": [
-            "春之祭"
-          ],
-          "content": "item：春之祭",
-          "enabled": true,
-          "insertion_order": 4240,
-          "position": "after_char",
-          "comment": "春之祭",
-          "extensions": {}
-        },
-        {
-          "id": 424,
-          "keys": [
-            "朗基奴斯枪"
-          ],
-          "content": "item：朗基奴斯枪",
-          "enabled": true,
-          "insertion_order": 4250,
-          "position": "after_char",
-          "comment": "朗基奴斯枪",
-          "extensions": {}
-        },
-        {
-          "id": 425,
-          "keys": [
-            "木头盒子"
-          ],
-          "content": "item：木头盒子",
-          "enabled": true,
-          "insertion_order": 4260,
-          "position": "after_char",
-          "comment": "木头盒子",
-          "extensions": {}
-        },
-        {
-          "id": 426,
-          "keys": [
-            "机械外骨骼"
-          ],
-          "content": "item：机械外骨骼",
-          "enabled": true,
-          "insertion_order": 4270,
-          "position": "after_char",
-          "comment": "机械外骨骼",
-          "extensions": {}
-        },
-        {
-          "id": 427,
-          "keys": [
-            "机械局"
-          ],
-          "content": "faction：机械局",
-          "enabled": true,
-          "insertion_order": 4280,
-          "position": "after_char",
-          "comment": "机械局",
-          "extensions": {}
-        },
-        {
-          "id": 428,
-          "keys": [
-            "机械师"
-          ],
-          "content": "concept：机械师",
-          "enabled": true,
-          "insertion_order": 4290,
-          "position": "after_char",
-          "comment": "机械师",
-          "extensions": {}
-        },
-        {
-          "id": 429,
-          "keys": [
-            "机械心脏"
-          ],
-          "content": "item：机械心脏",
-          "enabled": true,
-          "insertion_order": 4300,
-          "position": "after_char",
-          "comment": "机械心脏",
-          "extensions": {}
-        },
-        {
-          "id": 430,
-          "keys": [
-            "机械计算机"
-          ],
-          "content": "item：机械计算机",
-          "enabled": true,
-          "insertion_order": 4310,
-          "position": "after_char",
-          "comment": "机械计算机",
-          "extensions": {}
-        },
-        {
-          "id": 431,
-          "keys": [
-            "机械鹦鹉"
-          ],
-          "content": "item：机械鹦鹉",
-          "enabled": true,
-          "insertion_order": 4320,
-          "position": "after_char",
-          "comment": "机械鹦鹉",
-          "extensions": {}
-        },
-        {
-          "id": 432,
-          "keys": [
-            "查理曼国王"
-          ],
-          "content": "character：查理曼国王",
-          "enabled": true,
-          "insertion_order": 4330,
-          "position": "after_char",
-          "comment": "查理曼国王",
-          "extensions": {}
-        },
-        {
-          "id": 433,
-          "keys": [
-            "查理曼帝国"
-          ],
-          "content": "faction：查理曼帝国",
-          "enabled": true,
-          "insertion_order": 4340,
-          "position": "after_char",
-          "comment": "查理曼帝国",
-          "extensions": {}
-        },
-        {
-          "id": 434,
-          "keys": [
-            "格里高利"
-          ],
-          "content": "faction：格里高利",
-          "enabled": true,
-          "insertion_order": 4350,
-          "position": "after_char",
-          "comment": "格里高利",
-          "extensions": {}
-        },
-        {
-          "id": 435,
-          "keys": [
-            "桂冠女神号"
-          ],
-          "content": "item：桂冠女神号",
-          "enabled": true,
-          "insertion_order": 4360,
-          "position": "after_char",
-          "comment": "桂冠女神号",
-          "extensions": {}
-        },
-        {
-          "id": 436,
-          "keys": [
-            "永久请柬"
-          ],
-          "content": "item：永久请柬",
-          "enabled": true,
-          "insertion_order": 4370,
-          "position": "after_char",
-          "comment": "永久请柬",
-          "extensions": {}
-        },
-        {
-          "id": 437,
-          "keys": [
-            "沙皇"
-          ],
-          "content": "concept：沙皇",
-          "enabled": true,
-          "insertion_order": 4380,
-          "position": "after_char",
-          "comment": "沙皇",
-          "extensions": {}
-        },
-        {
-          "id": 438,
-          "keys": [
-            "波涛菲诺"
-          ],
-          "content": "place：波涛菲诺",
-          "enabled": true,
-          "insertion_order": 4390,
-          "position": "after_char",
-          "comment": "波涛菲诺",
-          "extensions": {}
-        },
-        {
-          "id": 439,
-          "keys": [
-            "滚石"
-          ],
-          "content": "item：滚石",
-          "enabled": true,
-          "insertion_order": 4400,
-          "position": "after_char",
-          "comment": "滚石",
-          "extensions": {}
-        },
-        {
-          "id": 440,
-          "keys": [
-            "灌顶"
-          ],
-          "content": "concept：灌顶",
-          "enabled": true,
-          "insertion_order": 4410,
-          "position": "after_char",
-          "comment": "灌顶",
-          "extensions": {}
-        },
-        {
-          "id": 441,
-          "keys": [
-            "火焰十字徽"
-          ],
-          "content": "item：火焰十字徽",
-          "enabled": true,
-          "insertion_order": 4420,
-          "position": "after_char",
-          "comment": "火焰十字徽",
-          "extensions": {}
-        },
-        {
-          "id": 442,
-          "keys": [
-            "火萤之巢"
-          ],
-          "content": "item：火萤之巢",
-          "enabled": true,
-          "insertion_order": 4430,
-          "position": "after_char",
-          "comment": "火萤之巢",
-          "extensions": {}
-        },
-        {
-          "id": 443,
-          "keys": [
-            "炽天训练营"
-          ],
-          "content": "place：炽天训练营",
-          "enabled": true,
-          "insertion_order": 4440,
-          "position": "after_char",
-          "comment": "炽天训练营",
-          "extensions": {}
-        },
-        {
-          "id": 444,
-          "keys": [
-            "炽天骑士团训练营"
-          ],
-          "content": "place：炽天骑士团训练营",
-          "enabled": true,
-          "insertion_order": 4450,
-          "position": "after_char",
-          "comment": "炽天骑士团训练营",
-          "extensions": {}
-        },
-        {
-          "id": 445,
-          "keys": [
-            "燃烧棒"
-          ],
-          "content": "item：燃烧棒",
-          "enabled": true,
-          "insertion_order": 4460,
-          "position": "after_char",
-          "comment": "燃烧棒",
-          "extensions": {}
-        },
-        {
-          "id": 446,
-          "keys": [
-            "狮子心Ⅲ型"
-          ],
-          "content": "item：狮子心Ⅲ型",
-          "enabled": true,
-          "insertion_order": 4470,
-          "position": "after_char",
-          "comment": "狮子心Ⅲ型",
-          "extensions": {}
-        },
-        {
-          "id": 447,
-          "keys": [
-            "率兽食人的世界"
-          ],
-          "content": "concept：率兽食人的世界",
-          "enabled": true,
-          "insertion_order": 4480,
-          "position": "after_char",
-          "comment": "率兽食人的世界",
-          "extensions": {}
-        },
-        {
-          "id": 448,
-          "keys": [
-            "王屋山"
-          ],
-          "content": "place：王屋山",
-          "enabled": true,
-          "insertion_order": 4490,
-          "position": "after_char",
-          "comment": "王屋山",
-          "extensions": {}
-        },
-        {
-          "id": 449,
-          "keys": [
-            "玩具熊"
-          ],
-          "content": "item：玩具熊",
-          "enabled": true,
-          "insertion_order": 4500,
-          "position": "after_char",
-          "comment": "玩具熊",
-          "extensions": {}
-        },
-        {
-          "id": 450,
-          "keys": [
-            "甘迪亚省"
-          ],
-          "content": "place：甘迪亚省",
-          "enabled": true,
-          "insertion_order": 4510,
-          "position": "after_char",
-          "comment": "甘迪亚省",
-          "extensions": {}
-        },
-        {
-          "id": 451,
-          "keys": [
-            "白手套"
-          ],
-          "content": "item：白手套",
-          "enabled": true,
-          "insertion_order": 4520,
-          "position": "after_char",
-          "comment": "白手套",
-          "extensions": {}
-        },
-        {
-          "id": 452,
-          "keys": [
-            "石柱街"
-          ],
-          "content": "place：石柱街",
-          "enabled": true,
-          "insertion_order": 4530,
-          "position": "after_char",
-          "comment": "石柱街",
-          "extensions": {}
-        },
-        {
-          "id": 453,
-          "keys": [
-            "矿石灯"
-          ],
-          "content": "item：矿石灯",
-          "enabled": true,
-          "insertion_order": 4540,
-          "position": "after_char",
-          "comment": "矿石灯",
-          "extensions": {}
-        },
-        {
-          "id": 454,
-          "keys": [
-            "礼仪剑术"
-          ],
-          "content": "ability：礼仪剑术",
-          "enabled": true,
-          "insertion_order": 4550,
-          "position": "after_char",
-          "comment": "礼仪剑术",
-          "extensions": {}
-        },
-        {
-          "id": 455,
-          "keys": [
-            "神怒Ⅰ型"
-          ],
-          "content": "item：神怒Ⅰ型",
-          "enabled": true,
-          "insertion_order": 4560,
-          "position": "after_char",
-          "comment": "神怒Ⅰ型",
-          "extensions": {}
-        },
-        {
-          "id": 456,
-          "keys": [
-            "神武门"
-          ],
-          "content": "place：神武门",
-          "enabled": true,
-          "insertion_order": 4570,
-          "position": "after_char",
-          "comment": "神武门",
-          "extensions": {}
-        },
-        {
-          "id": 457,
-          "keys": [
-            "秘金"
-          ],
-          "content": "item：秘金",
-          "enabled": true,
-          "insertion_order": 4580,
-          "position": "after_char",
-          "comment": "秘金",
-          "extensions": {}
-        },
-        {
-          "id": 458,
-          "keys": [
-            "秘银弹"
-          ],
-          "content": "item：秘银弹",
-          "enabled": true,
-          "insertion_order": 4590,
-          "position": "after_char",
-          "comment": "秘银弹",
-          "extensions": {}
-        },
-        {
-          "id": 459,
-          "keys": [
-            "究极之盾"
-          ],
-          "content": "item：究极之盾",
-          "enabled": true,
-          "insertion_order": 4600,
-          "position": "after_char",
-          "comment": "究极之盾",
-          "extensions": {}
-        },
-        {
-          "id": 460,
-          "keys": [
-            "究极金属"
-          ],
-          "content": "concept：究极金属",
-          "enabled": true,
-          "insertion_order": 4610,
-          "position": "after_char",
-          "comment": "究极金属",
-          "extensions": {}
-        },
-        {
-          "id": 461,
-          "keys": [
-            "紫瞳的诅咒"
-          ],
-          "content": "concept：紫瞳的诅咒",
-          "enabled": true,
-          "insertion_order": 4620,
-          "position": "after_char",
-          "comment": "紫瞳的诅咒",
-          "extensions": {}
-        },
-        {
-          "id": 462,
-          "keys": [
-            "红伞"
-          ],
-          "content": "item：红伞",
-          "enabled": true,
-          "insertion_order": 4630,
-          "position": "after_char",
-          "comment": "红伞",
-          "extensions": {}
-        },
-        {
-          "id": 463,
-          "keys": [
-            "红松林"
-          ],
-          "content": "place：红松林",
-          "enabled": true,
-          "insertion_order": 4640,
-          "position": "after_char",
-          "comment": "红松林",
-          "extensions": {}
-        },
-        {
-          "id": 464,
-          "keys": [
-            "红水银炸弹"
-          ],
-          "content": "item：红水银炸弹",
-          "enabled": true,
-          "insertion_order": 4650,
-          "position": "after_char",
-          "comment": "红水银炸弹",
-          "extensions": {}
-        },
-        {
-          "id": 465,
-          "keys": [
-            "罗曼神父"
-          ],
-          "content": "character：罗曼神父",
-          "enabled": true,
-          "insertion_order": 4660,
-          "position": "after_char",
-          "comment": "罗曼神父",
-          "extensions": {}
-        },
-        {
-          "id": 466,
-          "keys": [
-            "美杜莎金币"
-          ],
-          "content": "item：美杜莎金币",
-          "enabled": true,
-          "insertion_order": 4670,
-          "position": "after_char",
-          "comment": "美杜莎金币",
-          "extensions": {}
-        },
-        {
-          "id": 467,
-          "keys": [
-            "自闭症"
-          ],
-          "content": "concept：自闭症",
-          "enabled": true,
-          "insertion_order": 4680,
-          "position": "after_char",
-          "comment": "自闭症",
-          "extensions": {}
-        },
-        {
-          "id": 468,
-          "keys": [
-            "臼炮"
-          ],
-          "content": "item：臼炮",
-          "enabled": true,
-          "insertion_order": 4690,
-          "position": "after_char",
-          "comment": "臼炮",
-          "extensions": {}
-        },
-        {
-          "id": 469,
-          "keys": [
-            "英灵殿"
-          ],
-          "content": "place：英灵殿",
-          "enabled": true,
-          "insertion_order": 4700,
-          "position": "after_char",
-          "comment": "英灵殿",
-          "extensions": {}
-        },
-        {
-          "id": 470,
-          "keys": [
-            "蒸汽机械神教"
-          ],
-          "content": "faction：蒸汽机械神教",
-          "enabled": true,
-          "insertion_order": 4710,
-          "position": "after_char",
-          "comment": "蒸汽机械神教",
-          "extensions": {}
-        },
-        {
-          "id": 471,
-          "keys": [
-            "蓝宝石戒指"
-          ],
-          "content": "item：蓝宝石戒指",
-          "enabled": true,
-          "insertion_order": 4720,
-          "position": "after_char",
-          "comment": "蓝宝石戒指",
-          "extensions": {}
-        },
-        {
-          "id": 472,
-          "keys": [
-            "虎式战车"
-          ],
-          "content": "item：虎式战车",
-          "enabled": true,
-          "insertion_order": 4730,
-          "position": "after_char",
-          "comment": "虎式战车",
-          "extensions": {}
-        },
-        {
-          "id": 473,
-          "keys": [
-            "血红色的莲花徽章"
-          ],
-          "content": "item：血红色的莲花徽章",
-          "enabled": true,
-          "insertion_order": 4740,
-          "position": "after_char",
-          "comment": "血红色的莲花徽章",
-          "extensions": {}
-        },
-        {
-          "id": 474,
-          "keys": [
-            "行刑地实验场"
-          ],
-          "content": "place：行刑地实验场",
-          "enabled": true,
-          "insertion_order": 4750,
-          "position": "after_char",
-          "comment": "行刑地实验场",
-          "extensions": {}
-        },
-        {
-          "id": 475,
-          "keys": [
-            "计时钟"
-          ],
-          "content": "item：计时钟",
-          "enabled": true,
-          "insertion_order": 4760,
-          "position": "after_char",
-          "comment": "计时钟",
-          "extensions": {}
-        },
-        {
-          "id": 476,
-          "keys": [
-            "赫拉克勒斯之胄"
-          ],
-          "content": "item：赫拉克勒斯之胄",
-          "enabled": true,
-          "insertion_order": 4770,
-          "position": "after_char",
-          "comment": "赫拉克勒斯之胄",
-          "extensions": {}
-        },
-        {
-          "id": 477,
-          "keys": [
-            "适格者"
-          ],
-          "content": "concept：适格者",
-          "enabled": true,
-          "insertion_order": 4780,
-          "position": "after_char",
-          "comment": "适格者",
-          "extensions": {}
-        },
-        {
-          "id": 478,
-          "keys": [
-            "逃生通道"
-          ],
-          "content": "concept：逃生通道",
-          "enabled": true,
-          "insertion_order": 4790,
-          "position": "after_char",
-          "comment": "逃生通道",
-          "extensions": {}
-        },
-        {
-          "id": 479,
-          "keys": [
-            "金伦加战役"
-          ],
-          "content": "event：金伦加战役",
-          "enabled": true,
-          "insertion_order": 4800,
-          "position": "after_char",
-          "comment": "金伦加战役",
-          "extensions": {}
-        },
-        {
-          "id": 480,
-          "keys": [
-            "铁傀儡"
-          ],
-          "content": "concept：铁傀儡",
-          "enabled": true,
-          "insertion_order": 4810,
-          "position": "after_char",
-          "comment": "铁傀儡",
-          "extensions": {}
-        },
-        {
-          "id": 481,
-          "keys": [
-            "铜狼"
-          ],
-          "content": "character：铜狼",
-          "enabled": true,
-          "insertion_order": 4820,
-          "position": "after_char",
-          "comment": "铜狼",
-          "extensions": {}
-        },
-        {
-          "id": 482,
-          "keys": [
-            "银之克鲁泽"
-          ],
-          "content": "character：银之克鲁泽",
-          "enabled": true,
-          "insertion_order": 4830,
-          "position": "after_char",
-          "comment": "银之克鲁泽",
-          "extensions": {}
-        },
-        {
-          "id": 483,
-          "keys": [
-            "银刺"
-          ],
-          "content": "item：银刺",
-          "enabled": true,
-          "insertion_order": 4840,
-          "position": "after_char",
-          "comment": "银刺",
-          "extensions": {}
-        },
-        {
-          "id": 484,
-          "keys": [
-            "锡兰王宫"
-          ],
-          "content": "place：锡兰王宫",
-          "enabled": true,
-          "insertion_order": 4850,
-          "position": "after_char",
-          "comment": "锡兰王宫",
-          "extensions": {}
-        },
-        {
-          "id": 485,
-          "keys": [
-            "阿尔卑斯山"
-          ],
-          "content": "place：阿尔卑斯山",
-          "enabled": true,
-          "insertion_order": 4860,
-          "position": "after_char",
-          "comment": "阿尔卑斯山",
-          "extensions": {}
-        },
-        {
-          "id": 486,
-          "keys": [
-            "阿尔比恩公国"
-          ],
-          "content": "faction：阿尔比恩公国",
-          "enabled": true,
-          "insertion_order": 4870,
-          "position": "after_char",
-          "comment": "阿尔比恩公国",
-          "extensions": {}
-        },
-        {
-          "id": 487,
-          "keys": [
-            "随身枪"
-          ],
-          "content": "item：随身枪",
-          "enabled": true,
-          "insertion_order": 4880,
-          "position": "after_char",
-          "comment": "随身枪",
-          "extensions": {}
-        },
-        {
-          "id": 488,
-          "keys": [
-            "霜之拂晓"
-          ],
-          "content": "item：霜之拂晓",
-          "enabled": true,
-          "insertion_order": 4890,
-          "position": "after_char",
-          "comment": "霜之拂晓",
-          "extensions": {}
-        },
-        {
-          "id": 489,
-          "keys": [
-            "马斯顿公国"
-          ],
-          "content": "place：马斯顿公国",
-          "enabled": true,
-          "insertion_order": 4900,
-          "position": "after_char",
-          "comment": "马斯顿公国",
-          "extensions": {}
-        },
-        {
-          "id": 490,
-          "keys": [
-            "马斯顿火车站"
-          ],
-          "content": "place：马斯顿火车站",
-          "enabled": true,
-          "insertion_order": 4910,
-          "position": "after_char",
-          "comment": "马斯顿火车站",
-          "extensions": {}
-        },
-        {
-          "id": 491,
-          "keys": [
-            "骑士衔"
-          ],
-          "content": "concept：骑士衔",
-          "enabled": true,
-          "insertion_order": 4920,
-          "position": "after_char",
-          "comment": "骑士衔",
-          "extensions": {}
-        },
-        {
-          "id": 492,
-          "keys": [
-            "骑士道"
-          ],
-          "content": "concept：骑士道",
-          "enabled": true,
-          "insertion_order": 4930,
-          "position": "after_char",
-          "comment": "骑士道",
-          "extensions": {}
-        },
-        {
-          "id": 493,
-          "keys": [
-            "高加索山"
-          ],
-          "content": "place：高加索山",
-          "enabled": true,
-          "insertion_order": 4940,
-          "position": "after_char",
-          "comment": "高加索山",
-          "extensions": {}
-        },
-        {
-          "id": 494,
-          "keys": [
-            "高加索山脉"
-          ],
-          "content": "place：高加索山脉",
-          "enabled": true,
-          "insertion_order": 4950,
-          "position": "after_char",
-          "comment": "高加索山脉",
-          "extensions": {}
-        },
-        {
-          "id": 495,
-          "keys": [
-            "鹦鹉"
-          ],
-          "content": "item：鹦鹉",
-          "enabled": true,
-          "insertion_order": 4960,
-          "position": "after_char",
-          "comment": "鹦鹉",
-          "extensions": {}
-        },
-        {
-          "id": 496,
-          "keys": [
-            "鹰巢"
-          ],
-          "content": "place：鹰巢",
-          "enabled": true,
-          "insertion_order": 4970,
-          "position": "after_char",
-          "comment": "鹰巢",
-          "extensions": {}
-        },
-        {
-          "id": 497,
-          "keys": [
-            "黄金十字战旗"
-          ],
-          "content": "item：黄金十字战旗",
-          "enabled": true,
-          "insertion_order": 4980,
-          "position": "after_char",
-          "comment": "黄金十字战旗",
-          "extensions": {}
-        },
-        {
-          "id": 498,
-          "keys": [
-            "黄金圣徽"
-          ],
-          "content": "item：黄金圣徽",
-          "enabled": true,
-          "insertion_order": 4990,
-          "position": "after_char",
-          "comment": "黄金圣徽",
-          "extensions": {}
-        },
-        {
-          "id": 499,
-          "keys": [
-            "黄金请柬"
-          ],
-          "content": "item：黄金请柬",
-          "enabled": true,
-          "insertion_order": 5000,
-          "position": "after_char",
-          "comment": "黄金请柬",
-          "extensions": {}
-        },
-        {
-          "id": 500,
-          "keys": [
-            "黄铜火铳"
-          ],
-          "content": "item：黄铜火铳",
-          "enabled": true,
-          "insertion_order": 5010,
-          "position": "after_char",
-          "comment": "黄铜火铳",
-          "extensions": {}
-        },
-        {
-          "id": 501,
-          "keys": [
-            "黑箱"
-          ],
-          "content": "item：黑箱",
-          "enabled": true,
-          "insertion_order": 5020,
-          "position": "after_char",
-          "comment": "黑箱",
-          "extensions": {}
-        },
-        {
-          "id": 502,
-          "keys": [
-            "黑色欧泊石戒指"
-          ],
-          "content": "item：黑色欧泊石戒指",
-          "enabled": true,
-          "insertion_order": 5030,
-          "position": "after_char",
-          "comment": "黑色欧泊石戒指",
-          "extensions": {}
-        },
-        {
-          "id": 503,
-          "keys": [
-            "黑铁大门"
-          ],
-          "content": "item：黑铁大门",
-          "enabled": true,
-          "insertion_order": 5040,
-          "position": "after_char",
-          "comment": "黑铁大门",
-          "extensions": {}
-        },
-        {
-          "id": 504,
-          "keys": [
-            "龙吼重炮"
-          ],
-          "content": "item：龙吼重炮",
-          "enabled": true,
-          "insertion_order": 5050,
-          "position": "after_char",
-          "comment": "龙吼重炮",
-          "extensions": {}
-        },
-        {
-          "id": 505,
-          "keys": [
-            "龙炎铳"
-          ],
-          "content": "item：龙炎铳",
-          "enabled": true,
-          "insertion_order": 5060,
-          "position": "after_char",
-          "comment": "龙炎铳",
-          "extensions": {}
-        },
-        {
-          "id": 506,
-          "keys": [
-            "龙爪"
-          ],
-          "content": "item：龙爪",
-          "enabled": true,
-          "insertion_order": 5070,
-          "position": "after_char",
-          "comment": "龙爪",
-          "extensions": {}
-        },
-        {
-          "id": 507,
-          "keys": [
-            "龙骑兵套装"
-          ],
-          "content": "item：龙骑兵套装",
-          "enabled": true,
-          "insertion_order": 5080,
-          "position": "after_char",
-          "comment": "龙骑兵套装",
           "extensions": {}
         }
       ]

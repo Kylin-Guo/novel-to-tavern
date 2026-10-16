@@ -16,12 +16,12 @@ from novel_to_tavern.export import (
     WORLDBOOK_NAME,
     ChapterDigest,
     ExportError,
+    build_core_rules_entry,
     build_exports,
     build_greetings,
     build_plot_entry,
     export,
     plan_to_drafts,
-    plot_skeleton_text,
 )
 from novel_to_tavern.resolve import CanonicalEntity
 from novel_to_tavern.tavern import CardV2, validate_card, validate_parity
@@ -120,10 +120,14 @@ def test_plot_entry_is_triggered_not_always_on():
     assert entry.keys
 
 
-def test_plot_skeleton_is_compact():
-    text = plot_skeleton_text(_digests(156))
-    assert text.count("\n") < 20
-    assert "剧情主线" in text
+def test_core_rules_contain_only_rules_not_a_plot_outline():
+    """条目叫「世界运行规则」，内容就该只有规则 —— 不能塞逐章大纲。"""
+    from novel_to_tavern.export.builder import CORE_RULES
+
+    entry = build_core_rules_entry()
+    assert "第1章" not in entry.content_runtime
+    assert "章：" not in entry.content_runtime
+    assert CORE_RULES in entry.content_runtime
 
 
 # --- 导出物 ---------------------------------------------------------------
@@ -168,7 +172,7 @@ def test_exactly_three_always_on_entries():
     """常驻条目数要留在配置上限内。"""
     from novel_to_tavern.export.builder import build_core_rules_entry
 
-    entries = [build_core_rules_entry(_digests()), *_plan()]
+    entries = [build_core_rules_entry(), *_plan()]
     card, _ = build_exports(book_title="测试书", entries=entries, greetings=_greetings())
     always_on = [e for e in card.data.character_book.entries if e.constant]
     assert len(always_on) == 3
@@ -177,7 +181,7 @@ def test_exactly_three_always_on_entries():
 def test_always_on_entries_are_placed_before_the_character_block():
     from novel_to_tavern.export.builder import build_core_rules_entry
 
-    entries = [build_core_rules_entry(_digests()), *_plan()]
+    entries = [build_core_rules_entry(), *_plan()]
     card, _ = build_exports(book_title="测试书", entries=entries, greetings=_greetings())
     for entry in card.data.character_book.entries:
         if entry.constant:
@@ -296,11 +300,13 @@ def test_export_manifest_contains_no_credentials(tmp_path):
     assert "NOVEL_TAVERN_API_KEY" not in text
 
 
-def test_audit_states_tavo_is_untested(tmp_path):
+def test_audit_states_exactly_how_far_tavo_was_verified(tmp_path):
+    """只验证到「导入成功」就不能说更多 —— 触发与剧透纪律都还没验。"""
     run = _prepare_run(tmp_path)
     export(run, config_module.Config())
     audit = (run / "reports" / "audit.md").read_text(encoding="utf-8")
-    assert "尚未在 Tavo 实测" in audit
+    assert "只验证到「导入成功」" in audit
+    assert "都还没验证" in audit
     assert "粗估" in audit
 
 

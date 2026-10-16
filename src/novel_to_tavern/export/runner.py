@@ -110,7 +110,7 @@ def _assemble_entries(
     always_on = [e for e in plan if e.always_on]
     triggered = [e for e in plan if not e.always_on]
 
-    entries: list[PlannedEntry] = [build_core_rules_entry(digests)]
+    entries: list[PlannedEntry] = [build_core_rules_entry()]
     for entry in always_on:
         if entry.entry_id != "wb_core_rules":
             entries.append(entry)
@@ -349,6 +349,8 @@ def _render_audit(
         f"- 带来源引用的条目：{with_refs} / {len(entries)}",
         f"- 条目携带的引文总数：{len(refs)}",
         f"- 实体：{len(entities)}（其中人物 {len(characters)}）",
+        f"- 其中生成世界书条目的实体：{sum(1 for e in entries if e.entry_id.startswith('wb_entity_'))}"
+        f"（**一条 canon 事实都没有的实体不生成条目**，见 timeline_report.md 的跳过名单）",
         f"- 时间线事件：{len(timeline)}",
         "",
         "## 校验结果",
@@ -384,8 +386,9 @@ def _render_audit(
         "",
         "## 已知限制",
         "",
-        "1. **尚未在 Tavo 实测**。格式依据为 SillyTavern 1.19.0 源码，"
-        "但没有任何一次真实导入记录。导入步骤见 docs/TAVO_IMPORT_CHECKLIST.md。",
+        "1. **Tavo 只验证到「导入成功」这一步**（角色卡与内嵌世界书能被接受并显示）。"
+        "触发命中、常驻条目是否每轮都在、剧透纪律、实际 token 占用**都还没验证**。"
+        "格式依据为 SillyTavern 1.19.0 源码逐行核对。",
         "2. 事件没有绝对时间：原文未明确给出时 `occurred_at` 一律为空，不予推算。",
         "3. 知识边界由「事件参与者」推断，标注为 `present_at_event`，"
         "不等于原著明文授权。",

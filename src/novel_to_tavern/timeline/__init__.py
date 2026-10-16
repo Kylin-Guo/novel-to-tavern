@@ -30,8 +30,11 @@ from .runner import (
 )
 from .worldbible import (
     PlannedEntry,
+    clip_at_sentence,
+    entities_without_facts,
     estimate_tokens,
     filter_for_start_chapter,
+    headline_for,
     plan_character_index,
     plan_entity_entries,
     plan_world_overview,
@@ -55,7 +58,10 @@ __all__ = [
     "build_knowledge",
     "build_timeline",
     "check_leakage",
+    "clip_at_sentence",
+    "entities_without_facts",
     "estimate_tokens",
+    "headline_for",
     "extract_relative_time",
     "filter_for_start_chapter",
     "find_contradictions",
