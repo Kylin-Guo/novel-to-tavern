@@ -120,6 +120,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="只校验高风险事实（身份/生死/秘密/关系/能力/立场）",
     )
 
+    style_observe_parser = sub.add_parser(
+        "style-observe", help="逐分块观察作者写作风格（旁路资料，非 canon）"
+    )
+    style_observe_parser.add_argument(
+        "--run-id", required=True, help="要观察的 run id（来自 ingest）"
+    )
+    style_observe_parser.add_argument(
+        "--no-resume", action="store_true", help="忽略已有观察，重新观察所有选中分块"
+    )
+    style_observe_parser.add_argument(
+        "--limit", type=int, metavar="N", help="只处理选中的前 N 块（调试用）"
+    )
+
     export_parser = sub.add_parser(
         "export", help="导出角色卡与世界书（Phase 5）"
     )
@@ -438,6 +451,52 @@ def _cmd_verify(args: argparse.Namespace, log) -> int:
     return 0
 
 
+def _cmd_style_observe(args: argparse.Namespace, log) -> int:
+    from .llm import ProviderError, build_provider
+    from .style import StyleError, run_style_observation
+
+    try:
+        config = config_module.load_config(args.config)
+    except config_module.ConfigError as exc:
+        print(f"配置校验失败：{exc}", file=sys.stderr)
+        return 1
+
+    run_dir = _resolve_run(config, args)
+    if run_dir is None:
+        return 1
+
+    try:
+        provider = build_provider(config, log=log)
+    except ProviderError as exc:
+        print(f"无法装配风格观察引擎：{exc}", file=sys.stderr)
+        return 1
+
+    try:
+        result = run_style_observation(
+            config,
+            run_dir,
+            provider,
+            resume=not args.no_resume,
+            limit=args.limit,
+            log=log,
+        )
+    except StyleError as exc:
+        print(f"风格观察失败：{exc}", file=sys.stderr)
+        return 1
+
+    coverage = result["coverage"]
+    print(f"观察引擎：{provider.name}")
+    print(f"已完成观察：{len(result['done'])}")
+    print(f"本次跳过：{len(result['skipped'])}")
+    print(f"失败分块：{len(result['failed'])}")
+    print(
+        f"覆盖率：{coverage['observed']} / {coverage['selected']} 选中块"
+        f"（全部分块 {coverage['total_chunks']}）"
+    )
+    print(f"报告：{result['report']}")
+    return 0 if result["ok"] else 1
+
+
 def _cmd_export(args: argparse.Namespace, log) -> int:
     from .export import ExportError, export
 
@@ -511,6 +570,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_timeline(args, log)
     if args.command == "verify":
         return _cmd_verify(args, log)
+    if args.command == "style-observe":
+        return _cmd_style_observe(args, log)
     if args.command == "export":
         return _cmd_export(args, log)
 
