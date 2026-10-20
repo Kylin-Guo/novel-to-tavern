@@ -82,6 +82,46 @@ def test_summary_contains_no_secret_values(tmp_path, monkeypatch):
     assert summary["llm.api_key_env"] == config.llm.api_key_env
 
 
+def test_style_section_defaults_are_disabled():
+    cfg = config_module.Config()
+    assert cfg.style.enabled is False
+    assert cfg.style.max_runtime_tokens == 800
+    assert cfg.style.worldbook_entries is True
+    assert cfg.style.observe_max_chunks == 0
+    assert cfg.style.merge_batch_size == 30
+    assert cfg.style.supplementary_path is None
+
+
+def test_summary_exposes_the_style_switches():
+    summary = config_module.summarize(config_module.Config())
+    assert summary["style.enabled"] is False
+    assert summary["style.max_runtime_tokens"] == 800
+    assert summary["style.worldbook_entries"] is True
+
+
+def test_warning_when_supplementary_file_is_missing(tmp_path):
+    cfg = config_module.Config()
+    cfg = cfg.model_copy(
+        update={
+            "style": cfg.style.model_copy(
+                update={
+                    "enabled": True,
+                    "supplementary_path": str(tmp_path / "absent.md"),
+                }
+            )
+        }
+    )
+    warnings = config_module.config_warnings(cfg)
+    assert any("supplementary_path" in w for w in warnings)
+
+    note = tmp_path / "note.md"
+    note.write_text("作者自述。", encoding="utf-8")
+    cfg = cfg.model_copy(
+        update={"style": cfg.style.model_copy(update={"supplementary_path": str(note)})}
+    )
+    assert not any("supplementary_path" in w for w in config_module.config_warnings(cfg))
+
+
 def test_paths_are_strings_not_path_objects():
     """摘要要能安全序列化，不能混入 Path 对象。"""
     summary = config_module.summarize(config_module.Config())

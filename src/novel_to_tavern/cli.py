@@ -133,6 +133,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--limit", type=int, metavar="N", help="只处理选中的前 N 块（调试用）"
     )
 
+    style_compile_parser = sub.add_parser(
+        "style-compile", help="把风格观察合并、编译成风格档案（旁路资料，非 canon）"
+    )
+    style_compile_parser.add_argument(
+        "--run-id", required=True, help="要编译的 run id（先跑 style-observe）"
+    )
+    style_compile_parser.add_argument(
+        "--no-resume",
+        action="store_true",
+        help="强制重编译：先清掉 author_style/ 下除 observations/ 以外的产物",
+    )
+
     export_parser = sub.add_parser(
         "export", help="导出角色卡与世界书（Phase 5）"
     )
@@ -497,8 +509,11 @@ def _cmd_style_observe(args: argparse.Namespace, log) -> int:
     return 0 if result["ok"] else 1
 
 
-def _cmd_export(args: argparse.Namespace, log) -> int:
-    from .export import ExportError, export
+def _cmd_style_compile(args: argparse.Namespace, log) -> int:
+    import shutil
+
+    from .llm import ProviderError, build_provider
+    from .style import StyleError, run_style_compile
 
     try:
         config = config_module.load_config(args.config)
@@ -510,10 +525,86 @@ def _cmd_export(args: argparse.Namespace, log) -> int:
     if run_dir is None:
         return 1
 
+    if args.no_resume:
+        # 只清产物，不动 observations/ —— 观察是花了调用换来的。
+        base = run_dir / "author_style"
+        if base.is_dir():
+            for child in base.iterdir():
+                if child.name == "observations":
+                    continue
+                if child.is_dir():
+                    shutil.rmtree(child)
+                else:
+                    child.unlink()
+
+    try:
+        provider = build_provider(config, log=log)
+    except ProviderError as exc:
+        print(f"无法装配风格编译引擎：{exc}", file=sys.stderr)
+        return 1
+
+    try:
+        profile = run_style_compile(run_dir, config, provider, log=log)
+    except StyleError as exc:
+        print(f"风格编译失败：{exc}", file=sys.stderr)
+        return 1
+
+    from .timeline.worldbible import estimate_tokens
+
+    entries_path = run_dir / "author_style" / "style_worldbook_entries.json"
+    entry_count = 0
+    if entries_path.is_file():
+        import json
+
+        entry_count = len(json.loads(entries_path.read_text(encoding="utf-8")))
+
+    print(f"编译引擎：{provider.name}")
+    print(f"profile_id：{profile.profile_id}")
+    print(
+        f"运行时规范：约 {estimate_tokens(profile.runtime_rules)} token"
+        f"（预算 {config.style.max_runtime_tokens}）"
+    )
+    print(f"风格世界书条目：{entry_count}")
+    print(f"审计：{run_dir / 'author_style' / 'audit.md'}")
+    return 0
+
+
+def _cmd_export(args: argparse.Namespace, log) -> int:
+    from .export import ExportError, export
+    from .llm import ProviderError, build_provider
+    from .style import StyleError
+
+    try:
+        config = config_module.load_config(args.config)
+    except config_module.ConfigError as exc:
+        print(f"配置校验失败：{exc}", file=sys.stderr)
+        return 1
+
+    run_dir = _resolve_run(config, args)
+    if run_dir is None:
+        return 1
+
+    # 风格产物新鲜时**不需要**引擎 —— 没有凭据也能导出。
+    provider = None
+    if config.style.enabled:
+        from .style.pipeline import style_artifacts_fresh
+
+        if not style_artifacts_fresh(run_dir, config):
+            try:
+                provider = build_provider(config, log=log)
+            except ProviderError as exc:
+                print(
+                    f"风格产物不存在/已过期且无法装配引擎：{exc}",
+                    file=sys.stderr,
+                )
+                return 1
+
     start_chapter = args.start_chapter - 1 if args.start_chapter is not None else None
     try:
-        result = export(run_dir, config, start_chapter=start_chapter)
-    except ExportError as exc:
+        result = export(
+            run_dir, config, start_chapter=start_chapter, provider=provider, log=log
+        )
+    except (ExportError, StyleError) as exc:
         print(f"导出失败：{exc}", file=sys.stderr)
         return 1
 
@@ -572,6 +663,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_verify(args, log)
     if args.command == "style-observe":
         return _cmd_style_observe(args, log)
+    if args.command == "style-compile":
+        return _cmd_style_compile(args, log)
     if args.command == "export":
         return _cmd_export(args, log)
 

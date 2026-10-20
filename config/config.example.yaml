@@ -55,6 +55,14 @@ worldbook:
   allow_ejs: false # 未实现。只能为 false
   allow_html_beautification: false # 未实现。只能为 false
 
+style:
+  enabled: false # 开启后 n2t export 自动执行作者风格蒸馏（逐块观察→合并→编译）
+  max_runtime_tokens: 800 # 【叙事风格规范】分节粗估上限；超出自动压缩，再超报错
+  worldbook_entries: true # 把 8 组完整风格档案写进世界书（触发式，非常驻）
+  observe_max_chunks: 0 # 逐块观察上限；0 = 全部。>0 时等距抽样（确定性）
+  merge_batch_size: 30 # 合并阶段每批观察份数
+  supplementary_path: null # 可选：作者访谈/创作谈笔记（md/txt），补充证据
+
 export:
   character_card_spec: chara_card_v2
   include_individual_npc_cards: false # 未实现（P2-2）。只能为 false

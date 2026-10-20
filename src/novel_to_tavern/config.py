@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from . import env as env_module
 
@@ -96,6 +96,25 @@ class WorldbookConfig(_Base):
     allow_html_beautification: Literal[False] = False
 
 
+class StyleConfig(_Base):
+    """作者风格自动蒸馏（旁路资料流，非 canon）。"""
+
+    #: 总开关。开启后 export 会自动执行风格蒸馏（见 style/pipeline.py）。
+    enabled: bool = False
+    #: 【叙事风格规范】分节的粗估 token 上限（estimate_tokens 口径）。
+    #: 超出先自动压缩，再超报错 —— 不静默截断。
+    max_runtime_tokens: int = Field(default=800, gt=0)
+    #: 是否把 8 组完整风格档案写进世界书（触发式条目）。
+    worldbook_entries: bool = True
+    #: 逐块观察的分块数上限；0 = 全部。>0 时等距抽样（确定性，见 select_chunks）。
+    observe_max_chunks: int = Field(default=0, ge=0)
+    #: 合并阶段每批吃多少份观察。
+    merge_batch_size: int = Field(default=30, gt=0)
+    #: 可选：用户自持有的作者访谈/创作谈笔记（md/txt），作补充证据。
+    #: 相对仓库根目录。
+    supplementary_path: str | None = None
+
+
 class ExportConfig(_Base):
     character_card_spec: CardSpec = "chara_card_v2"
     #: 单张 NPC 卡（P2-2）尚未实现。同 `enable_recursive_scan`，用 `Literal[False]` 表达
@@ -115,6 +134,7 @@ class Config(_Base):
     llm: LLMConfig = Field(default_factory=LLMConfig)
     pipeline: PipelineConfig = Field(default_factory=PipelineConfig)
     worldbook: WorldbookConfig = Field(default_factory=WorldbookConfig)
+    style: StyleConfig = Field(default_factory=StyleConfig)
     export: ExportConfig = Field(default_factory=ExportConfig)
     privacy: PrivacyConfig = Field(default_factory=PrivacyConfig)
 
@@ -163,6 +183,15 @@ def config_warnings(config: Config) -> list[str]:
         )
     if config.input.formats and set(config.input.formats) - {"txt", "md"}:
         warnings.append(f"input.formats 含未支持的后缀：{config.input.formats}")
+    if (
+        config.style.enabled
+        and config.style.supplementary_path
+        and not Path(config.style.supplementary_path).is_file()
+    ):
+        warnings.append(
+            f"style.supplementary_path 指向的文件不存在：{config.style.supplementary_path}。"
+            "风格编译会因此报错，请修正路径或留空。"
+        )
     return warnings
 
 
@@ -183,4 +212,7 @@ def summarize(config: Config) -> dict[str, Any]:
         "worldbook.always_on_core_rules": config.worldbook.always_on_core_rules,
         "worldbook.always_on_world_overview": config.worldbook.always_on_world_overview,
         "worldbook.always_on_character_index": config.worldbook.always_on_character_index,
+        "style.enabled": config.style.enabled,
+        "style.max_runtime_tokens": config.style.max_runtime_tokens,
+        "style.worldbook_entries": config.style.worldbook_entries,
     }
