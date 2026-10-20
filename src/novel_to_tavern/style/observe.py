@@ -35,7 +35,12 @@ from .prompts import (
     SYSTEM_PROMPT_OBSERVE,
     build_observe_user_prompt,
 )
-from .schema import RawStyleObservation, StyleEvidence, StyleObservation
+from .schema import (
+    OBSERVATION_SCHEMA_VERSION,
+    RawStyleObservation,
+    StyleEvidence,
+    StyleObservation,
+)
 
 STYLE_DIR = "author_style"
 OBSERVATIONS_DIR = "observations"
@@ -236,7 +241,7 @@ class StyleObservationRunner:
             chunk_id=chunk_id,
             chapter_index=chapter_index,
             source_id=chunk.source_id,
-            schema_version=1,
+            schema_version=OBSERVATION_SCHEMA_VERSION,
             narrative_voice=raw.narrative_voice,
             sentence_rhythm=raw.sentence_rhythm,
             description_patterns=raw.description_patterns,
