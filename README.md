@@ -10,24 +10,43 @@
 
 ---
 
+## 感谢与灵感
+
+这个项目能出现，先要感谢三个开源项目：
+
+| 项目 | 它给我的启发 |
+|---|---|
+| [nuwa-skill](https://github.com/alchaincyf/nuwa-skill) | 把「风格」拆成可观察、可执行的东西：表达 DNA、反模式、诚实边界。本仓库的作者风格蒸馏直接受它影响。 |
+| [st_book](https://github.com/nariahlamb/st_book) | 酒馆世界书 / 角色卡的组织方式与格式取舍。 |
+| [worldbook-skill](https://github.com/echo-xianyu/worldbook-skill) | 从小说里抽取资料、再组织成世界书的流程与检查清单。 |
+
+我仔细读过它们的 README、SKILL 和工作流，然后结合自己的理解重写了实现：
+**借鉴的是方法论，不是源码。** 本项目没有复制或分发上述项目的代码、提示词或文档正文，
+许可证边界写在 [`docs/THIRD_PARTY_NOTICES.md`](docs/THIRD_PARTY_NOTICES.md)。
+
+最初的动机很具体：我想在酒馆里把一部**没写完的小说**接着玩下去 ——
+既不想丢原著的设定，也不想让 AI 用通用网文腔替我续写。
+所以我先把「事实」和「文风」拆成两条线：一条保证不编造原著设定，
+一条尽量模仿作者的写法。这个仓库就是这两条线的合并。
+
 ## 这是什么
 
-给定一份小说的纯文本，产出一套能在既有酒馆客户端里使用的文件，让用户**自己选一个起始时间点**开始扮演。
+给定一份小说的纯文本，产出一套能在既有酒馆客户端里使用的文件，
+让用户**自己选一个起始时间点**开始扮演。
 
-两个**可选、默认关闭**的旁路模块（都不改变 canon 数据）：
-
-- **作者风格自动蒸馏**：`style.enabled=true` 时，`export` 会自动逐块观察写作风格 →
-  合并 → 编译档案；Description **开头**写入「尽量模仿该作者风格、按世界书风格条目写」的要求，
-  末尾附精简的【叙事风格规范】分节，
-  8 组完整档案作为**触发式**世界书条目。也可单独跑 `style-observe` / `style-compile`。
-- **受控 HTML 输出规范**：`rendering.html.enabled=true` 时多一条
-  「输出格式：受控 HTML 规范」**触发式**世界书条目（只用 `span` + 配置字号/色板/斜体）。
-  这是**提示词约束，不是运行时沙箱**。
+- **角色卡**：单文件 Character Card V2，内嵌世界书，直接导入。
+- **世界书**：人物 / 地点 / 势力 / 事件 / 剧情主线，关键词触发；另有独立世界书与严格起始点版本。
+- **时间线**：章节化事件、知识边界、冲突报告。
+- **严格无剧透档**：起点之后的事实**不写进任何条目正文**。
+- **可选：作者风格蒸馏**（默认关闭）：逐块观察文风 → 合并 → 编译档案 →
+  Description 开头要求模仿作者风格，8 组完整档案作为触发式世界书条目。
+- **可选：受控 HTML 条目**（默认关闭）：只允许 `span` + 配置字号/色板/斜体，
+  作为世界书触发条目；这是提示词约束，不是运行时沙箱。
 
 ### 剧透防护的真实保证（重要，请先读）
 
-**完整原著剧情 —— 包括结局 —— 就在卡里。** 它写在 `剧情主线（逐章）` 条目中（25,483 字，覆盖全书 156 章），
-是一个**可触发**条目。因此：
+**完整原著剧情 —— 包括结局 —— 就在卡里。** 它写在 `剧情主线（逐章）` 条目中
+（25,483 字，覆盖全书 156 章），是一个**可触发**条目。因此：
 
 - 本工具提供的是**提示词层面的时间纪律**：核心规则要求 NPC 把「标注章节晚于当前起始点的内容」
   视为尚未发生。**这是行为约束，不是访问控制。** 模型仍可能读到或说出后续剧情。
@@ -39,13 +58,14 @@
 
 | 产物 | 说明 | 在仓库里？ |
 |---|---|---|
-| `world_simulator_v2.json` | 单张多角色世界模拟器卡（Character Card V2），**内嵌世界书** | ✅ `exports/天之炽/` |
+| `world_simulator_v2.json` | 单张多角色世界模拟器卡（Character Card V2），**内嵌世界书** | ✅ `exports/天之炽/`（示例） |
 | `worldbook_start_beginning.json` | **按起始点过滤**的世界书，严格无剧透版 | ❌ 本地生成 |
 | `worldbook_standalone.json` | 独立世界书，全部条目 | ❌ 本地生成 |
 | `timeline.json` | 章节化事件时间线 | ❌ 本地生成 |
 | `reports/audit.md` | 来源覆盖率、冲突、待复核项与兼容性检查 | ❌ 本地生成 |
 
 > 只有主卡进了公开仓库 —— 它是唯一一个「单文件即可导入」的产物。
+> `exports/天之炽/` 是**示例**，不要拿它当你的书；用你自己的原文重新导出。
 > 其余产物含逐章剧情与逐字引文，只留在本地 `runs/`，与原文同等对待。
 
 ## 这不是什么
@@ -60,7 +80,132 @@
 
 ---
 
-## 快速开始
+## 最快用法：让 Agent 一句话导出角色卡
+
+前提：你有一个能读仓库、能执行命令的 Agent（Claude Code / Codex / Cursor 等），
+本机有 Python 3.10+，小说是 `txt` / `md`。
+
+### 一句话版
+
+把下面一句发给 Agent，路径换成你的小说目录：
+
+```text
+把 /path/to/小说目录 用 https://github.com/Kylin-Guo/novel-to-tavern 导出成可导入
+SillyTavern/Tavo 的角色卡；新建 run，不要覆盖已有 runs/；完成后告诉我卡在哪。
+```
+
+### 推荐版（把事情说清楚，少返工）
+
+```text
+请用 https://github.com/Kylin-Guo/novel-to-tavern 这个仓库，把 /path/to/小说目录
+导出成可导入 SillyTavern/Tavo 的多角色世界模拟器角色卡。
+
+要求：
+1. 先读 README.md 和 AGENTS.md，不要修改小说原文。
+2. 新建 run，产物写到 runs/<run_id>/，不要覆盖已有 runs/。
+3. 按 ingest → extract → resolve → timeline → export 执行；verify 可选。
+4. 需要 API 凭据时先问我；没有凭据就用 file 引擎 + 预生成响应，不要伪造抽取结果。
+5. 导出后跑一遍结构校验；把主卡路径、条目数、哪些验证做了/没做告诉我。
+6. 默认不要开启作者风格蒸馏；如果我要，再按 README 的风格章节处理。
+```
+
+### Agent 会做什么
+
+| 步骤 | 命令 | 产物 |
+|---|---|---|
+| 1. 准备 | `git clone` / `python -m venv` / `pip install -e ".[dev]"` | `.venv/` |
+| 2. 导入 | `n2t ingest --run-id <id>` | 章节索引、分块 |
+| 3. 抽取 | `n2t extract --run-id <id>` | 原子事实、引文定位 |
+| 4. 归一 | `n2t resolve --run-id <id>` | canonical 实体 |
+| 5. 时间线 | `n2t timeline --run-id <id>` | 事件、知识边界、世界书规划 |
+| 6. 导出 | `n2t export --run-id <id> [--start-chapter N]` | `runs/<id>/exports/world_simulator_v2.json` |
+
+> 没有 API 凭据时，Agent 只能用 `file` 引擎：需要先有 `precomputed/` 响应，
+> 或由 Agent 阅读原文生成响应（会消耗较多 token，见下一节）。
+> **不要把 `exports/天之炽/` 里的示例卡当成你的书。**
+
+### 导出之后
+
+1. 把 `runs/<id>/exports/world_simulator_v2.json` 导入 Tavo / SillyTavern。
+2. 剧透敏感就用 `--start-chapter N` 的严格档。
+3. 按 [`docs/TAVO_IMPORT_CHECKLIST.md`](docs/TAVO_IMPORT_CHECKLIST.md) 逐项实测；
+   「导入成功」不等于触发、常驻、剧透行为都正确。
+
+---
+
+## 作者风格蒸馏：默认关闭、怎么开、花多少 token
+
+### 默认没有风格蒸馏
+
+不改配置时 `style.enabled=false`：不会多调用模型，Description 里也没有
+【写作要求：作者风格】和【叙事风格规范】。卡仍然可以正常用。
+
+### 想开启时怎么跟 Agent 说
+
+在导出提示词里加一句即可：
+
+```text
+在导出时开启作者风格蒸馏（style.enabled=true），观察全部章节；
+如果 token 预算有限，用 observe_max_chunks 抽样，并在报告里写明覆盖率。
+```
+
+或者手动改 `config/config.yaml`：
+
+```yaml
+style:
+  enabled: true
+  max_runtime_tokens: 800
+  worldbook_entries: true
+  observe_max_chunks: 0    # 0 = 全部章节；>0 为确定性等距抽样
+  merge_batch_size: 30
+```
+
+然后正常 `n2t export`：产物缺失/过期时会自动跑
+`style-observe → style-compile`；产物新鲜时不需要凭据。
+
+### 大概要花多少 token
+
+以本仓库实测的《天之炽》156 章为例（全量观察，没有抽样）：
+
+| 阶段 | 量级 |
+|---|---|
+| 章节级观察（156 块） | 约 **0.9M** token |
+| 6 批合并 + 1 次编译 | 约 **0.16M** token |
+| **合计** | **约 1.0–1.1M token**（本次实测 1,080,307） |
+
+粗算规则：**每章约 6–7k token**，再加约 100–160k 的合并/编译开销。
+这是**模型 token**，不是角色卡运行时占用；换成真实 API 时按你所用模型的单价计费。
+
+想省 token 就用抽样：
+
+| `observe_max_chunks` | 大致观察成本 | 覆盖率 |
+|---|---|---|
+| 0（全部，156 章） | 约 1.0–1.1M | 156 / 156 |
+| 48 | 约 1/3 | 48 / 156 |
+| 24 | 约 1/6 | 24 / 156 |
+| 12 | 约 1/12 | 12 / 156 |
+
+抽样是**确定性等距抽样**，首尾必含；`author_style/audit.md` 和 README
+会写明「这是抽样，不是全量」。覆盖越少，风格档案越容易偏。
+
+> 没有 API 凭据也能做：把预生成响应放进 `llm.precomputed_responses_dir`，
+> 用 `file` 引擎。让 Agent 阅读原文生成这些响应同样会消耗 token，
+> 只是不产生 API 账单。
+
+### 风格卡会多出什么
+
+- Description **最开头**：【写作要求：作者风格】，要求尽量模仿该作者文风，
+  并指向世界书里标题以「作者风格：」开头的条目。
+- Description 末尾：【叙事风格规范】精简规则（默认上限 800 token）。
+- 世界书：**8 条触发式**作者风格条目（总体原则、句式、对白、心理、描写、意象、节奏、反模式）。
+- 单轮常驻增量约 **850 token**；提到「作者风格」时 8 条一起触发，约 **3.3k token**。
+
+**风格档案是自动蒸馏产物，不是「与作者文风完全一致」的证明。**
+覆盖率、置信度、压缩丢弃项与人工复核项都在 `runs/<id>/author_style/audit.md`。
+
+---
+
+## 手动使用（CLI）
 
 ```bash
 git clone git@github.com:Kylin-Guo/novel-to-tavern.git
@@ -75,11 +220,7 @@ python3 -m venv .venv
 
 运行期只依赖 `pydantic` 与 `PyYAML`；HTTP 走标准库 `urllib`，不引入 `requests` / `httpx`。
 
----
-
-## 工作流
-
-六个阶段，每段独立可重跑，产物写在 `runs/<run_id>/` 下，**默认不覆盖已有结果**。
+### 六个阶段
 
 ```bash
 cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你的小说
@@ -102,19 +243,14 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 | ⑤ `timeline` | 时间线、知识边界、世界书规划 | 不编造绝对时间；冲突只报告不覆盖 |
 | ⑥ `export` | 序列化成 V2 卡与独立世界书 | 校验不过就**不写文件**，不产出半成品 |
 
-### 可选：作者风格自动蒸馏
-
-默认关闭。开启 `style.enabled` 后，`export` 会在产物缺失/过期时自动执行
-`style-observe → style-compile`（这是「导出阶段不调 LLM」的唯一例外，
-且只产出风格资料，不产生 canon 事实）。产物新鲜时**不需要凭据**。
+### 可选：作者风格分步命令
 
 ```bash
 .venv/bin/n2t style-observe --run-id <run_id>   # 逐块观察写作风格（带逐字引文证据）
 .venv/bin/n2t style-compile --run-id <run_id>   # 合并 → 编译档案 → 8 组世界书条目
 ```
 
-产物在 `runs/<run_id>/author_style/`（`style_profile.json`、`runtime_style_prompt.md`、
-`style_worldbook_entries.json`、`audit.md` 等）。详见
+产物在 `runs/<run_id>/author_style/`。详见
 [`docs/AUTHOR_STYLE_PIPELINE.md`](docs/AUTHOR_STYLE_PIPELINE.md)。
 
 ### 可选：受控 HTML 世界书条目
@@ -145,8 +281,12 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 
 - `openai_compatible` —— 调用户自己配置的 endpoint。凭据**只**从环境变量 / `.env` 读取，
   只按配置里的变量名间接寻址；不硬编码供应商，缺凭据时报错并给出可操作提示。
+  需要同时设置 `llm.extraction_model`。
 - `file` —— 从目录读预生成的响应。没有可用凭据时，靠它仍能离线跑完整条管线；
   run 报告里会如实标注 `provider`，**不冒充 API 调用结果**。
+
+凭据变量默认是 `NOVEL_TAVERN_BASE_URL` / `NOVEL_TAVERN_API_KEY`，
+只写变量名到配置里，值放 `.env`（已在 `.gitignore` 中）。见 `.env.example`。
 
 ---
 
@@ -270,33 +410,41 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 
 ## 目录结构
 
-```
-├── src/novel_to_tavern/
-│   ├── ingest/        ① 原文读取 · 章节索引 · 分块
-│   ├── extract/       ② 事实抽取 · 证据定位 · schema 校验
-│   ├── llm/           抽取引擎（OpenAI 兼容 / 文件）
-│   ├── resolve/       ③ 实体消歧与角色档案
-│   ├── verify/        ④ 语义支持校验（引文支不支持那条主张）
-│   ├── timeline/      ⑤ 时间线 · 知识边界 · 世界书规划
-│   ├── export/        ⑥ 角色卡与世界书装配 · 严格起始点 · 游玩模式
-│   ├── style/         旁路：作者风格观察 · 合并 · 编译 · 世界书条目（默认关闭）
-│   ├── render/        旁路：受控 HTML 输出规范（默认关闭，提示词约束）
-│   ├── tavern/        酒馆目标格式层（V2 卡 / 独立世界书 / 序列化 / 校验 / 触发模拟）
-│   ├── cli.py         命令行入口
-│   ├── config.py      配置模型（未知键直接报错）
-│   ├── env.py  secrets.py  logging_setup.py   .env 读取 · 密钥脱敏 · 日志
-│   └── paths.py       runs/<run_id>/ 隔离，拒绝覆盖
-├── tests/             687 项离线单元测试
-├── docs/              架构 · 数据模型 · 格式依据 · 实施计划 · 运行报告
-├── exports/           生成的产物（含一张可直接导入的示例卡）
-├── examples/fixtures/ 最小合法卡与世界书 fixture（自创内容）
-├── examples/gold/     黄金集：自创微型小说 + 手标期望 + 精确率/召回率
-├── tools/             fixture 生成与防漂移脚本
-├── config/            配置示例
-└── tasks/             阶段任务单
+```text
+novel-to-tavern/
+├── src/novel_to_tavern/          # 可安装的 Python 包
+│   ├── ingest/                   # ① 原文读取 · 章节索引 · 分块
+│   ├── extract/                  # ② 事实抽取 · 证据定位 · schema 校验
+│   ├── llm/                      # 引擎（OpenAI 兼容 / 文件）
+│   ├── resolve/                  # ③ 实体消歧与角色档案
+│   ├── verify/                   # ④ 语义支持校验
+│   ├── timeline/                 # ⑤ 时间线 · 知识边界 · 世界书规划
+│   ├── export/                   # ⑥ 角色卡与世界书装配 · 严格起始点 · 游玩模式
+│   ├── style/                    # 旁路：作者风格观察 · 合并 · 编译 · 世界书条目
+│   ├── render/                   # 旁路：受控 HTML 输出规范
+│   ├── tavern/                   # 酒馆格式层（V2 卡 / 独立世界书 / 序列化 / 校验 / 触发模拟）
+│   ├── cli.py                    # 命令行入口
+│   ├── config.py                 # 配置模型（未知键直接报错）
+│   ├── env.py  secrets.py  logging_setup.py
+│   └── paths.py                  # runs/<run_id>/ 隔离，拒绝覆盖
+├── tests/                        # 687 项离线单元测试
+├── docs/                         # 公开文档（见下方「文档」）
+├── examples/
+│   ├── fixtures/                 # 最小合法卡与世界书 fixture（自创内容）
+│   └── gold/                     # 黄金集：自创微型小说 + 手标期望
+├── tools/                        # fixture 生成与防漂移脚本
+├── config/config.example.yaml    # 配置示例
+├── exports/天之炽/               # 唯一入库的示例主卡（衍生作品，不在 MIT 内）
+├── .github/workflows/            # CI
+├── AGENTS.md  CLAUDE.md          # Agent / Claude Code 的仓库规则
+├── README.md  LICENSE  NOTICE.md
+└── 本地、不入库：runs/  precomputed/  cache/  天之炽/  config/config.yaml
+                 docs/internal/（内部计划、审查复核、任务单）
 ```
 
-`runs/` 与 `precomputed/` 在 `.gitignore` 中 —— 它们含原文与逐字引文，与原文同等对待。
+`runs/`、`precomputed/`、`cache/`、小说原文、本地配置与 `docs/internal/`
+都在 `.gitignore` 中，与原文同等对待。公开仓库只保留代码、公开文档、
+自创 fixture 与一张示例主卡。
 
 ---
 
@@ -307,20 +455,17 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | 分层与阶段划分 |
 | [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) | 事实、实体、事件、世界书条目的内部契约 |
 | [`docs/FORMAT_COMPATIBILITY.md`](docs/FORMAT_COMPATIBILITY.md) | 酒馆格式的**字段级依据**与已知陷阱 |
-| [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) | Phase 0–7 路线图 |
-| [`docs/PLAN.md`](docs/PLAN.md) | 当前阶段的实施计划与验收划分 |
+| [`docs/CONFIG_REFERENCE.md`](docs/CONFIG_REFERENCE.md) | 每个配置键读在哪里 |
 | [`docs/QUALITY_GATES.md`](docs/QUALITY_GATES.md) | 质量门禁清单 |
 | [`docs/RUN_REPORT.md`](docs/RUN_REPORT.md) | 端到端运行报告与产物说明 |
-| [`docs/REVIEW_RECHECK.md`](docs/REVIEW_RECHECK.md) | 对审查报告的**逐条本地复核**：结论、证据、修了什么 |
-| [`docs/CONFIG_REFERENCE.md`](docs/CONFIG_REFERENCE.md) | 每个配置键读在哪里（由测试生成，不是手抄） |
 | [`docs/TAVO_IMPORT_CHECKLIST.md`](docs/TAVO_IMPORT_CHECKLIST.md) | Tavo 手工实测步骤 |
 | [`docs/AUTHOR_STYLE_PIPELINE.md`](docs/AUTHOR_STYLE_PIPELINE.md) | 作者风格蒸馏：方法论映射、操作、缓存与指纹、局限 |
 | [`docs/HTML_RENDERING.md`](docs/HTML_RENDERING.md) | 受控 HTML：白名单、配置、触发条目、非沙箱声明 |
 | [`docs/UPSTREAM_ANALYSIS.md`](docs/UPSTREAM_ANALYSIS.md) | 上游项目借鉴与弃用取舍 |
 | [`docs/THIRD_PARTY_NOTICES.md`](docs/THIRD_PARTY_NOTICES.md) | 第三方许可证边界 |
 
-`AGENTS.md` 与 `CLAUDE.md` 是本项目**构建过程**的规则文件，用来说明这个仓库是怎么做出来的，
-不是使用本工具的必需文档。
+`AGENTS.md` 是给 Agent 的仓库规则；`CLAUDE.md` 是 Claude Code 的入口。
+内部计划与审查记录放在本地 `docs/internal/`，不随公开仓库分发。
 
 ---
 
@@ -377,15 +522,16 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 
 ## 版权与免责
 
-- **代码**：见下方「许可」。
+- **代码与文档**：MIT，见下方「许可」。
 - **导出的角色卡**：`exports/天之炽/world_simulator_v2.json` **确实发布在本公开仓库中**。
   它是原著小说的**衍生作品**，其权利归原著权利人所有，**不随代码许可证授予**。
   本仓库以技术演示为目的保留该样例，**不声称**拥有再分发、公开发布或商业化的权利。
   权利人若要求移除，见 [`exports/README.md`](exports/README.md)。
-- 仓库内**不包含**任何小说原文；`runs/`、`precomputed/`、`cache/` 均在 `.gitignore` 中，
-  与原文同等对待。测试 fixture 全部为自行编写的占位文本。
-- 本项目不复制上游项目（`worldbook-skill` / `st_book`）的源码或文档正文，只借鉴方法。
-  详见 [`docs/THIRD_PARTY_NOTICES.md`](docs/THIRD_PARTY_NOTICES.md)。
+- 仓库内**不包含**任何小说原文；`runs/`、`precomputed/`、`cache/`、`天之炽/`
+  均在 `.gitignore` 中，与原文同等对待。测试 fixture 全部为自行编写的占位文本。
+- 本项目不复制上游项目（`nuwa-skill` / `st_book` / `worldbook-skill`）的源码或文档正文，
+  只借鉴方法论。详见 [`docs/THIRD_PARTY_NOTICES.md`](docs/THIRD_PARTY_NOTICES.md)。
+- 感谢三个项目带来的灵感；如果它们不存在，这个仓库大概不会出现。
 
 ## 许可
 

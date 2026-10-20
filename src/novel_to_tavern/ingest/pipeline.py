@@ -56,7 +56,7 @@ def discover_sources(target: str | Path, *, formats: list[str] | None = None) ->
     """目标可以是单个文件，也可以是目录（按文件名排序）。
 
     目录模式按 `input.formats` 筛选后缀 —— 早先这里把 `.txt` / `.md` 写死，
-    于是配置里改了 `formats` 而行为完全不变（见 docs/REVIEW_RECHECK.md P2-05）。
+    于是配置里改了 `formats` 而行为完全不变（见 docs/CONFIG_REFERENCE.md 的「每个键都要有消费点」）。
     单文件模式不看后缀：用户明确指了一个文件，就按他说的读。
     """
     allowed = {f".{f.lower().lstrip('.')}" for f in (formats or ["txt", "md"])}

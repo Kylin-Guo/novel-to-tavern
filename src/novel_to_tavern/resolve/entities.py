@@ -239,7 +239,7 @@ def kinds_are_compatible(left: NameCluster, right: NameCluster) -> bool:
     `unknown` 在这里**当通配符**，不当第三种类别。理由：它是「模型没说」，
     不是「模型说它不是人物」。若把它当成一个互斥取值，一个漏写 kind 的提及
     就会与它本该合并的其它提及全部失去兼容性，实体被拆成一堆碎片 ——
-    那是把一个隐私性很好的默认值换成了更难查的故障。见 REVIEW_RECHECK P1-03。
+    那是把一个隐私性很好的默认值换成了更难查的故障。见 docs/DATA_MODEL.md 的字段默认值说明。
     """
     left_kinds = set(left.kinds) - {UNKNOWN}
     right_kinds = set(right.kinds) - {UNKNOWN}

@@ -1,6 +1,6 @@
 """把逐块观察编译成风格档案。
 
-步骤（与 docs/PLAN.md §6.2 对应）：
+步骤（与 docs/AUTHOR_STYLE_PIPELINE.md 对应）：
 
 1. 读 `author_style/observations/*.json`；
 2. 按 `merge_batch_size` 分批合并，逐批落盘；

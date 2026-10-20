@@ -57,7 +57,14 @@ def test_env_example_is_tracked():
 
 
 def test_runtime_output_dirs_are_ignored():
-    for path in ("runs/20261016T120000Z_abcdef/exports/card.json", "cache/x.json", "input/novel.txt"):
+    for path in (
+        "runs/20261016T120000Z_abcdef/exports/card.json",
+        "cache/x.json",
+        "input/novel.txt",
+        # 内部计划 / 审查 / 任务单只在本地，不随公开仓库分发
+        "docs/internal/PLAN.md",
+        "tasks/001-phase0.md",
+    ):
         assert _is_ignored(path), path
 
 
@@ -76,7 +83,11 @@ def test_build_artifacts_are_ignored():
 
 
 def test_source_files_are_not_ignored():
-    for path in ("src/novel_to_tavern/cli.py", "docs/PLAN.md", "config/config.example.yaml"):
+    for path in (
+        "src/novel_to_tavern/cli.py",
+        "docs/ARCHITECTURE.md",
+        "config/config.example.yaml",
+    ):
         assert not _is_ignored(path), path
 
 
