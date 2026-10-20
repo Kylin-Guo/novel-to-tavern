@@ -29,6 +29,12 @@
    ▼
 [8] 程序校验 + 质量审计
       schema validation / evidence coverage / temporal leakage / import fixture
+
+旁路（可选、默认关闭，产物非 canon）：
+   小说原文 ──► style-observe ──► style-compile ──► style_profile.json
+                                                   ├─ runtime_style_prompt.md ──► Description 分节
+                                                   └─ 8 组风格条目 ──► 世界书（触发式）
+   配置      ─────────────────────────────────────► 受控 HTML 条目 ──► 世界书（触发式）
 ```
 
 各阶段只读取上游数据，输出到新目录；不得修改原始小说。每个阶段有独立 CLI 命令、状态文件和单元测试。
@@ -51,12 +57,19 @@
 
 Canonical 层是生成世界书与角色卡的唯一事实来源。导出阶段不得直接调用 LLM 重新猜测事实。
 
+**唯一例外（2026-10 起）：** `style.enabled=true` 且风格产物缺失/过期时，
+导出会触发**旁路的作者风格蒸馏**（`style-observe → style-compile`）。
+它产出的是写作风格资料，**不写 facts / entities / timeline / knowledge**，
+不改变任何 canon 事实。产物新鲜时导出不调用 LLM，也不需要凭据。
+
 ### C. Runtime 层（酒馆加载资料）
 
 - `description`/`system_prompt`/`post_history_instructions`：只放对每轮推理都重要、不能依赖关键词触发的模拟器规则。
 - 内嵌世界书：角色、关系、地点、势力、物品、能力和特定事件等详细资料，按需触发。
 - 独立世界书：与内嵌内容一致的单独导出，供客户端导入或维护。
 - 起始时间点/记忆快照：由用户指定章节生成；不把该章节之后的 canon 事件当成当前已发生事件。
+- `author_style` / `rendering` 两类条目属于 Runtime 层，**不是 canon**：
+  它们只影响写作与呈现方式，不提供事实，也不参与剧情主线或知识边界。
 
 ## 3. 第一版导出策略
 
@@ -110,3 +123,6 @@ Canonical 层是生成世界书与角色卡的唯一事实来源。导出阶段�
 - 对每次调用保存 `prompt_version`、输入 hash、输出 hash、模型名、状态、耗时和用量（若可获取）。
 - 先校验 LLM JSON 输出，再落盘；失败内容进入错误目录，不要默默当作成功。
 - 不需要把整本原文一次塞给模型。按章节分块提取，之后用 canonical 文件和必要证据做汇总。
+- 风格蒸馏是独立的旁路：`style-observe`（逐块）→ `style-merge`（分批）→
+  `style-compile`（档案）→ 预算超限时 `style-compress`。四个阶段各自进缓存键，
+  改提示词、模板、模型、endpoint、schema 版本或输入 hash 都会失效重跑。

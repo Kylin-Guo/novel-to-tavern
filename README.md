@@ -14,6 +14,15 @@
 
 给定一份小说的纯文本，产出一套能在既有酒馆客户端里使用的文件，让用户**自己选一个起始时间点**开始扮演。
 
+两个**可选、默认关闭**的旁路模块（都不改变 canon 数据）：
+
+- **作者风格自动蒸馏**：`style.enabled=true` 时，`export` 会自动逐块观察写作风格 →
+  合并 → 编译档案，把精简后的【叙事风格规范】追加进 Description，
+  8 组完整档案作为**触发式**世界书条目。也可单独跑 `style-observe` / `style-compile`。
+- **受控 HTML 输出规范**：`rendering.html.enabled=true` 时多一条
+  「输出格式：受控 HTML 规范」**触发式**世界书条目（只用 `span` + 配置字号/色板/斜体）。
+  这是**提示词约束，不是运行时沙箱**。
+
 ### 剧透防护的真实保证（重要，请先读）
 
 **完整原著剧情 —— 包括结局 —— 就在卡里。** 它写在 `剧情主线（逐章）` 条目中（25,483 字，覆盖全书 156 章），
@@ -42,7 +51,9 @@
 
 - 不是新的聊天客户端、Web 前端、移动端或 RPG 平台
 - 不引入数据库、向量库、消息队列或 Web 框架
-- 不做 MVU / EJS / HTML / CSS 美化
+- 不做 MVU / EJS
+- 不支持任意 HTML 美化；只提供**受控 span 子集**（字号/色板/斜体），
+  以世界书触发条目形式可选提供，且不保证客户端一定渲染
 - 不把小说**原文**逐字塞进角色卡（角色卡里是抽取后的条目，不是原文），
   也不把模型推断伪装成原著事实
 
@@ -57,7 +68,7 @@ cd novel-to-tavern
 python3 -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
 
-.venv/bin/python -m pytest      # 605 项离线测试，不联网、不花 API 额度
+.venv/bin/python -m pytest      # 687 项离线测试，不联网、不花 API 额度
 .venv/bin/n2t --help
 ```
 
@@ -89,6 +100,30 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 | ④ `verify` | 判断引文**支不支持**那条主张 | 失败不静默放过；一条都调不通就整体中止 |
 | ⑤ `timeline` | 时间线、知识边界、世界书规划 | 不编造绝对时间；冲突只报告不覆盖 |
 | ⑥ `export` | 序列化成 V2 卡与独立世界书 | 校验不过就**不写文件**，不产出半成品 |
+
+### 可选：作者风格自动蒸馏
+
+默认关闭。开启 `style.enabled` 后，`export` 会在产物缺失/过期时自动执行
+`style-observe → style-compile`（这是「导出阶段不调 LLM」的唯一例外，
+且只产出风格资料，不产生 canon 事实）。产物新鲜时**不需要凭据**。
+
+```bash
+.venv/bin/n2t style-observe --run-id <run_id>   # 逐块观察写作风格（带逐字引文证据）
+.venv/bin/n2t style-compile --run-id <run_id>   # 合并 → 编译档案 → 8 组世界书条目
+```
+
+产物在 `runs/<run_id>/author_style/`（`style_profile.json`、`runtime_style_prompt.md`、
+`style_worldbook_entries.json`、`audit.md` 等）。详见
+[`docs/AUTHOR_STYLE_PIPELINE.md`](docs/AUTHOR_STYLE_PIPELINE.md)。
+
+### 可选：受控 HTML 世界书条目
+
+默认关闭。开启 `rendering.html.enabled` 后，世界书多一条触发式条目
+`wb_rendering_html`（不进 Description）。只允许 `<span>` + 配置里的
+`font-size` / `color` / `font-style`；非法配置在 `config-check` 就报错。
+
+> **这是提示词约束。** 本工具不声称能过滤 Tavo 运行时模型的 HTML 输出，
+> 也不声称 Tavo 一定会渲染。详见 [`docs/HTML_RENDERING.md`](docs/HTML_RENDERING.md)。
 
 ### 严格起始点导出（结构性无剧透）
 
@@ -194,12 +229,15 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 
 ## 验证等级：哪些是真跑过的
 
-本项目区分「代码测试」「格式校验」「客户端实测」三件事。当前状态：
+本项目区分四件事：**单元 / 集成测试**、**静态 JSON 校验**、**Tavo 实际导入**、
+**真实对话行为**。当前状态：
 
 | 等级 | 内容 | 状态 |
 |---|---|---|
-| ① 单元 / 集成测试 | 605 项离线测试 | ✅ **已跑通**（`python -m pytest`） |
+| ① 单元 / 集成测试 | 687 项离线测试 | ✅ **已跑通**（`python -m pytest`） |
 | ② 结构与一致性校验 | V2 结构 + 内嵌/独立世界书一致 + 密钥扫描 | ✅ **已跑通**（导出时强制） |
+| ②b 风格管线 | 观察/合并/编译/压缩、缓存、预算、canon 隔离 | ✅ **单元 / 集成测试级**（离线 `FileProvider`） |
+| ②c 受控 HTML | 配置闸门、白名单样例矩阵、导出条目存在性 | ✅ **静态校验级**；Tavo 是否渲染 ⬜ **未实测** |
 | ③ JSON 可解析 | 卡能被 JSON 解析器读入 | ✅ 已验证 |
 | ④ 卡导入客户端 | 导入 Tavo | ✅ **已实测通过**（单文件，含内嵌世界书） |
 | ⑤ 内嵌世界书被识别 | 卡内世界书在客户端里出现 | ✅ **已实测通过** |
@@ -209,7 +247,7 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 | ⑨ 起始点剧透行为 | 早期起点是否漏后续剧情 | ⬜ **未验证** |
 | ⑩ token / 上下文占用 | 实际占多少上下文 | ⬜ **未验证** |
 
-**⑥–⑩ 一律未验证，本文档不做任何推断。** 手工步骤见
+**⑥–⑩ 以及 ②c 的 Tavo 渲染一律未验证，本文档不做任何推断。** 手工步骤见
 [`docs/TAVO_IMPORT_CHECKLIST.md`](docs/TAVO_IMPORT_CHECKLIST.md)。
 
 ---
@@ -239,12 +277,14 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 │   ├── verify/        ④ 语义支持校验（引文支不支持那条主张）
 │   ├── timeline/      ⑤ 时间线 · 知识边界 · 世界书规划
 │   ├── export/        ⑥ 角色卡与世界书装配 · 严格起始点 · 游玩模式
+│   ├── style/         旁路：作者风格观察 · 合并 · 编译 · 世界书条目（默认关闭）
+│   ├── render/        旁路：受控 HTML 输出规范（默认关闭，提示词约束）
 │   ├── tavern/        酒馆目标格式层（V2 卡 / 独立世界书 / 序列化 / 校验 / 触发模拟）
 │   ├── cli.py         命令行入口
 │   ├── config.py      配置模型（未知键直接报错）
 │   ├── env.py  secrets.py  logging_setup.py   .env 读取 · 密钥脱敏 · 日志
 │   └── paths.py       runs/<run_id>/ 隔离，拒绝覆盖
-├── tests/             605 项离线单元测试
+├── tests/             687 项离线单元测试
 ├── docs/              架构 · 数据模型 · 格式依据 · 实施计划 · 运行报告
 ├── exports/           生成的产物（含一张可直接导入的示例卡）
 ├── examples/fixtures/ 最小合法卡与世界书 fixture（自创内容）
@@ -272,6 +312,8 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 | [`docs/REVIEW_RECHECK.md`](docs/REVIEW_RECHECK.md) | 对审查报告的**逐条本地复核**：结论、证据、修了什么 |
 | [`docs/CONFIG_REFERENCE.md`](docs/CONFIG_REFERENCE.md) | 每个配置键读在哪里（由测试生成，不是手抄） |
 | [`docs/TAVO_IMPORT_CHECKLIST.md`](docs/TAVO_IMPORT_CHECKLIST.md) | Tavo 手工实测步骤 |
+| [`docs/AUTHOR_STYLE_PIPELINE.md`](docs/AUTHOR_STYLE_PIPELINE.md) | 作者风格蒸馏：方法论映射、操作、缓存与指纹、局限 |
+| [`docs/HTML_RENDERING.md`](docs/HTML_RENDERING.md) | 受控 HTML：白名单、配置、触发条目、非沙箱声明 |
 | [`docs/UPSTREAM_ANALYSIS.md`](docs/UPSTREAM_ANALYSIS.md) | 上游项目借鉴与弃用取舍 |
 | [`docs/THIRD_PARTY_NOTICES.md`](docs/THIRD_PARTY_NOTICES.md) | 第三方许可证边界 |
 
@@ -320,6 +362,14 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 9. **触发词仍可能误伤。** 子串匹配不认识否定 —— 「我没见过西泽尔」一样会命中。
    本次产物里有 60 个条目只有单个触发词，1 个触发词短到 1 个汉字（`隆`）。
    `reports/worldbook_budget.md` 会把这些列出来。
+10. **风格档案是自动蒸馏产物，不是「与作者文风完全一致」的证明。**
+    观察覆盖率、置信度分布、压缩丢弃项与人工复核项都写在
+    `author_style/audit.md`；证据不足的维度会保留 `unknown`，不强行填值。
+11. **受控 HTML 只是提示词约束。** 不保证 Tavo 渲染、不保证模型遵守、
+    不构成运行时过滤；HTML 规范条目本身也会占用触发预算。
+12. **风格管线让导出可能发起 LLM 调用。** 仅在 `style.enabled=true`
+    且产物缺失/过期时发生；产物新鲜时不需要凭据。产物过期判定基于
+    `inputs_fingerprint`，改预算、来源 hash 或补充资料都会触发重跑。
 
 ---
 

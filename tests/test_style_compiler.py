@@ -215,6 +215,23 @@ def test_second_run_cache_hit(tmp_path):
     assert second.calls == 0
 
 
+def test_audit_records_unknown_groups(tmp_path):
+    """全组 unknown 的条目不生成，但必须在审计里留名，不能静默消失。"""
+    cfg, run_dir = _setup(tmp_path)
+    _write_observations(run_dir)
+    payload = style_profile_payload()
+    payload["sentence_rhythm"] = {
+        "summary": "unknown",
+        "rules": [],
+        "confidence": "unknown",
+    }
+    run_style_compile(run_dir, cfg, DictProvider(_responses(compile_payload=payload)))
+
+    audit = (run_dir / "author_style" / "audit.md").read_text(encoding="utf-8")
+    assert "未生成的世界书条目组" in audit
+    assert "wb_style_rhythm" in audit
+
+
 def test_supplementary_missing_raises(tmp_path):
     cfg, run_dir = _setup(
         tmp_path, supplementary_path=str(tmp_path / "absent.md")

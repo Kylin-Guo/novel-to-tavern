@@ -49,7 +49,11 @@ from .schema import (
     StyleProfile,
     _Base,
 )
-from .worldbook import build_style_entries, write_style_entries
+from .worldbook import (
+    STYLE_ENTRY_GROUPS,
+    build_style_entries,
+    write_style_entries,
+)
 
 MERGE_DIR = "merged"
 ERROR_DIR = "_errors"
@@ -615,6 +619,14 @@ def _write_audit(
         f"- 是否触发压缩：{'是' if compressed else '否'}",
         f"- 丢弃规律数：{len(dropped)}",
     ]
+
+    built = {entry.entry_id for entry in build_style_entries(profile)}
+    skipped_groups = [group for group in STYLE_ENTRY_GROUPS if group[0] not in built]
+    if skipped_groups:
+        lines.append(
+            "- 未生成的世界书条目组（全组维度都是 unknown）："
+            + "、".join(f"{entry_id}（{title}）" for entry_id, title, _ in skipped_groups)
+        )
     if dropped:
         lines.append("")
         lines.append("压缩时删去的规律：")

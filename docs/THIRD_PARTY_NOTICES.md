@@ -11,6 +11,18 @@
 - 处理原则：优先借鉴抽取流程/概念；不直接复制 Skill 文件、引用文档或 Python 源码。若未来要复制或改编具体文档/代码表达，实施前必须复核仓库当前 LICENSE、署名要求、非商业及相同方式共享要求，并明确给派生文件加来源和许可证说明。
 - 不能仅凭“使用免费 API”推导出所有使用场景都自动合规；仍需遵守作品版权、作者限制和相关平台条款。
 
+## nuwa-skill
+
+- URL: https://github.com/alchaincyf/nuwa-skill
+- 仓库 LICENSE：MIT（检索日期 2026-10-20）。
+- 用途：**方法论参考**。「表达 DNA → 观察维度」「反模式 → anti_patterns」
+  「诚实边界 → limitations」的映射写在 `docs/AUTHOR_STYLE_PIPELINE.md`。
+- 处理原则：**本仓库不分发、不导入其代码或产物**；没有 `style-import` 命令，
+  也不要求用户先装 Nuwa。风格蒸馏由本项目自己的 LLM 管线完成。
+  其面向咨询场景的心智模型 / 实时调研流程不采用。
+- 若将来复制或改编其具体文档/代码表达，必须复核当时的 LICENSE 与署名要求，
+  并随分发保留版权声明。
+
 ## st_book
 
 - URL: https://github.com/nariahlamb/st_book

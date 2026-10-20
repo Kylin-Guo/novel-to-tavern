@@ -1,7 +1,7 @@
 # 本阶段实施计划
 
 当前阶段：**作者风格自动蒸馏 + 受控 HTML 世界书条目**（两个可独立启用的增强模块）
-状态：方案已定稿，待实施
+状态：**已实施**（2026-10-20；Phase E1–E4 完成，验收记录见 `docs/RUN_REPORT.md` §14）
 制定日期：2026-10-20
 上游依据：`docs/novel-to-tavern-enhancement-plan.md`（2026-10-20 版）、
 Nuwa SKILL.md v1.0.0（2026-10-20 检索，仅作方法论参考）
@@ -665,9 +665,9 @@ fixture 全部合成（迷你小说 3 章，禁止用真实原文）；可复用
 
 ### Phase E0 — 开工确认
 
-- [ ] 全量测试绿：`.venv/bin/python -m pytest`。
-- [ ] git working tree 干净；从独立分支开工。
-- [ ] 通读本文件 §1 基线表中的每个位置，确认无漂移。
+- [x] 全量测试绿：`.venv/bin/python -m pytest`（基线 605 项）。
+- [x] git working tree 干净；从独立分支开工（`feat/style-distillation-and-html-entry`）。
+- [x] 通读本文件 §1 基线表中的每个位置，确认无漂移。
 
 验收：无既有功能被删改；本计划经用户确认。
 

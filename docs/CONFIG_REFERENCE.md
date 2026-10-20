@@ -54,7 +54,18 @@
 | `worldbook.enable_recursive_scan` | **声明型** —— 单值 `Literal`，只能取一个值，不是开关 |
 | `worldbook.allow_mvu` | **声明型** —— 单值 `Literal`，只能取一个值，不是开关 |
 | `worldbook.allow_ejs` | **声明型** —— 单值 `Literal`，只能取一个值，不是开关 |
-| `worldbook.allow_html_beautification` | **声明型** —— 单值 `Literal`，只能取一个值，不是开关 |
+| `style.enabled` | `export/runner.py`、`cli.py`、`style/pipeline.py` |
+| `style.max_runtime_tokens` | `style/compiler.py`（预算检查与压缩） |
+| `style.worldbook_entries` | `style/pipeline.py` |
+| `style.observe_max_chunks` | `style/observe.py`（确定性等距抽样） |
+| `style.merge_batch_size` | `style/compiler.py` |
+| `style.supplementary_path` | `style/compiler.py`、`config.py`（缺失警告） |
+| `rendering.html.enabled` | `export/runner.py`（触发式条目、导出清单与审计）、`config_warnings()` |
+| `rendering.html.mode` | `render/html_policy.py` |
+| `rendering.html.allowed_properties` | `render/html_policy.py` |
+| `rendering.html.allowed_font_sizes` | `render/html_policy.py` |
+| `rendering.html.color_palette` | `render/html_policy.py` |
+| `rendering.html.max_suggested_spans_per_reply` | `render/html_policy.py` |
 | `export.character_card_spec` | **声明型** —— 单值 `Literal`，只能取一个值，不是开关 |
 | `export.include_individual_npc_cards` | **声明型** —— 单值 `Literal`，只能取一个值，不是开关 |
 | `privacy.never_log_api_keys` | **声明型** —— 单值 `Literal`，只能取一个值，不是开关 |
@@ -64,9 +75,8 @@
 ## 「声明型」是什么意思
 
 `preserve_chapter_boundaries: Literal[True]`、`enable_recursive_scan: Literal[False]`、
-`include_individual_npc_cards: Literal[False]`、`allow_mvu` / `allow_ejs` /
-`allow_html_beautification: Literal[False]`、`privacy.*: Literal[True]` ——
-这些字段在 schema 层就只允许一个取值。
+`include_individual_npc_cards: Literal[False]`、`allow_mvu` / `allow_ejs: Literal[False]`、
+`privacy.*: Literal[True]` —— 这些字段在 schema 层就只允许一个取值。
 
 它们**不是开关**，是声明：
 
@@ -77,9 +87,10 @@
 
 ## 已删除的键（以及为什么）
 
-以下 15 个键曾经存在于 `config.example.yaml` 与 `config.py`，但**没有任何代码读它们**。
+以下键曾经存在于 `config.example.yaml` 与 `config.py`，但**没有任何代码读它们**。
 删除的理由统一是「留着等于让配置文件撒谎」；删除后由
 `test_removed_keys_stay_removed` 挡住，避免它们无声地回来。
+最后一行是例外：它不是「从未接线」，而是被真实功能取代。
 
 | 键 | 曾经看起来像什么 | 实际行为 |
 |---|---|---|
@@ -98,9 +109,23 @@
 | `export.overwrite_existing_run` | 允许覆盖已有 run | 从不覆盖，也没实现覆盖 |
 | `export.include_embedded_character_book` | 是否内嵌世界书 | 永远内嵌（单文件导入是本项目的核心用法） |
 | `export.also_export_standalone_worldbook` | 是否另出独立世界书 | 永远另出（严格档要用它） |
+| `worldbook.allow_html_beautification` | 受控 HTML 开关（声明型，永远 `false`） | 已由 `rendering.html.enabled` 取代；写旧键会报 unknown 字段 |
 
 > 如果你需要其中某一项成为真功能，正确的顺序是：先实现、再加测试、
 > 最后把它加回 schema —— 那时 `test_config_wiring.py` 会自然通过。
+
+### 从 `allow_html_beautification` 迁移
+
+旧配置里的 `worldbook.allow_html_beautification: false` 现在会被拒绝
+（未知字段）。删掉它，改用：
+
+```yaml
+rendering:
+  html:
+    enabled: false   # 改成 true 才会多出世界书触发条目
+```
+
+注意行为不同：旧键是一个**从未生效的声明**，新键是**真的会改变导出产物**的开关。
 
 ## 加新配置项的检查清单
 
