@@ -36,13 +36,43 @@ def _config_classes() -> dict[str, type[BaseModel]]:
 
 
 def _all_fields() -> list[tuple[str, str, object]]:
-    """返回 `[(section, field, field_info), ...]`，section 是实例名（project/input/...）。"""
-    root = config_module.Config.model_fields
+    """返回 `[(section, field, field_info), ...]`，section 是点分实例路径。
+
+    递归展开嵌套配置段（例如 `rendering.html`），否则嵌套段的键
+    永远不会被接线检查覆盖。
+    """
     rows: list[tuple[str, str, object]] = []
-    for section, info in root.items():
-        for field, finfo in info.annotation.model_fields.items():
-            rows.append((section, field, finfo))
+
+    def walk(model: type[BaseModel], prefix: str) -> None:
+        for field, finfo in model.model_fields.items():
+            annotation = finfo.annotation
+            path = f"{prefix}.{field}" if prefix else field
+            if isinstance(annotation, type) and issubclass(annotation, BaseModel):
+                walk(annotation, path)
+            else:
+                rows.append((prefix, field, finfo))
+
+    walk(config_module.Config, "")
     return rows
+
+
+def _sections() -> dict[str, set[str]]:
+    """`{点分路径: 该段的字段名集合}`，只含真正的配置段。"""
+    sections: dict[str, set[str]] = {}
+
+    def walk(model: type[BaseModel], prefix: str) -> None:
+        names: set[str] = set()
+        for field, finfo in model.model_fields.items():
+            annotation = finfo.annotation
+            path = f"{prefix}.{field}" if prefix else field
+            names.add(field)
+            if isinstance(annotation, type) and issubclass(annotation, BaseModel):
+                walk(annotation, path)
+        if prefix:
+            sections[prefix] = names
+
+    walk(config_module.Config, "")
+    return sections
 
 
 def _is_single_value_literal(annotation) -> bool:
@@ -104,6 +134,34 @@ def test_single_value_literal_fields_are_documented_in_the_example_config():
     assert missing == [], f"示例配置里缺少这些声明型字段：{missing}"
 
 
+def _yaml_leaf_keys(text: str, sections: dict[str, set[str]]) -> set[tuple[str, str]]:
+    """按缩进还原点分路径，只记录**配置段**下面的叶子键。"""
+    seen: set[tuple[str, str]] = set()
+    stack: list[tuple[int, str]] = []
+    for line in text.splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        match = re.match(r"^(\s*)([a-z_]+):(.*)$", line)
+        if not match:
+            continue
+        indent = len(match.group(1))
+        key = match.group(2)
+        rest = match.group(3).strip()
+        while stack and stack[-1][0] >= indent:
+            stack.pop()
+        parent = ".".join(name for _, name in stack)
+        path = f"{parent}.{key}" if parent else key
+        if (
+            parent in sections
+            and key in sections[parent]
+            and path not in sections  # 嵌套段本身不是叶子键
+        ):
+            seen.add((parent, key))
+        if not rest:
+            stack.append((indent, key))
+    return seen
+
+
 def test_the_example_config_covers_exactly_the_real_keys():
     """示例配置与 schema 必须一一对应 —— 多一个键会在加载时直接报错。"""
     from novel_to_tavern.config import load_config
@@ -112,18 +170,7 @@ def test_the_example_config_covers_exactly_the_real_keys():
     assert isinstance(cfg, config_module.Config)
 
     declared = {(section, field) for section, field, _ in FIELDS}
-    text = EXAMPLE_YAML.read_text(encoding="utf-8")
-    current_section = ""
-    seen: set[tuple[str, str]] = set()
-    for line in text.splitlines():
-        if not line.strip() or line.lstrip().startswith("#"):
-            continue
-        if not line.startswith(" ") and line.rstrip().endswith(":"):
-            current_section = line.split(":")[0].strip()
-            continue
-        match = re.match(r"^\s+([a-z_]+):", line)
-        if match and current_section:
-            seen.add((current_section, match.group(1)))
+    seen = _yaml_leaf_keys(EXAMPLE_YAML.read_text(encoding="utf-8"), _sections())
 
     assert seen == declared, (
         f"示例配置与 schema 不一致：只在 schema 里 {sorted(declared - seen)}；"
@@ -157,6 +204,7 @@ def test_removed_keys_stay_removed():
         "overwrite_existing_run",
         "include_embedded_character_book",
         "also_export_standalone_worldbook",
+        "allow_html_beautification",
     ]
     names = {field for _, field, _ in FIELDS}
     assert not (set(removed) & names), (

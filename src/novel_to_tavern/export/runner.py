@@ -147,6 +147,17 @@ def _extra_entries(style_artifacts, config) -> list[PlannedEntry]:
     extra: list[PlannedEntry] = []
     if style_artifacts is not None:
         extra.extend(style_artifacts.entries)
+    if config.rendering.html.enabled:
+        from ..render.html_policy import (
+            HtmlPolicy,
+            HtmlPolicyError,
+            build_html_entry,
+        )
+
+        try:
+            extra.append(build_html_entry(HtmlPolicy.from_config(config.rendering.html)))
+        except HtmlPolicyError as exc:
+            raise ExportError(f"HTML 规范配置非法：{exc}") from exc
     return extra
 
 
@@ -382,7 +393,7 @@ def export(
         },
         "play_mode": mode_block(play_mode),
         "style": _style_manifest_block(style_artifacts),
-        "rendering": {"enabled": False},
+        "rendering": _rendering_manifest_block(config),
         "metrics": {
             **_evidence_stats(run_path),
             "quote_location_success_rate_meaning": (
@@ -449,6 +460,7 @@ def export(
         strict_result=strict_result,
         config_mode=play_mode,
         style_artifacts=style_artifacts,
+        config=config,
     )
     _write_text(reports_dir / AUDIT_NAME, audit)
 
@@ -785,6 +797,17 @@ def _style_manifest_block(style_artifacts) -> dict:
     }
 
 
+def _rendering_manifest_block(config) -> dict:
+    html = config.rendering.html
+    if not html.enabled:
+        return {"enabled": False}
+    return {
+        "enabled": True,
+        "mode": html.mode,
+        "note": "提示词约束，无 Tavo 运行时过滤；渲染效果以实测为准",
+    }
+
+
 def _provenance(run_dir: Path) -> dict:
     """运行溯源：这份产物到底是**怎么**来的。
 
@@ -896,6 +919,27 @@ def _style_audit_lines(run_dir: Path, style_artifacts) -> list[str]:
     return lines
 
 
+def _rendering_audit_lines(config) -> list[str]:
+    html = config.rendering.html
+    lines = ["## 受控 HTML（输出格式条目，非 canon）", ""]
+    if not html.enabled:
+        lines += ["- 启用：否 —— 本次导出没有 HTML 规范条目。", ""]
+        return lines
+
+    palette = "、".join(f"{name}={color}" for name, color in html.color_palette.items())
+    lines += [
+        "- 启用：是（世界书触发条目 `wb_rendering_html`，非常驻、不进 Description）",
+        f"- 模式：`{html.mode}`",
+        f"- 允许属性：{'、'.join(html.allowed_properties)}",
+        f"- 字号：{'、'.join(html.allowed_font_sizes)}",
+        f"- 色板：{palette}",
+        "- **无运行时过滤**：这是提示词约束；Tavo 是否渲染、模型是否遵守，"
+        "都以实测为准。",
+        "",
+    ]
+    return lines
+
+
 def _render_audit(
     run_dir: Path,
     *,
@@ -916,6 +960,7 @@ def _render_audit(
     strict_result: dict | None = None,
     config_mode: str = "branch_start",
     style_artifacts=None,
+    config=None,
 ) -> str:
     from ..timeline.worldbible import estimate_tokens
 
@@ -1080,6 +1125,8 @@ def _render_audit(
             lines.append("")
 
     lines += _style_audit_lines(run_dir, style_artifacts)
+    if config is not None:
+        lines += _rendering_audit_lines(config)
 
     lines += [
         "## 已知限制",
