@@ -265,8 +265,10 @@ def export(
     play_mode = config.project.mode
     greetings.description = greetings.description + mode_notice(play_mode)
     if style_artifacts is not None:
-        greetings.description += (
-            "\n\n【叙事风格规范】\n" + style_artifacts.runtime_text.strip()
+        from ..style.pipeline import style_description
+
+        greetings.description = style_description(
+            greetings.description, style_artifacts.runtime_text
         )
 
     card, worldbook = build_exports(
@@ -564,7 +566,11 @@ def _export_strict(
         strict_chapter_index=start_chapter,
     )
     if style_runtime_text:
-        greetings.description += "\n\n【叙事风格规范】\n" + style_runtime_text.strip()
+        from ..style.pipeline import style_description
+
+        greetings.description = style_description(
+            greetings.description, style_runtime_text
+        )
     card, worldbook = build_exports(
         book_title=f"{book_title}（{start.chapter_label} 起）",
         entries=assembled,

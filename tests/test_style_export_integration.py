@@ -390,9 +390,19 @@ def test_enabled_fresh_artifacts_no_provider(tmp_path):
     result = export(run, cfg)  # 不传 provider：新鲜产物不需要引擎
 
     description = result["card"].data.description
+    # 用户要求：开头就要写明「尽量模仿作者风格」，并指向世界书里的风格条目。
+    assert description.startswith("【写作要求：作者风格】")
+    assert "模仿该作品的文风" in description
+    assert "世界书" in description and "作者风格：" in description
     assert description.count("【叙事风格规范】") == 1
     assert "旁白用短句" in description
     assert len(_style_ids(result)) == 8
+
+    # 严格起始点档同样把写作要求放在开头。
+    strict = export(run, cfg, start_chapter=1)
+    strict_description = strict["strict"]["card"].data.description
+    assert strict_description.startswith("【写作要求：作者风格】")
+    assert strict_description.count("【叙事风格规范】") == 1
 
 
 def test_enabled_missing_artifacts_auto_runs(tmp_path):

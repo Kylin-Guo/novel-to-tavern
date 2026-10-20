@@ -27,6 +27,34 @@ from .schema import StyleProfile
 from .worldbook import load_style_entries
 
 
+#: 开启风格模块时，写在 Description **最开头**的写作要求。
+#:
+#: 为什么放在开头：Description 是每轮都在上下文里的最稳定位置；
+#: 用户要的是「先看到模仿作者风格的要求」，而不是先看到世界模拟器说明。
+#: 这里明确指向世界书的「作者风格：…」条目 —— 具体规则在那些条目里，
+#: 不是在 Description 里重复一遍。
+STYLE_DESCRIPTION_PREAMBLE = (
+    "【写作要求：作者风格】本卡附带从原著蒸馏出的作者风格档案。"
+    "写作时请尽量模仿该作品的文风：句式与段落节奏、环境与感官描写、"
+    "对白与潜台词、心理呈现、场景推进，都按风格档案执行。"
+    "具体规则见世界书中标题以「作者风格：」开头的 8 组条目 ——"
+    "用户提到「作者风格」「叙事风格」「语言风格」「文风特点」「写作风格」时会触发，"
+    "请优先按那些条目写，而不是套用通用网文腔。"
+    "风格只约束写法，不改变原著事实、角色设定与时间线。"
+)
+
+
+def style_description(description: str, runtime_text: str) -> str:
+    """把风格要求放到 Description 开头，并在末尾保留精简运行时规范分节。"""
+    return (
+        STYLE_DESCRIPTION_PREAMBLE
+        + "\n\n"
+        + description.strip()
+        + "\n\n【叙事风格规范】\n"
+        + runtime_text.strip()
+    )
+
+
 @dataclass
 class StyleArtifacts:
     profile: StyleProfile
