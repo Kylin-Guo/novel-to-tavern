@@ -53,7 +53,27 @@ worldbook:
   enable_recursive_scan: false # 未实现。只能为 false —— 写 true 会被配置校验拒绝
   allow_mvu: false # 未实现。只能为 false
   allow_ejs: false # 未实现。只能为 false
-  allow_html_beautification: false # 未实现。只能为 false
+
+style:
+  enabled: false # 开启后 n2t export 自动执行作者风格蒸馏（逐块观察→合并→编译）
+  max_runtime_tokens: 800 # 【叙事风格规范】分节粗估上限；超出自动压缩，再超报错
+  worldbook_entries: true # 把 8 组完整风格档案写进世界书（触发式，非常驻）
+  observe_max_chunks: 0 # 逐块观察上限；0 = 全部。>0 时等距抽样（确定性）
+  merge_batch_size: 30 # 合并阶段每批观察份数
+  supplementary_path: null # 可选：作者访谈/创作谈笔记（md/txt），补充证据
+
+rendering:
+  html:
+    enabled: false # 开启后世界书多一条「输出格式：受控 HTML 规范」触发条目
+    mode: controlled_span # 唯一取值
+    allowed_properties: [font-size, color, font-style] # 只能取这三个值的子集
+    allowed_font_sizes: ["0.88em", "1em", "1.08em", "1.12em"] # 必须 em 相对单位
+    color_palette:
+      muted: "#9298A3"
+      emphasis: "#B08A38"
+      warning: "#B05A5A"
+      mystery: "#7C8FA6"
+    max_suggested_spans_per_reply: 3 # 写进规范文本的软建议
 
 export:
   character_card_spec: chara_card_v2

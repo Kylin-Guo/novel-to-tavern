@@ -27,6 +27,9 @@ EntryCategory = Literal[
     "ability",
     "concept",
     "event",
+    #: Runtime 层资料，不是 canon。
+    "author_style",
+    "rendering",
 ]
 
 #: 实体类别 → 世界书条目类别。

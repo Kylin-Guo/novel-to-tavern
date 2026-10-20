@@ -177,13 +177,13 @@ def test_checklist_no_longer_denies_the_observed_import():
 
 
 def test_checklist_separates_fixture_from_full_output():
-    """fixture 是 4 条，真产物是 180 条，两者不得混写。"""
+    """fixture 是 4 条，真产物是 188 条，两者不得混写。"""
     fixture_entries = json.loads(_read(FIXTURE_PATH))["data"]["character_book"]["entries"]
     assert len(fixture_entries) == 4, "fixture 的条目数变了，文档里的说明需要同步"
 
     text = _read(CHECKLIST)
     assert "fixture" in text.lower()
-    assert "180" in text and "4" in text
+    assert "188" in text and "4" in text
 
 
 def test_checklist_distinguishes_the_unverified_runtime_behaviour():

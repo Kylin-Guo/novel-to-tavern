@@ -39,7 +39,7 @@ CANON = "canon_fact"
 
 #: 模型漏字段时的落点。默认取它而不是 `CANON`：
 #: 少写一个字段是常见的，而「默认当成原著正史」正好是本项目最不能犯的错 ——
-#: 错误的默认值在 JSON 完全合法的情况下不会报任何错。见 docs/REVIEW_RECHECK.md P1-03。
+#: 错误的默认值在 JSON 完全合法的情况下不会报任何错。见 docs/DATA_MODEL.md 的字段默认值说明。
 UNKNOWN = "unknown"
 
 

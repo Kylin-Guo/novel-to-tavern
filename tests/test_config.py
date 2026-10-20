@@ -82,6 +82,80 @@ def test_summary_contains_no_secret_values(tmp_path, monkeypatch):
     assert summary["llm.api_key_env"] == config.llm.api_key_env
 
 
+def test_style_section_defaults_are_disabled():
+    cfg = config_module.Config()
+    assert cfg.style.enabled is False
+    assert cfg.style.max_runtime_tokens == 800
+    assert cfg.style.worldbook_entries is True
+    assert cfg.style.observe_max_chunks == 0
+    assert cfg.style.merge_batch_size == 30
+    assert cfg.style.supplementary_path is None
+
+
+def test_summary_exposes_the_style_switches():
+    summary = config_module.summarize(config_module.Config())
+    assert summary["style.enabled"] is False
+    assert summary["style.max_runtime_tokens"] == 800
+    assert summary["style.worldbook_entries"] is True
+
+
+def test_warning_when_supplementary_file_is_missing(tmp_path):
+    cfg = config_module.Config()
+    cfg = cfg.model_copy(
+        update={
+            "style": cfg.style.model_copy(
+                update={
+                    "enabled": True,
+                    "supplementary_path": str(tmp_path / "absent.md"),
+                }
+            )
+        }
+    )
+    warnings = config_module.config_warnings(cfg)
+    assert any("supplementary_path" in w for w in warnings)
+
+    note = tmp_path / "note.md"
+    note.write_text("作者自述。", encoding="utf-8")
+    cfg = cfg.model_copy(
+        update={"style": cfg.style.model_copy(update={"supplementary_path": str(note)})}
+    )
+    assert not any("supplementary_path" in w for w in config_module.config_warnings(cfg))
+
+
+def test_rendering_section_defaults_are_disabled():
+    html = config_module.Config().rendering.html
+    assert html.enabled is False
+    assert html.mode == "controlled_span"
+    assert html.allowed_properties == ["font-size", "color", "font-style"]
+    assert html.color_palette["muted"] == "#9298A3"
+
+
+def test_rendering_switch_is_in_the_summary_and_has_a_warning():
+    cfg = config_module.Config()
+    assert config_module.summarize(cfg)["rendering.html.enabled"] is False
+    assert not any("rendering.html" in w for w in config_module.config_warnings(cfg))
+
+    cfg = cfg.model_copy(
+        update={
+            "rendering": cfg.rendering.model_copy(
+                update={"html": cfg.rendering.html.model_copy(update={"enabled": True})}
+            )
+        }
+    )
+    assert config_module.summarize(cfg)["rendering.html.enabled"] is True
+    warnings = config_module.config_warnings(cfg)
+    assert any("未经实测" in w for w in warnings)
+
+
+def test_removed_html_beautification_flag_is_now_an_unknown_key(tmp_path):
+    """删掉的键必须报 unknown —— 报错本身就是迁移指引。"""
+    path = tmp_path / "c.yaml"
+    path.write_text("worldbook:\n  allow_html_beautification: true\n", encoding="utf-8")
+    with pytest.raises(config_module.ConfigError) as excinfo:
+        config_module.load_config(path)
+    assert "allow_html_beautification" in str(excinfo.value)
+
+
 def test_paths_are_strings_not_path_objects():
     """摘要要能安全序列化，不能混入 Path 对象。"""
     summary = config_module.summarize(config_module.Config())

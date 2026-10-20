@@ -4,9 +4,9 @@
 
 ## 开始任何修改前
 
-1. 阅读 `README.md`、`docs/UPSTREAM_ANALYSIS.md`、`docs/ARCHITECTURE.md`、`docs/DATA_MODEL.md`、`docs/IMPLEMENTATION_PLAN.md`、`docs/QUALITY_GATES.md` 和 `docs/THIRD_PARTY_NOTICES.md`。
+1. 阅读 `README.md`、`docs/ARCHITECTURE.md`、`docs/DATA_MODEL.md`、`docs/CONFIG_REFERENCE.md`、`docs/QUALITY_GATES.md` 和 `docs/THIRD_PARTY_NOTICES.md`。
 2. 检查仓库当前状态、已存在的代码、测试和配置；不要假设空仓库或之前的任务已完成。
-3. 建立 `docs/PLAN.md`，列出本阶段范围、拟改文件、测试、风险与不做的内容，再开始实现。
+3. 内部计划写在 `docs/internal/PLAN.md`（该目录不入库），列出本阶段范围、拟改文件、测试、风险与不做的内容，再开始实现。
 4. 如上游文档/接口可能变化，应先看该仓库链接的当前文件并记录检索日期；不要依赖记忆猜测 SillyTavern JSON 字段。
 
 ## 产品边界
@@ -45,7 +45,7 @@
 - 对模型输出先解析/校验，再进入下一阶段；不得让模型生成的任意字段直接覆盖内部数据。
 - 生成卡片/世界书必须使用代码序列化，不要要求 LLM 手写最终 JSON。
 - 新增依赖前解释必要性，优先标准库和少量成熟依赖；避免在 MVP 引入数据库、向量库或分布式队列。
-- 每一阶段结束时运行相关测试，并更新 `docs/PLAN.md` 与 `README.md` 状态。
+- 每一阶段结束时运行相关测试，并更新内部计划（`docs/internal/PLAN.md`）与 `README.md` 状态。
 
 ## 交付标准
 

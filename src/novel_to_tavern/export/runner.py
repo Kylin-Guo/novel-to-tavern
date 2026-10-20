@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -138,6 +139,28 @@ def _collect_digests(run_dir: Path) -> list[ChapterDigest]:
     return [by_chapter[k] for k in sorted(by_chapter)]
 
 
+def _extra_entries(style_artifacts, config) -> list[PlannedEntry]:
+    """旁路 Runtime 条目：风格档案（+ 受控 HTML 规范，见 render/html_policy.py）。
+
+    它们都不进 canon，也不参与剧情主线。
+    """
+    extra: list[PlannedEntry] = []
+    if style_artifacts is not None:
+        extra.extend(style_artifacts.entries)
+    if config.rendering.html.enabled:
+        from ..render.html_policy import (
+            HtmlPolicy,
+            HtmlPolicyError,
+            build_html_entry,
+        )
+
+        try:
+            extra.append(build_html_entry(HtmlPolicy.from_config(config.rendering.html)))
+        except HtmlPolicyError as exc:
+            raise ExportError(f"HTML 规范配置非法：{exc}") from exc
+    return extra
+
+
 def _assemble_entries(
     plan: list[PlannedEntry],
     digests: list[ChapterDigest],
@@ -146,6 +169,7 @@ def _assemble_entries(
     strict_label: str = "",
     include_plot: bool = True,
     include_core_rules: bool = True,
+    extra_entries: list[PlannedEntry] | None = None,
 ) -> list[PlannedEntry]:
     """核心规则 + 规划条目 + 剧情主线。顺序决定插入次序。
 
@@ -167,6 +191,8 @@ def _assemble_entries(
         if plot is not None:
             entries.append(plot)
     entries.extend(triggered)
+    # 风格 / 呈现类条目是旁路 Runtime 资料，不是 canon；排在规划条目之后。
+    entries.extend(extra_entries or ())
     return entries
 
 
@@ -175,11 +201,17 @@ def export(
     config: config_module.Config,
     *,
     start_chapter: int | None = None,
+    provider=None,
+    log=None,
 ) -> dict:
     """导出。
 
     `start_chapter`（**0 基**）非空时，除了默认产物，还会另外产出**严格起始点**的一整套：
     起点之后的事实不进任何条目正文。默认产物不受影响。
+
+    `config.style.enabled=true` 时这里会装配风格产物：新鲜则直接用（不需要
+    凭据），缺失或过期则用 `provider` 自动蒸馏。这是「导出阶段不调 LLM」
+    的唯一例外，见 docs/ARCHITECTURE.md。
     """
     run_path = Path(run_dir)
     exports_dir = run_path / "exports"
@@ -189,6 +221,14 @@ def export(
     book_title = derive_book_title(
         [s["filename"] for s in manifest.get("sources", [])], fallback=config.project.name
     )
+
+    style_artifacts = None
+    if config.style.enabled:
+        from ..style.pipeline import ensure_style_artifacts
+
+        style_artifacts = ensure_style_artifacts(
+            run_path, config, provider, log=log
+        )
 
     plan = [
         PlannedEntry.model_validate(item)
@@ -206,8 +246,12 @@ def export(
     if not digests:
         raise ExportError("抽取结果里没有章节摘要，无法生成剧情主线与开场白。")
 
+    extra_entries = _extra_entries(style_artifacts, config)
     entries = _assemble_entries(
-        plan, digests, include_core_rules=config.worldbook.always_on_core_rules
+        plan,
+        digests,
+        include_core_rules=config.worldbook.always_on_core_rules,
+        extra_entries=extra_entries,
     )
 
     try:
@@ -220,6 +264,12 @@ def export(
     # 游玩模式写进卡面 —— 用户要在客户端里就能看到自己拿到的是哪一种
     play_mode = config.project.mode
     greetings.description = greetings.description + mode_notice(play_mode)
+    if style_artifacts is not None:
+        from ..style.pipeline import style_description
+
+        greetings.description = style_description(
+            greetings.description, style_artifacts.runtime_text
+        )
 
     card, worldbook = build_exports(
         book_title=book_title,
@@ -289,6 +339,10 @@ def export(
                 for item in _read_json(run_path / "canonical" / "relations.json")
             ],
             timeline=timeline,
+            extra_entries=extra_entries,
+            style_runtime_text=(
+                style_artifacts.runtime_text if style_artifacts is not None else ""
+            ),
         )
 
     # --- 落盘 ---
@@ -340,6 +394,8 @@ def export(
             "card_warnings": card_report.warnings,
         },
         "play_mode": mode_block(play_mode),
+        "style": _style_manifest_block(style_artifacts),
+        "rendering": _rendering_manifest_block(config),
         "metrics": {
             **_evidence_stats(run_path),
             "quote_location_success_rate_meaning": (
@@ -405,6 +461,8 @@ def export(
         entities=entities,
         strict_result=strict_result,
         config_mode=play_mode,
+        style_artifacts=style_artifacts,
+        config=config,
     )
     _write_text(reports_dir / AUDIT_NAME, audit)
 
@@ -447,6 +505,8 @@ def _export_strict(
     events: list[EventRecord],
     relations: list[RelationRecord],
     timeline: list[TimelineEvent],
+    extra_entries: list[PlannedEntry] | None = None,
+    style_runtime_text: str = "",
 ) -> dict:
     """产出一整套**严格起始点**产物。
 
@@ -480,12 +540,22 @@ def _export_strict(
     plan = plan_strict(
         entities=entities, facts=facts, events=events, digests=digests, start=start
     )
+
+    # 风格/呈现条目里本来就不该有章节指涉；有就说明蒸馏或手工产物把剧情带进来了。
+    from ..style.worldbook import StyleLeakError, check_style_no_plot_leak
+
+    try:
+        check_style_no_plot_leak(list(extra_entries or ()), start_chapter)
+    except StyleLeakError as exc:
+        raise ExportError(str(exc)) from exc
+
     assembled = _assemble_entries(
         plan.entries,
         digests,
         strict_label=start.chapter_label,
         include_plot=False,
         include_core_rules=config.worldbook.always_on_core_rules,
+        extra_entries=extra_entries,
     )
     greetings = build_greetings(
         book_title=book_title,
@@ -495,6 +565,12 @@ def _export_strict(
         strict_label=start.chapter_label,
         strict_chapter_index=start_chapter,
     )
+    if style_runtime_text:
+        from ..style.pipeline import style_description
+
+        greetings.description = style_description(
+            greetings.description, style_runtime_text
+        )
     card, worldbook = build_exports(
         book_title=f"{book_title}（{start.chapter_label} 起）",
         entries=assembled,
@@ -711,6 +787,33 @@ def _semantic_metrics(run_dir: Path) -> dict[str, object]:
     }
 
 
+def _style_manifest_block(style_artifacts) -> dict:
+    if style_artifacts is None:
+        return {"enabled": False}
+    from ..timeline.worldbible import estimate_tokens
+
+    profile = style_artifacts.profile
+    return {
+        "enabled": True,
+        "profile_id": profile.profile_id,
+        "inputs_fingerprint": profile.inputs_fingerprint,
+        "runtime_tokens_est": estimate_tokens(style_artifacts.runtime_text),
+        "worldbook_entries": len(style_artifacts.entries),
+        "note": "风格资料非 canon；token 为粗估，不是分词器计数",
+    }
+
+
+def _rendering_manifest_block(config) -> dict:
+    html = config.rendering.html
+    if not html.enabled:
+        return {"enabled": False}
+    return {
+        "enabled": True,
+        "mode": html.mode,
+        "note": "提示词约束，无 Tavo 运行时过滤；渲染效果以实测为准",
+    }
+
+
 def _provenance(run_dir: Path) -> dict:
     """运行溯源：这份产物到底是**怎么**来的。
 
@@ -774,6 +877,75 @@ def _provenance(run_dir: Path) -> dict:
     }
 
 
+def _style_observation_coverage(run_dir: Path) -> tuple[int, int]:
+    directory = run_dir / "author_style" / "observations"
+    observed = len(
+        [p for p in directory.glob("*.json") if not p.name.startswith("_")]
+    ) if directory.is_dir() else 0
+    manifest_path = run_dir / "manifest.json"
+    total = 0
+    if manifest_path.is_file():
+        total = len(json.loads(manifest_path.read_text(encoding="utf-8")).get("chunks", []))
+    return observed, total
+
+
+def _style_dropped_count(run_dir: Path) -> int:
+    """从编译审计里读压缩丢弃项数。读不到就如实写 0。"""
+    path = run_dir / "author_style" / "audit.md"
+    if not path.is_file():
+        return 0
+    match = re.search(r"丢弃规律数：(\d+)", path.read_text(encoding="utf-8"))
+    return int(match.group(1)) if match else 0
+
+
+def _style_audit_lines(run_dir: Path, style_artifacts) -> list[str]:
+    lines = ["## 作者风格（旁路资料，非 canon）", ""]
+    if style_artifacts is None:
+        lines += ["- 启用：否 —— 本次导出结果与未启用风格模块时一致。", ""]
+        return lines
+
+    from ..timeline.worldbible import estimate_tokens
+
+    profile = style_artifacts.profile
+    observed, total = _style_observation_coverage(run_dir)
+    coverage = f"{observed} / {total} 块"
+    if observed < total:
+        coverage += "（`observe_max_chunks` 抽样，不是全量）"
+    lines += [
+        "- 启用：是",
+        f"- profile_id：`{profile.profile_id}`",
+        f"- inputs_fingerprint：`{profile.inputs_fingerprint}`",
+        f"- 观察覆盖：{coverage}",
+        f"- 【叙事风格规范】粗估：{estimate_tokens(style_artifacts.runtime_text)} token",
+        f"- 风格世界书条目：{len(style_artifacts.entries)}（触发式，非常驻）",
+        f"- 压缩丢弃项：{_style_dropped_count(run_dir)}",
+        "- 风格资料**不写** facts / entities / timeline / knowledge；canon 数据未受影响。",
+        "",
+    ]
+    return lines
+
+
+def _rendering_audit_lines(config) -> list[str]:
+    html = config.rendering.html
+    lines = ["## 受控 HTML（输出格式条目，非 canon）", ""]
+    if not html.enabled:
+        lines += ["- 启用：否 —— 本次导出没有 HTML 规范条目。", ""]
+        return lines
+
+    palette = "、".join(f"{name}={color}" for name, color in html.color_palette.items())
+    lines += [
+        "- 启用：是（世界书触发条目 `wb_rendering_html`，非常驻、不进 Description）",
+        f"- 模式：`{html.mode}`",
+        f"- 允许属性：{'、'.join(html.allowed_properties)}",
+        f"- 字号：{'、'.join(html.allowed_font_sizes)}",
+        f"- 色板：{palette}",
+        "- **无运行时过滤**：这是提示词约束；Tavo 是否渲染、模型是否遵守，"
+        "都以实测为准。",
+        "",
+    ]
+    return lines
+
+
 def _render_audit(
     run_dir: Path,
     *,
@@ -793,6 +965,8 @@ def _render_audit(
     entities: list[CanonicalEntity],
     strict_result: dict | None = None,
     config_mode: str = "branch_start",
+    style_artifacts=None,
+    config=None,
 ) -> str:
     from ..timeline.worldbible import estimate_tokens
 
@@ -955,6 +1129,10 @@ def _render_audit(
                     f"（删去 {delta.chars_before - delta.chars_after} 字）"
                 )
             lines.append("")
+
+    lines += _style_audit_lines(run_dir, style_artifacts)
+    if config is not None:
+        lines += _rendering_audit_lines(config)
 
     lines += [
         "## 已知限制",
