@@ -3,7 +3,7 @@
 把一部小说转成可导入 **SillyTavern / Tavo** 的多角色世界模拟器角色卡、世界书与时间线 ——
 每一条事实都能回溯到原文的某一行。
 
-[![tests](https://github.com/Kylin-Guo/novel-to-tavern/actions/workflows/tests.yml/badge.svg)](https://github.com/Kylin-Guo/novel-to-tavern/actions/workflows/tests.yml)
+[![tests](https://github.com/kylin-guo/novel-to-tavern/actions/workflows/tests.yml/badge.svg)](https://github.com/kylin-guo/novel-to-tavern/actions/workflows/tests.yml)
 ![python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![offline](https://img.shields.io/badge/tests-100%25%20offline-brightgreen)
 ![license](https://img.shields.io/badge/license-MIT-blue)
@@ -80,33 +80,100 @@
 
 ---
 
+## 作为 Agent Skill 安装（推荐给 Agent 用户）
+
+仓库自带一个标准 **Agent Skill**：[`skills/novel-to-tavern/`](skills/novel-to-tavern/)——
+工作流程、执行纪律、三份参考、三个随附脚本，按开放的 Agent Skills 协议组织，
+可在 Claude Code、Codex、Cursor、Kimi Code 等兼容 runtime 中加载。装上之后，
+下面「最快用法」里的提示词都不用写了，也不需要给 Agent 配 API 凭据：
+**抽取由 Agent 自己完成**（file 引擎 + Agent 按 schema 生成的预生成响应）。
+
+### 方式一：一句话安装（推荐，跨 runtime）
+
+打开你正在用的 Agent，告诉它：
+
+```text
+帮我安装这个 skill：https://github.com/kylin-guo/novel-to-tavern/skills
+```
+
+或用通用 CLI 安装器（vercel-labs/skills，支持 50+ runtime，自动识别当前 runtime）：
+
+```bash
+npx skills add kylin-guo/novel-to-tavern/skills
+```
+
+需要指定 runtime 时加参数，如 `-a claude-code`、`-a codex`、`-a cursor`。
+
+### 方式二：手动安装
+
+| Runtime | 安装路径 |
+|---|---|
+| Claude Code | `~/.claude/skills/novel-to-tavern/` |
+| Codex CLI | `~/.codex/skills/novel-to-tavern/` |
+| Cursor | `~/.cursor/skills/novel-to-tavern/` |
+| Kimi Code | `~/.agents/skills/novel-to-tavern/` |
+| 其他 runtime | clone 后复制到对应 runtime 的 skills/ 目录 |
+
+```bash
+git clone git@github.com:kylin-guo/novel-to-tavern.git
+# 例：Kimi Code 用户级安装
+cp -r novel-to-tavern/skills/novel-to-tavern ~/.agents/skills/
+```
+
+### 方式三：当提示词用
+
+runtime 不支持技能自动加载时，直接把
+[`skills/novel-to-tavern/SKILL.md`](skills/novel-to-tavern/SKILL.md) 的内容
+粘贴进对话 —— 它本质就是一份 markdown + YAML frontmatter。
+
+### 如何使用
+
+装好后**新开一个对话**（确认技能列表出现 `novel-to-tavern`），直接说人话：
+
+```text
+把 /path/to/小说目录 导出成可导入 SillyTavern/Tavo 的角色卡。
+```
+
+技能会接管：确认环境、写配置、跑
+`ingest → extract → resolve → timeline → export`、复核产物并如实汇报。
+它会先问你四件事：原文路径、起始章节/剧透敏感度、要不要作者风格蒸馏
+（默认不开）、对话要不要 HTML 美化（默认不开，token 更高且只是提示词约束）。
+
+> `scripts/check_card.py` 可独立校验任何一张 V2 卡（不只本仓库导出的），
+> 发现「JSON 合法但客户端静默出错」的字段问题；`evals/evals.json` 是开发期
+> 测试提示集，不进分发包。
+
+---
+
 ## 最快用法：让 Agent 一句话导出角色卡
 
 前提：你有一个能读仓库、能执行命令的 Agent（Claude Code / Codex / Cursor 等），
-本机有 Python 3.10+，小说是 `txt` / `md`。
+本机有 Python 3.10+，小说是 `txt` / `md`。装了上面的 Skill 就可以跳过本节
+—— 以下是「不装技能、直接贴提示词」的用法。
 
 ### 一句话版
 
 把下面一句发给 Agent，路径换成你的小说目录：
 
 ```text
-把 /path/to/小说目录 用 https://github.com/Kylin-Guo/novel-to-tavern 导出成可导入
+把 /path/to/小说目录 用 https://github.com/kylin-guo/novel-to-tavern 导出成可导入
 SillyTavern/Tavo 的角色卡；新建 run，不要覆盖已有 runs/；完成后告诉我卡在哪。
 ```
 
 ### 推荐版（把事情说清楚，少返工）
 
 ```text
-请用 https://github.com/Kylin-Guo/novel-to-tavern 这个仓库，把 /path/to/小说目录
+请用 https://github.com/kylin-guo/novel-to-tavern 这个仓库，把 /path/to/小说目录
 导出成可导入 SillyTavern/Tavo 的多角色世界模拟器角色卡。
 
 要求：
 1. 先读 README.md 和 AGENTS.md，不要修改小说原文。
 2. 新建 run，产物写到 runs/<run_id>/，不要覆盖已有 runs/。
 3. 按 ingest → extract → resolve → timeline → export 执行；verify 可选。
-4. 需要 API 凭据时先问我；没有凭据就用 file 引擎 + 预生成响应，不要伪造抽取结果。
+4. 事实抽取由你完成：用 file 引擎，按 ChunkExtraction schema 逐块生成预生成
+   响应，引文必须逐字摘自原文，不要伪造抽取结果；不需要向我要 API 凭据。
 5. 导出后跑一遍结构校验；把主卡路径、条目数、哪些验证做了/没做告诉我。
-6. 默认不要开启作者风格蒸馏；如果我要，再按 README 的风格章节处理。
+6. 默认不要开启作者风格蒸馏和 HTML 美化；如果我要，再按 README 的对应章节处理。
 ```
 
 ### Agent 会做什么
@@ -120,8 +187,10 @@ SillyTavern/Tavo 的角色卡；新建 run，不要覆盖已有 runs/；完成�
 | 5. 时间线 | `n2t timeline --run-id <id>` | 事件、知识边界、世界书规划 |
 | 6. 导出 | `n2t export --run-id <id> [--start-chapter N]` | `runs/<id>/exports/world_simulator_v2.json` |
 
-> 没有 API 凭据时，Agent 只能用 `file` 引擎：需要先有 `precomputed/` 响应，
-> 或由 Agent 阅读原文生成响应（会消耗较多 token，见下一节）。
+> 抽取不需要 API：Agent 本身就是抽取模型（file 引擎 + 预生成响应，覆盖检查用
+> `skills/novel-to-tavern/scripts/check_responses.py`）。长篇全量生成响应会消耗
+> 较多 Agent token，建议先小样（`extract --limit N`）再全量；用户主动提供
+> OpenAI 兼容凭据时可切 `openai_compatible`。
 > **不要把 `exports/天之炽/` 里的示例卡当成你的书。**
 
 ### 导出之后
@@ -208,13 +277,13 @@ style:
 ## 手动使用（CLI）
 
 ```bash
-git clone git@github.com:Kylin-Guo/novel-to-tavern.git
+git clone git@github.com:kylin-guo/novel-to-tavern.git
 cd novel-to-tavern
 
 python3 -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
 
-.venv/bin/python -m pytest      # 687 项离线测试，不联网、不花 API 额度
+.venv/bin/python -m pytest      # 701 项离线测试，不联网、不花 API 额度
 .venv/bin/n2t --help
 ```
 
@@ -368,31 +437,6 @@ cp config/config.example.yaml config/config.yaml   # 改 source_path 指向你�
 
 ---
 
-## 验证等级：哪些是真跑过的
-
-本项目区分四件事：**单元 / 集成测试**、**静态 JSON 校验**、**Tavo 实际导入**、
-**真实对话行为**。当前状态：
-
-| 等级 | 内容 | 状态 |
-|---|---|---|
-| ① 单元 / 集成测试 | 687 项离线测试 | ✅ **已跑通**（`python -m pytest`） |
-| ② 结构与一致性校验 | V2 结构 + 内嵌/独立世界书一致 + 密钥扫描 | ✅ **已跑通**（导出时强制） |
-| ②b 风格管线 | 观察/合并/编译/压缩、缓存、预算、canon 隔离 | ✅ **单元 / 集成测试级**（离线 `FileProvider`） |
-| ②c 受控 HTML | 配置闸门、白名单样例矩阵、导出条目存在性 | ✅ **静态校验级**；Tavo 是否渲染 ⬜ **未实测** |
-| ③ JSON 可解析 | 卡能被 JSON 解析器读入 | ✅ 已验证 |
-| ④ 卡导入客户端 | 导入 Tavo | ✅ **已实测通过**（单文件，含内嵌世界书） |
-| ⑤ 内嵌世界书被识别 | 卡内世界书在客户端里出现 | ✅ **已实测通过** |
-| ⑥ 常驻条目每轮注入 | `constant: true` 不依赖关键词 | ⬜ **未验证** |
-| ⑦ 关键词 / 别名触发 | 发消息命中对应条目 | ⬜ **未验证** |
-| ⑧ 不误触发 | 无关闲聊不拉入大量条目 | ⬜ **未验证** |
-| ⑨ 起始点剧透行为 | 早期起点是否漏后续剧情 | ⬜ **未验证** |
-| ⑩ token / 上下文占用 | 实际占多少上下文 | ⬜ **未验证** |
-
-**⑥–⑩ 以及 ②c 的 Tavo 渲染一律未验证，本文档不做任何推断。** 手工步骤见
-[`docs/TAVO_IMPORT_CHECKLIST.md`](docs/TAVO_IMPORT_CHECKLIST.md)。
-
----
-
 ## 剧透防护：两个档位
 
 | 档位 | 怎么做 | 保证强度 |
@@ -427,12 +471,13 @@ novel-to-tavern/
 │   ├── config.py                 # 配置模型（未知键直接报错）
 │   ├── env.py  secrets.py  logging_setup.py
 │   └── paths.py                  # runs/<run_id>/ 隔离，拒绝覆盖
-├── tests/                        # 687 项离线单元测试
+├── tests/                        # 701 项离线单元测试
 ├── docs/                         # 公开文档（见下方「文档」）
 ├── examples/
 │   ├── fixtures/                 # 最小合法卡与世界书 fixture（自创内容）
 │   └── gold/                     # 黄金集：自创微型小说 + 手标期望
 ├── tools/                        # fixture 生成与防漂移脚本
+├── skills/novel-to-tavern/       # Agent Skill（SKILL.md + references + scripts + evals）
 ├── config/config.example.yaml    # 配置示例
 ├── exports/天之炽/               # 唯一入库的示例主卡（衍生作品，不在 MIT 内）
 ├── .github/workflows/            # CI
@@ -466,21 +511,6 @@ novel-to-tavern/
 
 `AGENTS.md` 是给 Agent 的仓库规则；`CLAUDE.md` 是 Claude Code 的入口。
 内部计划与审查记录放在本地 `docs/internal/`，不随公开仓库分发。
-
----
-
-## 格式依据
-
-目标格式的每个字段都指向 SillyTavern **1.19.0 的源码**，而非文档转述
-（`convertCharacterBook` / `world_info_position` / `newWorldInfoEntryDefinition` 等）。
-逐字段记录在 [`docs/FORMAT_COMPATIBILITY.md`](docs/FORMAT_COMPATIBILITY.md)。
-
-期间确证了几个「JSON 合法但行为静默出错」的陷阱，例如：
-
-- 内嵌条目的 `position` 必须是字符串 `"before_char"`；写数字 `0` 会被**静默当成** `after_char`
-- 缺 `enabled` 字段 → 条目被永久禁用，且不报任何错
-- 条目标题读的是 `comment`，不是 `name`
-- `probability` 是「命中后的插入概率」，**不代表常驻上下文**
 
 ---
 

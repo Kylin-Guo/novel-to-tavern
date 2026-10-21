@@ -1,0 +1,29 @@
+{
+  "skill_name": "novel-to-tavern",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我桌面上有个文件夹叫 灰港纪事，里面八章 txt，是我朋友写的短篇。帮我把它做成能直接导入 Tavo 的角色卡，要有世界书那种。弄完告诉我文件在哪。",
+      "expected_output": "定位或克隆 novel-to-tavern 仓库并装好 .venv；写 config.yaml 指向该目录；按 ingest → extract → resolve → timeline → export 执行（无凭据时走 file 引擎或向用户索要凭据，不伪造抽取结果）；用 check_card.py 复核；汇报主卡路径、条目数、哪些验证未执行。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "我没有 API key，也不想花钱。这个导出流程还能走吗？能的话先给我跑个小样看看，别给我整一张编出来的卡。",
+      "expected_output": "说明不需要 API 凭据：配置 file 引擎后由 Agent 自身作为抽取模型，按 ChunkExtraction schema 逐块生成预生成响应（引文必须逐字摘自原文）；先小样（extract --limit N）再全量；明示长篇的 token 成本；不编造引文、不伪造抽取结果；如实标注 provider 与验证状态。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "上次的卡用着还行，但回复一点都没有原作者那个味儿。能不能让酒馆里 NPC 说话尽量模仿作者的文风？大概要多花多少 token 你先说清楚。",
+      "expected_output": "说明风格蒸馏默认关闭及原因；给出每章约 6-7k token、外加合并编译开销的成本口径和 observe_max_chunks 抽样选项；用户确认后把 style.enabled 置 true 并重跑 export（自动 style-observe → style-compile）；汇报观察覆盖率与 audit.md 位置，不承诺「完全一致」。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "这书我才看到第 40 章，上次导的卡第二章就把结局给我剧透了，气死。能不能给我一张从第 40 章开始、后面剧情一点都不漏的卡？",
+      "expected_output": "解释默认单卡的剧透防护只是提示词层面、不是访问控制；用 n2t export --run-id <id> --start-chapter 40 生成严格起始点产物（起点之后的事实结构性不写入）；说明应导入 worldbook_start_beginning.json 而非默认卡；如实说明严格档的人物名单按提及抽取过滤、方向是少列不是多列。",
+      "files": []
+    }
+  ]
+}
